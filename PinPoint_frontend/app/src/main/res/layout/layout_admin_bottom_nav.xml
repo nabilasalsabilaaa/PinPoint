@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottomNavContainer"
+    android:layout_width="match_parent"
+    android:layout_height="104dp"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp">
+
+    <!-- 1. Background Bar Putih Melengkung (Floating Navbar) -->
+    <View
+        android:layout_width="0dp"
+        android:layout_height="68dp"
+        android:background="@drawable/bg_navbar"
+        android:elevation="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginBottom="12dp" />
+
+    <!-- 2. Menu Beranda (Digeser sedikit ke kiri dengan marginEnd) -->
+    <LinearLayout
+        android:id="@+id/navHome"
+        android:layout_width="0dp"
+        android:layout_height="68dp"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:elevation="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/navCategory"
+        app:layout_constraintHorizontal_weight="1"
+        android:layout_marginBottom="12dp">
+
+        <ImageView
+            android:id="@+id/ivNavHome"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/home"
+            app:tint="#0B3C8C" />
+
+        <TextView
+            android:id="@+id/tvNavHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Beranda"
+            android:textColor="#0B3C8C"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- 3. Menu Kategori (Digeser mendekati Beranda) -->
+    <LinearLayout
+        android:id="@+id/navCategory"
+        android:layout_width="0dp"
+        android:layout_height="68dp"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:elevation="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/navHome"
+        app:layout_constraintRight_toLeftOf="@id/guidelineCenter"
+        app:layout_constraintHorizontal_weight="1"
+        android:layout_marginBottom="12dp"
+        android:layout_marginEnd="30dp">
+
+        <ImageView
+            android:id="@+id/ivNavCategory"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/category"
+            app:tint="#94A3B8" />
+
+        <TextView
+            android:id="@+id/tvNavCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Kategori"
+            android:textColor="#94A3B8"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <!-- Garis Bantu Tengah Presisi -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineCenter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <!-- 4. Menu Pengguna (Digeser mendekati Profil) -->
+    <LinearLayout
+        android:id="@+id/navAccount"
+        android:layout_width="0dp"
+        android:layout_height="68dp"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:elevation="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/guidelineCenter"
+        app:layout_constraintRight_toLeftOf="@id/navProfile"
+        app:layout_constraintHorizontal_weight="1"
+        android:layout_marginBottom="12dp"
+        android:layout_marginStart="30dp">
+
+        <ImageView
+            android:id="@+id/ivNavAccount"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/user_manage"
+            app:tint="#94A3B8" />
+
+        <TextView
+            android:id="@+id/tvNavAccount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Pengguna"
+            android:textColor="#94A3B8"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <!-- 5. Menu Profil (Digeser sedikit ke kanan dengan marginStart) -->
+    <LinearLayout
+        android:id="@+id/navProfile"
+        android:layout_width="0dp"
+        android:layout_height="68dp"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:elevation="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/navAccount"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_weight="1"
+        android:layout_marginBottom="12dp">
+
+        <ImageView
+            android:id="@+id/ivNavProfile"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/user"
+            app:tint="#94A3B8" />
+
+        <TextView
+            android:id="@+id/tvNavProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Profile"
+            android:textColor="#94A3B8"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <!-- 6. Tombol Tengah Menonjol (Verifikasi) - Dinaikkan posisinya -->
+    <LinearLayout
+        android:id="@+id/navVerifyCenter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:elevation="15dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="24dp"> <!-- Dinaikkan agar lebih ke atas -->
+
+        <!-- RelativeLayout untuk Lingkaran Tombol & Badge -->
+        <RelativeLayout
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+            <!-- Lingkaran Tombol Utama (Warna Biru) -->
+            <LinearLayout
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/bg_circle_blue_btn"
+                android:elevation="4dp"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/verif"
+                    app:tint="#FFFFFF" />
+            </LinearLayout>
+
+            <!-- Badge Angka Merah -->
+            <TextView
+                android:id="@+id/tvNavBadgeCount"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/bg_badge_red_circle"
+                android:elevation="8dp"
+                android:gravity="center"
+                android:text="24"
+                android:textColor="#FFFFFF"
+                android:textSize="9sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <!-- Teks Label "Verifikasi" di bawah tombol -->
+        <TextView
+            android:id="@+id/tvNavVerify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Verifikasi"
+            android:textColor="#334155"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

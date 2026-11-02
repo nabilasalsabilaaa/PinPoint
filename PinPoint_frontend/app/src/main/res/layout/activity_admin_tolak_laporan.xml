@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F6F8FC"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Back Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
+            <ImageView
+                android:id="@+id/btnBackTolak"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_revert"
+                app:tint="#0B1C30"
+                android:layout_marginEnd="12dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tolak Laporan"
+                android:textColor="#0B1C30"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Warning Info Box -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFEBEE"
+            android:padding="12dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="20dp">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@android:drawable/ic_dialog_info"
+                app:tint="#D32F2F"
+                android:layout_marginEnd="8dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Alasan penolakan akan dikirimkan sebagai notifikasi resmi kepada pelapor melalui aplikasi."
+                android:textColor="#D32F2F"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <!-- Radio Group Alasan Utama -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pilih Alasan Utama *"
+            android:textColor="#0B1C30"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <RadioGroup
+            android:id="@+id/rgReasonReject"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp">
+
+            <RadioButton
+                android:id="@+id/rbReason1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Data Laporan Tidak Jelas / Foto Buram"
+                android:textColor="#0B1C30"
+                android:textSize="13sp"
+                android:paddingVertical="8dp" />
+
+            <RadioButton
+                android:id="@+id/rbReason2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Bukan Kewenangan Pemkot / Dinas PU"
+                android:textColor="#0B1C30"
+                android:textSize="13sp"
+                android:paddingVertical="8dp" />
+
+            <RadioButton
+                android:id="@+id/rbReason3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Laporan Duplikat"
+                android:textColor="#0B1C30"
+                android:textSize="13sp"
+                android:paddingVertical="8dp" />
+
+            <RadioButton
+                android:id="@+id/rbReason4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Lokasi GPS Tidak Sesuai / Fiktif"
+                android:textColor="#0B1C30"
+                android:textSize="13sp"
+                android:paddingVertical="8dp" />
+        </RadioGroup>
+
+        <!-- Input Penjelasan -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Penjelasan Lengkap untuk Pelapor *"
+            android:textColor="#0B1C30"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/etRejectExplanation"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@drawable/kolom_form"
+            android:gravity="top|start"
+            android:hint="Tuliskan alasan penolakan secara jelas..."
+            android:padding="12dp"
+            android:textSize="13sp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Confirm Reject Button -->
+        <Button
+            android:id="@+id/btnConfirmReject"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Konfirmasi Tolak Laporan"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:backgroundTint="#D32F2F" />
+
+    </LinearLayout>
+</ScrollView>
