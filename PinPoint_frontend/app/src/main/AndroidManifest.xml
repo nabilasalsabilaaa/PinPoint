@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Izin Akses Internet untuk Retrofit / Spring Boot -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.PinPoint"
+        android:usesCleartextTraffic="true"> <!-- Mengizinkan koneksi HTTP lokal (10.0.2.2) -->
+
+        <!-- Halaman Utama (Splash / Onboarding) -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Halaman Login -->
+        <activity
+            android:name=".Login"
+            android:exported="false" />
+
+        <!-- Halaman Register -->
+        <activity
+            android:name=".Register"
+            android:exported="false" />
+
+        <!-- Halaman Dashboard -->
+        <activity
+            android:name=".DashboardActivity"
+            android:exported="false" />
+
+    </application>
+
+</manifest>
