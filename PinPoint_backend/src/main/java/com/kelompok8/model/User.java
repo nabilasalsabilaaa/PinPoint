@@ -36,9 +36,20 @@ public class User {
 
     private LocalDateTime terakhirLogin;
 
-    // Helper untuk integrasi AuthService & Filter lama
-    public String getRole() { 
-        return idRole != null && idRole == 1L ? "ADMIN" : "USER"; 
+    /**
+     * Mengembalikan nama role berdasarkan idRole:
+     *   1 → ADMIN
+     *   2 → WARGA  (masyarakat umum)
+     *   3 → DINAS  (instansi pemerintah)
+     * Default ke WARGA jika idRole tidak dikenali.
+     */
+    public String getRole() {
+        if (idRole == null) return "WARGA";
+        return switch (idRole.intValue()) {
+            case 1 -> "ADMIN";
+            case 3 -> "DINAS";
+            default -> "WARGA"; // idRole == 2 atau nilai lain
+        };
     }
     public boolean isActive() { 
         return "ACTIVE".equalsIgnoreCase(statusAkun); 

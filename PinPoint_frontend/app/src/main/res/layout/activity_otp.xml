@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    activity_otp.xml — Material Design 3
+    Layar verifikasi OTP 6-digit PinPoint.
+    6 kotak input terpisah dengan auto-advance antar field.
+-->
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="?attr/colorSurface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="72dp"
+        android:paddingBottom="40dp">
+
+        <!-- ── Ikon OTP ──────────────────────────────────────────────── -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="?attr/colorPrimaryContainer">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="🔐"
+                android:textSize="38sp"
+                android:gravity="center" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ── Judul ─────────────────────────────────────────────────── -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Verifikasi OTP"
+            android:textAppearance="?attr/textAppearanceHeadlineSmall"
+            android:textColor="?attr/colorOnSurface"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tvOtpSubtitle"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Masukkan kode 6-digit yang telah dikirim ke email Anda"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:lineSpacingMultiplier="1.3"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Email tujuan OTP -->
+        <TextView
+            android:id="@+id/tvOtpEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceLabelLarge"
+            android:textColor="?attr/colorPrimary"
+            android:layout_marginBottom="40dp"
+            tools:text="user@email.com" />
+
+        <!-- ── 6 Kotak OTP ───────────────────────────────────────────── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="32dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etOtp1"
+                style="@style/OtpInputStyle"
+                android:layout_marginEnd="8dp"
+                android:nextFocusForward="@id/etOtp2" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etOtp2"
+                style="@style/OtpInputStyle"
+                android:layout_marginEnd="8dp"
+                android:nextFocusForward="@id/etOtp3" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etOtp3"
+                style="@style/OtpInputStyle"
+                android:layout_marginEnd="12dp"
+                android:nextFocusForward="@id/etOtp4" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etOtp4"
+                style="@style/OtpInputStyle"
+                android:layout_marginEnd="8dp"
+                android:nextFocusForward="@id/etOtp5" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etOtp5"
+                style="@style/OtpInputStyle"
+                android:layout_marginEnd="8dp"
+                android:nextFocusForward="@id/etOtp6" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etOtp6"
+                style="@style/OtpInputStyle"
+                android:imeOptions="actionDone" />
+
+        </LinearLayout>
+
+        <!-- ── Timer Resend ─────────────────────────────────────────── -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kode berlaku selama  "
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+
+            <TextView
+                android:id="@+id/tvOtpTimer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceLabelMedium"
+                android:textColor="?attr/colorError"
+                tools:text="14:52" />
+        </LinearLayout>
+
+        <!-- Kirim Ulang OTP -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnResendOtp"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kirim Ulang Kode"
+            android:enabled="false"
+            android:layout_marginBottom="24dp" />
+
+        <!-- ── Tombol Verifikasi ────────────────────────────────────── -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnVerifyOtp"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="Verifikasi"
+            android:textAppearance="?attr/textAppearanceLabelLarge"
+            app:cornerRadius="12dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Kembali ke Login -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnBackToLogin"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Kembali ke Login"
+            app:cornerRadius="12dp" />
+
+        <!-- Loading Indicator -->
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progressBarOtp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:visibility="gone"
+            app:indicatorSize="40dp"
+            app:trackThickness="4dp"
+            tools:visibility="gone" />
+
+    </LinearLayout>
+</ScrollView>

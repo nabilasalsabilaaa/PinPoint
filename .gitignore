@@ -1,0 +1,6 @@
+.env
+.DS_Store
+
+# QA & Testing Documentation (Internal)
+QA_Auth_Testing.md
+QA_*.md
