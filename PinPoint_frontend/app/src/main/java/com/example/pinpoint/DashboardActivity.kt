@@ -26,14 +26,13 @@ class DashboardActivity : AppCompatActivity() {
         val btnLogout = findViewById<Button>(R.id.btnLogout)
 
         // 1. Logika ketika Tombol Logout ditekan
-        // Logika ketika Tombol Logout ditekan
         btnLogout.setOnClickListener {
+            // Hapus sesi aman (EncryptedSharedPreferences)
+            TokenManager.clearSession(this)
 
-            // --- HAPUS SESI / TOKEN SAAT LOGOUT ---
+            // Bersihkan preferensi lama jika ada
             val sharedPreferences = getSharedPreferences("UserSession", MODE_PRIVATE)
-            val editor = sharedPreferences.edit()
-            editor.clear() // Menghapus semua data session yang tersimpan
-            editor.apply()
+            sharedPreferences.edit().clear().apply()
 
             // Pindah kembali ke halaman Login & hapus riwayat activity
             val intent = Intent(this, Login::class.java)
