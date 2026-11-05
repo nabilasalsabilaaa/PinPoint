@@ -90,8 +90,18 @@ public class AuthController {
             return ResponseEntity.badRequest().body(new ApiResponse(false, result));
         }
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse(true, result));
+        // Langsung kirim OTP untuk verifikasi email setelah registrasi
+        try {
+            authService.sendRegistrationOtp(request.getEmail(), request.getNama());
+            logger.info("OTP registrasi berhasil dikirim ke: {}", request.getEmail());
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ApiResponse(true, "Registrasi berhasil! Kode OTP telah dikirim ke email Anda."));
+        } catch (Exception e) {
+            logger.error("Gagal mengirim OTP registrasi ke {}: {}", request.getEmail(), e.getMessage());
+            authService.deleteAccount(request.getEmail());
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse(false, "Error: " + e.getMessage()));
+        }
     }
 
     // ══════════════════════════════════════════════════════════════════════════
@@ -276,6 +286,33 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ApiResponse(false, "Error: Token tidak valid atau sudah kedaluwarsa."));
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    //  DELETE ACCOUNT
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /**
+     * Menghapus akun pengguna berdasarkan email.
+     *
+     * @param request berisi email akun yang ingin dihapus
+     * @return status keberhasilan penghapusan akun
+     */
+    @Operation(
+        summary     = "Hapus akun pengguna",
+        description = "Menghapus akun pengguna berdasarkan email."
+    )
+    @DeleteMapping("/delete-account")
+    public ResponseEntity<ApiResponse> deleteAccount(@RequestBody DeleteAccountRequest request) {
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse(false, "Error: Email wajib diisi."));
+        }
+        String result = authService.deleteAccount(request.getEmail());
+        if (result.startsWith("Error:")) {
+            return ResponseEntity.badRequest().body(new ApiResponse(false, result));
+        }
+        return ResponseEntity.ok(new ApiResponse(true, result));
     }
 
     // ══════════════════════════════════════════════════════════════════════════

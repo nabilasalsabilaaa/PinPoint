@@ -15,18 +15,20 @@ public class EmailServiceTest {
     private EmailService emailService;
 
     @Test
-    @DisplayName("Email OTP dipanggil secara asinkron tanpa memblokir thread pemanggil")
-    void testSendOtpEmailAsyncNonBlocking() {
+    @DisplayName("Test send registration OTP email")
+    void testSendRegistrationOtpEmail() {
         assertDoesNotThrow(() -> {
-            emailService.sendOtpEmail("qa.tester.pinpoint@example.com", "849201", "QA Tester");
+            emailService.sendRegistrationOtpEmail("noreplay.pinpoint@gmail.com", "654321", "User Registrasi");
         });
     }
 
     @Test
-    @DisplayName("Email Welcome dipanggil secara asinkron tanpa memblokir thread pemanggil")
-    void testSendWelcomeEmailAsyncNonBlocking() {
+    @DisplayName("Test send forgot password OTP email")
+    void testSendForgotPasswordOtpEmail() {
         assertDoesNotThrow(() -> {
-            emailService.sendWelcomeEmail("qa.tester.pinpoint@example.com", "QA Tester");
+            emailService.sendForgotPasswordOtpEmail("noreplay.pinpoint@gmail.com", "123456", "User Lupa Password");
         });
     }
 }
+
+

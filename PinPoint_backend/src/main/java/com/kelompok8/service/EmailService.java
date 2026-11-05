@@ -40,28 +40,72 @@ public class EmailService {
     private static final String LOGO_TEXT   = "📍 PinPoint";
 
     // ══════════════════════════════════════════════════════════════════════════
-    //  OTP EMAIL
+    //  OTP EMAIL METHODS
     // ══════════════════════════════════════════════════════════════════════════
 
     /**
-     * Mengirim email berisi kode OTP untuk reset password.
-     * Metode ini berjalan secara asinkron agar tidak memblokir thread request.
+     * Mengirim email OTP untuk verifikasi pendaftaran akun baru.
      *
      * @param toEmail  alamat email tujuan
      * @param otpCode  kode OTP 6-digit
-     * @param userName nama lengkap penerima (untuk sapaan personal)
+     * @param userName nama lengkap pendaftar
      */
-    @Async
+    public void sendRegistrationOtpEmail(String toEmail, String otpCode, String userName) {
+        String subject = "🔐 Kode Verifikasi Registrasi — " + APP_NAME;
+        String desc = "Terima kasih telah mendaftar di " + APP_NAME + ". Masukkan kode OTP berikut pada aplikasi untuk memverifikasi akun Anda:";
+        sendOtpEmailInternal(toEmail, subject, userName, otpCode, desc);
+    }
+
+    /**
+     * Mengirim email OTP untuk lupa / reset kata sandi.
+     *
+     * @param toEmail  alamat email tujuan
+     * @param otpCode  kode OTP 6-digit
+     * @param userName nama lengkap penerima
+     */
+    public void sendForgotPasswordOtpEmail(String toEmail, String otpCode, String userName) {
+        String subject = "🔐 Kode OTP Reset Kata Sandi — " + APP_NAME;
+        String desc = "Kami menerima permintaan reset kata sandi untuk akun " + APP_NAME + " Anda. Masukkan kode OTP berikut pada aplikasi untuk melanjutkan proses verifikasi:";
+        sendOtpEmailInternal(toEmail, subject, userName, otpCode, desc);
+    }
+
+    /**
+     * Overload backward-compatibility untuk pengiriman OTP.
+     */
     public void sendOtpEmail(String toEmail, String otpCode, String userName) {
+        sendForgotPasswordOtpEmail(toEmail, otpCode, userName);
+    }
+
+    public void sendOtpEmail(String toEmail, String otpCode) {
+        sendForgotPasswordOtpEmail(toEmail, otpCode, "Pengguna");
+    }
+
+    public void sendOtpEmailSync(String toEmail, String otpCode, String userName) {
+        sendForgotPasswordOtpEmail(toEmail, otpCode, userName);
+    }
+
+    /**
+     * Mengirim email OTP via SMTP secara andal dengan multipart plain-text + HTML.
+     */
+    private void sendOtpEmailInternal(String toEmail, String subject, String userName, String otpCode, String desc) {
         try {
-            logger.info("Memulai proses pengiriman email OTP ke [{}]...", toEmail);
+            logger.info("Memulai pengiriman email OTP [{}] ke [{}]...", subject, toEmail);
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
             helper.setFrom(fromAddress, APP_NAME);
             helper.setTo(toEmail);
-            helper.setSubject("🔐 Kode OTP Reset Kata Sandi — " + APP_NAME);
-            helper.setText(buildOtpEmailHtml(userName, otpCode), true);
+            helper.setSubject(subject);
+
+            String plainText = "Halo, " + (userName != null ? userName : "Pengguna") + "!\n\n"
+                    + desc + "\n\n"
+                    + "KODE OTP ANDA: " + otpCode + "\n\n"
+                    + "Kode ini berlaku selama 15 menit. Masukkan kode ini pada aplikasi PinPoint.\n"
+                    + "Jangan bagikan kode ini kepada siapapun.\n\n"
+                    + "Salam,\nTim " + APP_NAME;
+
+            String htmlText = buildOtpEmailHtml(userName, otpCode, desc);
+            helper.setText(plainText, htmlText);
 
             mailSender.send(message);
             logger.info("✅ Email OTP berhasil terkirim via SMTP ke: {}", toEmail);
@@ -73,40 +117,22 @@ public class EmailService {
                     "Penerima         : " + toEmail + "\n" +
                     "Akun Pengirim    : " + fromAddress + "\n" +
                     "Detail Error     : 535 BadCredentials / Autentikasi Google Ditolak.\n" +
-                    "PENYEBAB         : Google tidak lagi mendukung password biasa (Less Secure Apps).\n" +
-                    "SOLUSI           : 1. Buka https://myaccount.google.com/apppasswords\n" +
-                    "                   2. Buat App Password (Sandi Aplikasi) 16 karakter.\n" +
-                    "                   3. Masukkan ke file .env pada baris MAIL_PASSWORD=<16_karakter>\n" +
+                    "PENYEBAB         : Google tidak mendukung password biasa (Less Secure Apps).\n" +
+                    "SOLUSI           : Buat App Password (Sandi Aplikasi) 16 karakter di Google Account,\n" +
+                    "                   masukkan ke .env tanpa spasi: MAIL_PASSWORD=xxxxxxxxxxxxxxxx\n" +
                     "********************************************************************************\n";
             System.err.println(alert);
-            logger.error("❌ Gagal autentikasi SMTP saat mengirim email OTP ke [{}]: {}", toEmail, e.getMessage(), e);
-            throw e;
+            logger.error("❌ Gagal autentikasi SMTP saat mengirim email OTP ke [{}]: {}", toEmail, e.getMessage());
+            throw new RuntimeException("Gagal autentikasi email server (535 BadCredentials). Periksa App Password Google.", e);
 
         } catch (MailSendException e) {
-            String alert = "\n" +
-                    "********************************************************************************\n" +
-                    "❌ [SMTP TRANSPORT/SEND ERROR] Gagal mengirim Email OTP!\n" +
-                    "Penerima         : " + toEmail + "\n" +
-                    "Detail Error     : " + e.getMessage() + "\n" +
-                    "PENYEBAB         : Koneksi SMTP ditolak atau timeout ke smtp.gmail.com:587.\n" +
-                    "********************************************************************************\n";
-            System.err.println(alert);
-            logger.error("❌ Koneksi/Transport SMTP gagal saat mengirim email OTP ke [{}]: {}", toEmail, e.getMessage(), e);
-            throw e;
+            logger.error("❌ Koneksi/Transport SMTP gagal saat mengirim email OTP ke [{}]: {}", toEmail, e.getMessage());
+            throw new RuntimeException("Gagal mengirim email melalui server SMTP. Periksa koneksi internet server.", e);
 
         } catch (Exception e) {
-            System.err.println("❌ [EMAIL UNEXPECTED ERROR] Gagal mengirim email OTP ke " + toEmail + ": " + e.getMessage());
-            logger.error("❌ Terjadi kesalahan tak terduga saat pengiriman email OTP ke [{}]: {}", toEmail, e.getMessage(), e);
-            throw new RuntimeException("Gagal mengirim email OTP. Silakan coba lagi.", e);
+            logger.error("❌ Terjadi kesalahan tak terduga saat pengiriman email OTP ke [{}]: {}", toEmail, e.getMessage());
+            throw new RuntimeException("Gagal mengirim email OTP: " + e.getMessage(), e);
         }
-    }
-
-    /**
-     * Overload untuk backward-compatibility — tanpa parameter userName.
-     */
-    @Async
-    public void sendOtpEmail(String toEmail, String otpCode) {
-        sendOtpEmail(toEmail, otpCode, "Pengguna");
     }
 
     // ══════════════════════════════════════════════════════════════════════════
@@ -166,7 +192,7 @@ public class EmailService {
      * Membangun HTML template email OTP yang responsif.
      * Mendukung dark mode via media query.
      */
-    private String buildOtpEmailHtml(String userName, String otpCode) {
+    private String buildOtpEmailHtml(String userName, String otpCode, String purposeDesc) {
         // Pisah setiap digit OTP untuk tampilan kotak terpisah
         String[] digits = otpCode.split("");
         StringBuilder otpBoxes = new StringBuilder();
@@ -240,8 +266,7 @@ public class EmailService {
             "<div class=\"body\">" +
                 "<p class=\"greeting\">Halo, <strong>" + escapeHtml(userName) + "</strong> 👋</p>" +
                 "<p class=\"desc\">" +
-                    "Kami menerima permintaan reset kata sandi untuk akun PinPoint Anda. " +
-                    "Gunakan kode OTP berikut untuk melanjutkan proses verifikasi:" +
+                    escapeHtml(purposeDesc) +
                 "</p>" +
 
                 "<p class=\"otp-label\">Kode Verifikasi Anda</p>" +

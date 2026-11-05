@@ -2,4 +2,28 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    
+    <!-- Material Theme Brand Colors from Design Specs -->
+    <color name="primary">#003C90</color>
+    <color name="primary_container">#0F52BA</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="on_primary_container">#BCCEFF</color>
+
+    <color name="secondary">#006A61</color>
+    <color name="secondary_container">#86F2E4</color>
+    <color name="on_secondary_container">#006F66</color>
+    
+    <color name="surface">#F8F9FF</color>
+    <color name="surface_container">#E5EEFF</color>
+    <color name="surface_container_high">#DCE9FF</color>
+    <color name="surface_container_low">#EFF4FF</color>
+    <color name="surface_container_lowest">#FFFFFF</color>
+    
+    <color name="on_surface">#0B1C30</color>
+    <color name="on_surface_variant">#434653</color>
+    <color name="outline">#737784</color>
+    <color name="outline_variant">#C3C6D5</color>
+    
+    <color name="error">#BA1A1A</color>
+    <color name="error_container">#FFDAD6</color>
 </resources>
