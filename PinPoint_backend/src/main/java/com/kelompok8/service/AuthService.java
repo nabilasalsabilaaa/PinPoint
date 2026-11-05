@@ -166,6 +166,7 @@ public class AuthService {
         // Kirim email OTP secara asinkron
         emailService.sendOtpEmail(user.getEmail(), otpCode, user.getNama());
         logger.info("OTP dikirim ke email: {} (kode disembunyikan dari log)", user.getEmail());
+        logger.debug("[DEV ONLY] Generated OTP untuk {}: {}", user.getEmail(), otpCode);
 
         return "Kode OTP telah dikirim ke email terdaftar Anda. Berlaku 15 menit.";
     }

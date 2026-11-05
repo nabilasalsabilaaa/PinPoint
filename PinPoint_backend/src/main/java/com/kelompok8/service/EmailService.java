@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailAuthenticationException;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -30,7 +32,7 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    @Value("${spring.mail.username:noreply.pinpoint@gmail.com}")
+    @Value("${spring.mail.username:noreplay.pinpoint@gmail.com}")
     private String fromAddress;
 
     private static final String APP_NAME    = "PinPoint";
@@ -52,6 +54,7 @@ public class EmailService {
     @Async
     public void sendOtpEmail(String toEmail, String otpCode, String userName) {
         try {
+            logger.info("Memulai proses pengiriman email OTP ke [{}]...", toEmail);
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
@@ -61,10 +64,39 @@ public class EmailService {
             helper.setText(buildOtpEmailHtml(userName, otpCode), true);
 
             mailSender.send(message);
-            logger.info("Email OTP berhasil dikirim ke: {}", toEmail);
+            logger.info("✅ Email OTP berhasil terkirim via SMTP ke: {}", toEmail);
+
+        } catch (MailAuthenticationException e) {
+            String alert = "\n" +
+                    "********************************************************************************\n" +
+                    "❌ [SMTP AUTHENTICATION ERROR] Gagal mengirim Email OTP!\n" +
+                    "Penerima         : " + toEmail + "\n" +
+                    "Akun Pengirim    : " + fromAddress + "\n" +
+                    "Detail Error     : 535 BadCredentials / Autentikasi Google Ditolak.\n" +
+                    "PENYEBAB         : Google tidak lagi mendukung password biasa (Less Secure Apps).\n" +
+                    "SOLUSI           : 1. Buka https://myaccount.google.com/apppasswords\n" +
+                    "                   2. Buat App Password (Sandi Aplikasi) 16 karakter.\n" +
+                    "                   3. Masukkan ke file .env pada baris MAIL_PASSWORD=<16_karakter>\n" +
+                    "********************************************************************************\n";
+            System.err.println(alert);
+            logger.error("❌ Gagal autentikasi SMTP saat mengirim email OTP ke [{}]: {}", toEmail, e.getMessage(), e);
+            throw e;
+
+        } catch (MailSendException e) {
+            String alert = "\n" +
+                    "********************************************************************************\n" +
+                    "❌ [SMTP TRANSPORT/SEND ERROR] Gagal mengirim Email OTP!\n" +
+                    "Penerima         : " + toEmail + "\n" +
+                    "Detail Error     : " + e.getMessage() + "\n" +
+                    "PENYEBAB         : Koneksi SMTP ditolak atau timeout ke smtp.gmail.com:587.\n" +
+                    "********************************************************************************\n";
+            System.err.println(alert);
+            logger.error("❌ Koneksi/Transport SMTP gagal saat mengirim email OTP ke [{}]: {}", toEmail, e.getMessage(), e);
+            throw e;
 
         } catch (Exception e) {
-            logger.error("Gagal mengirim email OTP ke {}: {}", toEmail, e.getMessage());
+            System.err.println("❌ [EMAIL UNEXPECTED ERROR] Gagal mengirim email OTP ke " + toEmail + ": " + e.getMessage());
+            logger.error("❌ Terjadi kesalahan tak terduga saat pengiriman email OTP ke [{}]: {}", toEmail, e.getMessage(), e);
             throw new RuntimeException("Gagal mengirim email OTP. Silakan coba lagi.", e);
         }
     }
@@ -90,6 +122,7 @@ public class EmailService {
     @Async
     public void sendWelcomeEmail(String toEmail, String userName) {
         try {
+            logger.info("Memulai proses pengiriman welcome email ke [{}]...", toEmail);
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
@@ -99,11 +132,29 @@ public class EmailService {
             helper.setText(buildWelcomeEmailHtml(userName), true);
 
             mailSender.send(message);
-            logger.info("Email selamat datang berhasil dikirim ke: {}", toEmail);
+            logger.info("✅ Email selamat datang berhasil dikirim ke: {}", toEmail);
+
+        } catch (MailAuthenticationException e) {
+            String alert = "\n" +
+                    "********************************************************************************\n" +
+                    "❌ [SMTP AUTHENTICATION ERROR] Gagal mengirim Welcome Email!\n" +
+                    "Penerima         : " + toEmail + "\n" +
+                    "Akun Pengirim    : " + fromAddress + "\n" +
+                    "Detail Error     : 535 BadCredentials / Autentikasi Google Ditolak.\n" +
+                    "PENYEBAB         : Google tidak lagi mendukung password biasa (Less Secure Apps).\n" +
+                    "SOLUSI           : Buat App Password (Sandi Aplikasi) 16 karakter di Google Security,\n" +
+                    "                   lalu masukkan ke .env pada baris MAIL_PASSWORD.\n" +
+                    "********************************************************************************\n";
+            System.err.println(alert);
+            logger.error("❌ Gagal autentikasi SMTP saat mengirim welcome email ke [{}]: {}", toEmail, e.getMessage(), e);
+
+        } catch (MailSendException e) {
+            System.err.println("❌ [SMTP TRANSPORT/SEND ERROR] Gagal mengirim welcome email ke " + toEmail + ": " + e.getMessage());
+            logger.error("❌ Koneksi/Transport SMTP gagal saat mengirim welcome email ke [{}]: {}", toEmail, e.getMessage(), e);
 
         } catch (Exception e) {
-            logger.error("Gagal mengirim email welcome ke {}: {}", toEmail, e.getMessage());
-            // Welcome email tidak kritikal — log saja, jangan lempar exception
+            System.err.println("❌ [EMAIL UNEXPECTED ERROR] Gagal mengirim welcome email ke " + toEmail + ": " + e.getMessage());
+            logger.error("❌ Terjadi kesalahan saat pengiriman email welcome ke [{}]: {}", toEmail, e.getMessage(), e);
         }
     }
 
