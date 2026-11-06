@@ -1,5 +1,6 @@
 package com.example.pinpoint
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
@@ -10,19 +11,18 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class ForgotPasswordActivity : AppCompatActivity() {
 
     private enum class SelectedMode { EMAIL, PHONE }
     private var currentMode = SelectedMode.EMAIL
+    private lateinit var authRepository: AuthRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_forgot_password)
+
+        authRepository = AuthRepository(this)
 
         val btnTabEmail = findViewById<LinearLayout>(R.id.btnTabEmail)
         val btnTabPhone = findViewById<LinearLayout>(R.id.btnTabPhone)
@@ -90,7 +90,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
             }
         }
 
-        // Submit Lupa Password / OTP
+        // Submit Lupa Password / Minta OTP
         btnSubmit.setOnClickListener {
             val inputValue = etInput.text.toString().trim()
             if (inputValue.isEmpty()) {
@@ -99,31 +99,30 @@ class ForgotPasswordActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val request = CheckAccountRequest(
+            val modeString = if (currentMode == SelectedMode.EMAIL) "EMAIL" else "PHONE"
+
+            btnSubmit.isEnabled = false
+
+            authRepository.sendOtp(
                 identifier = inputValue,
-                type = if (currentMode == SelectedMode.EMAIL) "EMAIL" else "PHONE"
-            )
+                type = modeString,
+                onSuccess = { message ->
+                    btnSubmit.isEnabled = true
+                    Toast.makeText(this@ForgotPasswordActivity, message, Toast.LENGTH_SHORT).show()
 
-            // Panggil API Pengecekan Akun
-            ApiClient.instance.checkAccount(request).enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    if (response.isSuccessful) {
-                        Toast.makeText(
-                            this@ForgotPasswordActivity,
-                            "Tautan verifikasi / OTP berhasil dikirim!",
-                            Toast.LENGTH_LONG
-                        ).show()
-                        finish()
-                    } else {
-                        val errorMsg = response.errorBody()?.string() ?: "Akun tidak terdaftar atau tidak aktif!"
-                        Toast.makeText(this@ForgotPasswordActivity, errorMsg, Toast.LENGTH_SHORT).show()
+                    // Berpindah ke layar Verifikasi OTP
+                    val intent = Intent(this@ForgotPasswordActivity, OtpActivity::class.java).apply {
+                        putExtra(OtpActivity.EXTRA_EMAIL, inputValue)
+                        putExtra(OtpActivity.EXTRA_OTP_TYPE, modeString)
                     }
+                    startActivity(intent)
+                    finish()
+                },
+                onError = { errorMsg ->
+                    btnSubmit.isEnabled = true
+                    Toast.makeText(this@ForgotPasswordActivity, errorMsg, Toast.LENGTH_LONG).show()
                 }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    Toast.makeText(this@ForgotPasswordActivity, "Gagal terhubung ke server: ${t.message}", Toast.LENGTH_SHORT).show()
-                }
-            })
+            )
         }
 
         btnBackToLogin.setOnClickListener {

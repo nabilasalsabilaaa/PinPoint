@@ -2,124 +2,137 @@ package com.example.pinpoint
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.InputType
 import android.view.View
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.checkbox.MaterialCheckBox
+import com.google.android.material.progressindicator.CircularProgressIndicator
+import com.google.android.material.textfield.TextInputLayout
 
+/**
+ * LoginActivity — Layar autentikasi pengguna PinPoint.
+ *
+ * Fitur:
+ * - Login via email atau nomor telepon + password
+ * - Toggle show/hide password (bawaan TextInputLayout MD3)
+ * - "Ingat Saya" — kredensial disimpan di EncryptedSharedPreferences
+ * - Auto-fill dari "Ingat Saya" saat activity dibuka
+ * - Redirect langsung ke Dashboard jika sudah login (token masih ada)
+ */
 class Login : AppCompatActivity() {
 
-    private var isPasswordVisible = false
+    private lateinit var tilEmailOrPhone: TextInputLayout
+    private lateinit var tilPassword: TextInputLayout
+    private lateinit var cbRememberMe: MaterialCheckBox
+    private lateinit var btnLogin: MaterialButton
+    private lateinit var tvForgotPassword: View
+    private lateinit var tvSignUpLink: View
+    private lateinit var progressBar: CircularProgressIndicator
+
+    private lateinit var authRepository: AuthRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // ── Auto-redirect jika sudah login ──────────────────────────────
+        if (TokenManager.isLoggedIn(this)) {
+            navigateToDashboard()
+            return
+        }
+
         setContentView(R.layout.activity_login)
+        authRepository = AuthRepository(this)
+        initViews()
+        autoFillRememberMe()
+        setupClickListeners()
+    }
 
-        // Inisialisasi View
-        val etEmailOrPhone = findViewById<EditText>(R.id.etEmailOrPhone)
-        val etPassword = findViewById<EditText>(R.id.etPassword)
-        val ivPasswordVisibility = findViewById<ImageView>(R.id.ivPasswordVisibility)
-        val cbRememberMe = findViewById<CheckBox>(R.id.cbRememberMe)
-        val btnLogin = findViewById<View>(R.id.btnWrapperLogin)
-        val tvSignUpLink = findViewById<View>(R.id.tvSignUpLink)
-        val tvForgotPassword = findViewById<View>(R.id.tvForgotPassword)
+    private fun initViews() {
+        tilEmailOrPhone = findViewById(R.id.tilEmailOrPhone)
+        tilPassword     = findViewById(R.id.tilPassword)
+        cbRememberMe    = findViewById(R.id.cbRememberMe)
+        btnLogin        = findViewById(R.id.btnLogin)
+        tvForgotPassword = findViewById(R.id.tvForgotPassword)
+        tvSignUpLink     = findViewById(R.id.tvSignUpLink)
+        progressBar      = findViewById(R.id.progressBarLogin)
+    }
 
-        // SharedPreferences untuk fitur "Ingat Saya"
-        val sharedPreferences = getSharedPreferences("UserSession", MODE_PRIVATE)
-        val isRemembered = sharedPreferences.getBoolean("KEY_REMEMBER_ME", false)
-
-        if (isRemembered) {
-            val savedIdentifier = sharedPreferences.getString("KEY_SAVED_IDENTIFIER", "")
-            val savedPassword = sharedPreferences.getString("KEY_SAVED_PASSWORD", "")
-            etEmailOrPhone.setText(savedIdentifier)
-            etPassword.setText(savedPassword)
+    /** Mengisi input secara otomatis dari data "Ingat Saya" yang tersimpan. */
+    private fun autoFillRememberMe() {
+        if (TokenManager.isRememberMe(this)) {
+            tilEmailOrPhone.editText?.setText(TokenManager.getSavedIdentifier(this))
+            tilPassword.editText?.setText(TokenManager.getSavedPassword(this))
             cbRememberMe.isChecked = true
         }
+    }
 
-        // Toggle Show/Hide Password
-        ivPasswordVisibility.setOnClickListener {
-            isPasswordVisible = !isPasswordVisible
-            etPassword.inputType = if (isPasswordVisible) {
-                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-            } else {
-                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+    private fun setupClickListeners() {
+
+        // ── Tombol Login ─────────────────────────────────────────────────
+        btnLogin.setOnClickListener {
+            val identifier = tilEmailOrPhone.editText?.text.toString().trim()
+            val password   = tilPassword.editText?.text.toString().trim()
+
+            // Reset error sebelumnya
+            tilEmailOrPhone.error = null
+            tilPassword.error     = null
+
+            // Validasi input
+            var isValid = true
+            if (identifier.isEmpty()) {
+                tilEmailOrPhone.error = "Email atau nomor ponsel tidak boleh kosong"
+                isValid = false
             }
-            etPassword.setSelection(etPassword.text.length)
+            if (password.isEmpty()) {
+                tilPassword.error = "Kata sandi tidak boleh kosong"
+                isValid = false
+            }
+            if (!isValid) return@setOnClickListener
+
+            setLoading(true)
+
+            authRepository.login(
+                identifier = identifier,
+                password   = password,
+                rememberMe = cbRememberMe.isChecked,
+                onSuccess  = { loginResponse ->
+                    setLoading(false)
+                    Toast.makeText(
+                        this,
+                        "Selamat datang, ${loginResponse.nama}! 👋",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    navigateToDashboard()
+                },
+                onError = { errorMsg ->
+                    setLoading(false)
+                    Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show()
+                }
+            )
         }
 
-        // Event Klik "Lupa Kata Sandi?"
+        // ── Lupa Kata Sandi ──────────────────────────────────────────────
         tvForgotPassword.setOnClickListener {
             startActivity(Intent(this, ForgotPasswordActivity::class.java))
         }
 
-        // Tombol Login (Mendukung Email atau Nomor Ponsel berawalan 0)
-        btnLogin.setOnClickListener {
-            val emailOrPhone = etEmailOrPhone.text.toString().trim()
-            val password = etPassword.text.toString().trim()
-
-            if (emailOrPhone.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Harap isi email/nomor ponsel dan kata sandi!", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            val request = LoginRequest(identifier = emailOrPhone, password = password)
-
-            ApiClient.instance.login(request).enqueue(object : Callback<LoginResponse> {
-                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                    if (response.isSuccessful) {
-                        val loginData = response.body()
-
-                        if (loginData?.token != null) {
-                            val editor = sharedPreferences.edit()
-
-                            // Cek apakah Checkbox "Ingat Saya" dicentang oleh user
-                            if (cbRememberMe.isChecked) {
-                                editor.putString("KEY_TOKEN", loginData.token)
-                                editor.putString("KEY_NAME", loginData.nama)
-                                editor.putBoolean("KEY_IS_LOGGED_IN", true)
-
-                                // Simpan kredensial untuk auto-fill
-                                editor.putBoolean("KEY_REMEMBER_ME", true)
-                                editor.putString("KEY_SAVED_IDENTIFIER", emailOrPhone)
-                                editor.putString("KEY_SAVED_PASSWORD", password)
-                            } else {
-                                // Hapus kredensial jika tidak dicentang
-                                editor.remove("KEY_REMEMBER_ME")
-                                editor.remove("KEY_SAVED_IDENTIFIER")
-                                editor.remove("KEY_SAVED_PASSWORD")
-                            }
-                            editor.apply()
-
-                            Toast.makeText(this@Login, "Selamat datang, ${loginData.nama}!", Toast.LENGTH_SHORT).show()
-
-                            // Pindah ke Dashboard
-                            val intent = Intent(this@Login, DashboardActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        } else {
-                            Toast.makeText(this@Login, "Login gagal: Token tidak ditemukan", Toast.LENGTH_SHORT).show()
-                        }
-                    } else {
-                        val errorBody = response.errorBody()?.string() ?: "Email/Nomor Ponsel atau Password salah!"
-                        Toast.makeText(this@Login, "Login Gagal: $errorBody", Toast.LENGTH_LONG).show()
-                    }
-                }
-
-                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                    Toast.makeText(this@Login, "Gagal terhubung ke server: ${t.message}", Toast.LENGTH_SHORT).show()
-                }
-            })
-        }
-
-        // Event Klik ke Halaman Register
+        // ── Link ke Register ─────────────────────────────────────────────
         tvSignUpLink.setOnClickListener {
             startActivity(Intent(this, Register::class.java))
         }
+    }
+
+    private fun setLoading(isLoading: Boolean) {
+        progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        btnLogin.isEnabled     = !isLoading
+        btnLogin.text          = if (isLoading) "Memproses..." else "Masuk"
+    }
+
+    private fun navigateToDashboard() {
+        val intent = Intent(this, DashboardActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
+        finish()
     }
 }
