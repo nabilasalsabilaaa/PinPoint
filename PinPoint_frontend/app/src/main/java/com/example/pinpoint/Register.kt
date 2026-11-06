@@ -97,9 +97,12 @@ class Register : AppCompatActivity() {
                 onSuccess  = { message ->
                     setLoading(false)
                     Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-                    // Kembali ke layar login
-                    val intent = Intent(this, Login::class.java)
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    // Navigasi ke verifikasi OTP
+                    val intent = Intent(this, OtpActivity::class.java).apply {
+                        putExtra(OtpActivity.EXTRA_EMAIL, email)
+                        putExtra(OtpActivity.EXTRA_OTP_TYPE, "EMAIL")
+                        putExtra(OtpActivity.EXTRA_SOURCE, "REGISTER")
+                    }
                     startActivity(intent)
                     finish()
                 },
