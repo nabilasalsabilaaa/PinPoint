@@ -32,7 +32,6 @@ class OtpActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_EMAIL    = "extra_email"
         const val EXTRA_OTP_TYPE = "extra_otp_type"
-        const val EXTRA_SOURCE   = "extra_source"  // "REGISTER" or "FORGOT_PASSWORD"
     }
 
     private lateinit var tvOtpEmail: TextView
@@ -47,7 +46,6 @@ class OtpActivity : AppCompatActivity() {
 
     private var email: String = ""
     private var otpType: String = "EMAIL"
-    private var source: String = "FORGOT_PASSWORD"
     private var countDownTimer: CountDownTimer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +54,6 @@ class OtpActivity : AppCompatActivity() {
 
         email   = intent.getStringExtra(EXTRA_EMAIL) ?: ""
         otpType = intent.getStringExtra(EXTRA_OTP_TYPE) ?: "EMAIL"
-        source  = intent.getStringExtra(EXTRA_SOURCE) ?: "FORGOT_PASSWORD"
         authRepository = AuthRepository(this)
 
         initViews()
@@ -160,19 +157,11 @@ class OtpActivity : AppCompatActivity() {
                 otpCode = otpCode,
                 onSuccess = {
                     setLoading(false)
-                    if (source == "REGISTER") {
-                        // Dari registrasi → OTP terverifikasi → ke Login
-                        Toast.makeText(this, "Email berhasil diverifikasi! Silakan login.", Toast.LENGTH_LONG).show()
-                        val intent = Intent(this, Login::class.java)
-                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                        startActivity(intent)
-                    } else {
-                        // Dari lupa password → ke Reset Password
-                        val intent = Intent(this, ResetPasswordActivity::class.java).apply {
-                            putExtra(ResetPasswordActivity.EXTRA_EMAIL, email)
-                        }
-                        startActivity(intent)
+                    // Navigasi ke layar Reset Password
+                    val intent = Intent(this, ResetPasswordActivity::class.java).apply {
+                        putExtra(ResetPasswordActivity.EXTRA_EMAIL, email)
                     }
+                    startActivity(intent)
                     finish()
                 },
                 onError = { errorMsg ->

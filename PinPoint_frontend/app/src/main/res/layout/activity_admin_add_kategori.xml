@@ -1,266 +1,492 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#F8F9FA"
-    tools:context=".AdminAddKategoriActivity">
+    android:background="#F8F9FF"
+    android:fillViewport="true">
 
-    <!-- Header -->
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:background="@android:color/white">
+        android:orientation="vertical"
+        android:padding="20dp">
 
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/back"
-            app:tint="#0B1C30" />
+        <!-- 1. Header Navigation Bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="24dp">
+
+            <ImageView
+                android:id="@+id/btnBackAddCategory"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/bg_white_rounded_btn"
+                android:padding="8dp"
+                android:src="@drawable/back"
+                app:tint="#0B1C30"
+                android:elevation="2dp"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tambah Kategori Baru"
+                android:textColor="#0B1C30"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- 2. Field Nama Kategori Fasum -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nama Kategori Fasum *"
+            android:textColor="#0B1C30"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp" />
+
+        <EditText
+            android:id="@+id/etCategoryName"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/kolom_form"
+            android:hint="cth: Trotoar &amp; Pedestrian Rusak"
+            android:paddingHorizontal="14dp"
+            android:textColor="#0B1C30"
+            android:textColorHint="#94A3B8"
+            android:textSize="13sp"
+            android:layout_marginBottom="4dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Tambah Kategori"
-            android:textColor="#0B1C30"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-    </RelativeLayout>
+            android:text="Pastikan nama lugas dan mudah dimengerti oleh masyarakat pelapor."
+            android:textColor="#64748B"
+            android:textSize="11sp"
+            android:layout_marginBottom="20dp" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        <!-- 3. Field Kode Referensi Sistem -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kode Referensi Sistem"
+                android:textColor="#0B1C30"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="Unik &amp; Baku"
+                android:textColor="#0B3C8C"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp">
 
-            <!-- Card Form -->
-            <androidx.cardview.widget.CardView
+            <EditText
+                android:id="@+id/etCategoryCode"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_chip_blue_light"
+                android:enabled="false"
+                android:drawableStart="@android:drawable/ic_menu_agenda"
+                android:drawablePadding="8dp"
+                android:paddingHorizontal="14dp"
+                android:text="KTG-MKS-06"
+                android:textColor="#0B3C8C"
+                android:textStyle="bold"
+                android:textSize="13sp"
+                android:layout_marginEnd="8dp" />
+
+            <ImageView
+                android:id="@+id/btnRefreshCode"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_chip_blue_light"
+                android:padding="12dp"
+                android:src="@android:drawable/ic_popup_sync"
+                app:tint="#0B3C8C" />
+        </LinearLayout>
+
+        <!-- 4. Pilih Ikon Visual Radar (8 Kartu Pilihan Ikon) -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pilih Ikon Visual Radar"
+                android:textColor="#0B1C30"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvSelectedIconLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="Ikon Terpilih: Jalan"
+                android:textColor="#0B3C8C"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <!-- Grid Ikon 4 Kolom x 2 Baris -->
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            android:rowCount="2"
+            android:layout_marginBottom="20dp">
+
+            <!-- Card Ikon Jalan (Active/Blue) -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="72dp"
+                android:layout_columnWeight="1"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_icon_card_active"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/jalan"
+                    app:tint="#FFFFFF" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Jalan"
+                    android:textColor="#FFFFFF"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <!-- Card Ikon Lampu -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="72dp"
+                android:layout_columnWeight="1"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_chip_white"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/lamp"
+                    app:tint="#434653" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lampu"
+                    android:textColor="#434653"
+                    android:textSize="11sp"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <!-- Card Ikon Air/Got -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="72dp"
+                android:layout_columnWeight="1"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_chip_white"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/drainage"
+                    app:tint="#434653" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Air/Got"
+                    android:textColor="#434653"
+                    android:textSize="11sp"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <!-- Card Ikon Taman -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="72dp"
+                android:layout_columnWeight="1"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_chip_white"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/park"
+                    app:tint="#434653" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Taman"
+                    android:textColor="#434653"
+                    android:textSize="11sp"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <!-- Card Ikon Sampah -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="72dp"
+                android:layout_columnWeight="1"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_chip_white"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/delete"
+                    app:tint="#434653" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sampah"
+                    android:textColor="#434653"
+                    android:textSize="11sp"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <!-- Card Ikon Trotoar -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="72dp"
+                android:layout_columnWeight="1"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_chip_white"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/walk"
+                    app:tint="#434653" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Trotoar"
+                    android:textColor="#434653"
+                    android:textSize="11sp"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <!-- Card Ikon Jembatan -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="72dp"
+                android:layout_columnWeight="1"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_chip_white"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/bridge"
+                    app:tint="#434653" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Jembatan"
+                    android:textColor="#434653"
+                    android:textSize="11sp"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <!-- Card Ikon Gedung -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="72dp"
+                android:layout_columnWeight="1"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_chip_white"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/busStop"
+                    app:tint="#434653" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Halte"
+                    android:textColor="#434653"
+                    android:textSize="11sp"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+        </GridLayout>
+
+        <!-- 5. Field Deskripsi & Panduan Verifikasi -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Deskripsi &amp; Panduan Verifikasi"
+                android:textColor="#0B1C30"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="Maks 300 kata"
+                android:textColor="#64748B"
+                android:textSize="11sp" />
+        </RelativeLayout>
+
+        <EditText
+            android:id="@+id/etCategoryDesc"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@drawable/kolom_form"
+            android:gravity="top|start"
+            android:hint="Deskripsikan kriteria kerusakan yang masuk dalam kategori ini agar warga dan verifikator tidak salah klasifikasi..."
+            android:padding="12dp"
+            android:textColor="#0B1C30"
+            android:textColorHint="#94A3B8"
+            android:textSize="12sp"
+            android:layout_marginBottom="6dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Contoh: &quot;Ubin pemandu tuna netra lepas, lubang pedestrian &gt; 15cm.&quot;"
+            android:textColor="#64748B"
+            android:textSize="11sp"
+            android:layout_marginBottom="20dp" />
+
+        <!-- 6. Card Publikasikan Segera (Switch) -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#FFFFFF"
+            android:layout_marginBottom="16dp">
+
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- 7. Card Info Sinkronisasi -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#E8F1FF"
+            android:layout_marginBottom="24dp">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp">
+                android:orientation="horizontal"
+                android:padding="14dp"
+                android:gravity="top">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@android:drawable/ic_dialog_info"
+                    app:tint="#0B3C8C"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="2dp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Nama Kategori"
-                        android:textColor="#434653"
-                        android:textSize="14sp"
+                        android:text="SINKRONISASI"
+                        android:textColor="#0B3C8C"
+                        android:textSize="12sp"
                         android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
-
-                    <EditText
-                        android:id="@+id/etCategoryName"
-                        android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:background="@drawable/kolom_form"
-                        android:hint="Contoh: Lampu Jalan"
-                        android:paddingHorizontal="12dp"
-                        android:textSize="14sp" />
+                        android:layout_marginBottom="2dp" />
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Pilih Icon"
-                        android:textColor="#434653"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:layout_marginTop="20dp"
-                        android:layout_marginBottom="8dp" />
-
-                    <GridLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:columnCount="4"
-                        android:alignmentMode="alignMargins"
-                        android:columnOrderPreserved="false">
-
-                        <!-- Icon Options -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="72dp"
-                            android:layout_columnWeight="1"
-                            android:layout_margin="4dp"
-                            android:background="@drawable/bg_chip_blue_light"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:src="@drawable/lamp"
-                                app:tint="#2196F3" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Lampu"
-                                android:textColor="#2196F3"
-                                android:textSize="11sp"
-                                android:layout_marginTop="4dp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="72dp"
-                            android:layout_columnWeight="1"
-                            android:layout_margin="4dp"
-                            android:background="@drawable/bg_chip_white"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:src="@drawable/jalan"
-                                app:tint="#434653" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Jalan"
-                                android:textColor="#434653"
-                                android:textSize="11sp"
-                                android:layout_marginTop="4dp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="72dp"
-                            android:layout_columnWeight="1"
-                            android:layout_margin="4dp"
-                            android:background="@drawable/bg_chip_white"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:src="@drawable/bridge"
-                                app:tint="#434653" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Jembatan"
-                                android:textColor="#434653"
-                                android:textSize="11sp"
-                                android:layout_marginTop="4dp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="72dp"
-                            android:layout_columnWeight="1"
-                            android:layout_margin="4dp"
-                            android:background="@drawable/bg_chip_white"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:src="@drawable/park"
-                                app:tint="#434653" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Taman"
-                                android:textColor="#434653"
-                                android:textSize="11sp"
-                                android:layout_marginTop="4dp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="72dp"
-                            android:layout_columnWeight="1"
-                            android:layout_margin="4dp"
-                            android:background="@drawable/bg_chip_white"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:src="@drawable/drainage"
-                                app:tint="#434653" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Drainase"
-                                android:textColor="#434653"
-                                android:textSize="11sp"
-                                android:layout_marginTop="4dp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="72dp"
-                            android:layout_columnWeight="1"
-                            android:layout_margin="4dp"
-                            android:background="@drawable/bg_chip_white"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:src="@drawable/bus_stop"
-                                app:tint="#434653" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Halte"
-                                android:textColor="#434653"
-                                android:textSize="11sp"
-                                android:layout_marginTop="4dp" />
-                        </LinearLayout>
-
-                    </GridLayout>
+                        android:text="Kategori baru akan langsung muncul pada aplikasi warga saat membuat laporan dan disinkronkan secara real-time ke radar peta."
+                        android:textColor="#434653"
+                        android:textSize="11sp"
+                        android:lineSpacingExtra="2dp" />
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-        </LinearLayout>
-    </ScrollView>
-
-    <!-- Bottom Button -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:background="@android:color/white">
-
+        <!-- 8. Action Buttons -->
         <Button
             android:id="@+id/btnSaveCategory"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="48dp"
             android:text="Simpan Kategori"
-            android:textAllCaps="false"
-            android:backgroundTint="#0B1C30"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp"
             android:textStyle="bold"
-            app:cornerRadius="12dp" />
-    </LinearLayout>
+            android:backgroundTint="#0B3C8C"
+            android:layout_marginBottom="12dp" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/btnCancelCategory"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Batal"
+            android:textColor="#434653"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:backgroundTint="#FFFFFF" />
+
+    </LinearLayout>
+</ScrollView>

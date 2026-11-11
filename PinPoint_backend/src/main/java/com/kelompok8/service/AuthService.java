@@ -76,9 +76,12 @@ public class AuthService {
         user.setIdRole(2L);        // 2 = WARGA
         user.setStatusAkun("ACTIVE");
         userRepository.save(user);
+
+        // Kirim email sambutan secara asinkron
+        emailService.sendWelcomeEmail(user.getEmail(), user.getNama());
         logger.info("Pengguna baru terdaftar: {} ({})", user.getNama(), user.getEmail());
 
-        return "Registrasi berhasil!";
+        return "Registrasi berhasil! Silakan login.";
     }
 
     /**
@@ -126,31 +129,6 @@ public class AuthService {
     }
 
     // ══════════════════════════════════════════════════════════════════════════
-    //  REGISTER OTP — Kirim OTP langsung setelah registrasi
-    // ══════════════════════════════════════════════════════════════════════════
-
-    /**
-     * Membuat OTP dan mengirimnya ke email setelah registrasi berhasil.
-     * Berbeda dengan checkAccountAndSendOtp, method ini tidak mengecek status akun
-     * karena akun baru saja dibuat.
-     *
-     * @param email    email pengguna yang baru terdaftar
-     * @param userName nama pengguna
-     * @return kode OTP yang di-generate (untuk logging/debugging)
-     */
-    public String sendRegistrationOtp(String email, String userName) {
-        String otpCode = generateOtp();
-        otpStore.put(email, new OtpEntry(otpCode, LocalDateTime.now().plusMinutes(15)));
-
-        // Kirim email OTP registrasi secara sinkron via SMTP
-        emailService.sendRegistrationOtpEmail(email, otpCode, userName);
-        logger.info("OTP registrasi dikirim ke email: {}", email);
-        logger.debug("[DEV ONLY] Registration OTP untuk {}: {}", email, otpCode);
-
-        return otpCode;
-    }
-
-    // ══════════════════════════════════════════════════════════════════════════
     //  FORGOT PASSWORD — STEP 1: Kirim OTP
     // ══════════════════════════════════════════════════════════════════════════
 
@@ -185,16 +163,11 @@ public class AuthService {
         String otpCode = generateOtp();
         otpStore.put(user.getEmail(), new OtpEntry(otpCode, LocalDateTime.now().plusMinutes(15)));
 
-        try {
-            // Kirim email OTP lupa password secara andal
-            emailService.sendForgotPasswordOtpEmail(user.getEmail(), otpCode, user.getNama());
-            logger.info("OTP lupa password berhasil dikirim ke email: {}", user.getEmail());
-            logger.debug("[DEV ONLY] Generated OTP untuk {}: {}", user.getEmail(), otpCode);
-            return "Kode OTP telah dikirim ke email terdaftar Anda. Berlaku 15 menit.";
-        } catch (Exception e) {
-            logger.error("Gagal mengirim email OTP ke {}: {}", user.getEmail(), e.getMessage());
-            return "Error: " + e.getMessage();
-        }
+        // Kirim email OTP secara asinkron
+        emailService.sendOtpEmail(user.getEmail(), otpCode, user.getNama());
+        logger.info("OTP dikirim ke email: {} (kode disembunyikan dari log)", user.getEmail());
+
+        return "Kode OTP telah dikirim ke email terdaftar Anda. Berlaku 15 menit.";
     }
 
     // ══════════════════════════════════════════════════════════════════════════
@@ -246,26 +219,9 @@ public class AuthService {
         return "Error: Email tidak ditemukan di sistem!";
     }
 
-    /**
-     * Menghapus akun pengguna yang terdaftar.
-     *
-     * @param email email pengguna yang ingin dihapus
-     * @return pesan sukses atau error
-     */
-     public String deleteAccount(String email) {
-         Optional<User> opt = userRepository.findByEmail(email);
-         if (opt.isEmpty()) {
-             return "Error: Akun tidak ditemukan!";
-         }
-         try {
-             userRepository.delete(opt.get());
-             logger.info("Akun dihapus: {}", email);
-             return "Akun berhasil dihapus.";
-         } catch (Exception e) {
-             logger.error("Gagal menghapus akun {}: {}", email, e.getMessage(), e);
-             return "Error: Gagal menghapus akun.";
-         }
-     }
+    // ══════════════════════════════════════════════════════════════════════════
+    //  HELPERS
+    // ══════════════════════════════════════════════════════════════════════════
 
     /** Menghasilkan kode OTP numerik 6 digit yang di-pad dengan leading zero jika perlu. */
     private String generateOtp() {

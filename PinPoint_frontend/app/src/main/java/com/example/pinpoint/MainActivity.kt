@@ -11,15 +11,18 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // --- PENGECEKAN SESI (INGAT SAYA & TOKEN JWT) ---
-        if (TokenManager.isLoggedIn(this)) {
-            // Jika sudah login dan memiliki token aktif, langsung ke Dashboard
+        // --- PENGECEKAN SESI (INGAT SAYA) ---
+        val sharedPreferences = getSharedPreferences("UserSession", MODE_PRIVATE)
+        val isLoggedIn = sharedPreferences.getBoolean("KEY_IS_LOGGED_IN", false)
+
+        if (isLoggedIn) {
+            // Jika sudah login, langsung lempar ke Dashboard & hancurkan MainActivity
             val intent = Intent(this, DashboardActivity::class.java)
             startActivity(intent)
             finish()
             return
         }
-        // -------------------------------------------------
+        // ------------------------------------
 
         setContentView(R.layout.activity_main)
 
