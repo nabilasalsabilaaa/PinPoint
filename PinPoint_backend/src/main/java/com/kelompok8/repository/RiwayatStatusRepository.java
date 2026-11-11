@@ -8,4 +8,5 @@ import java.util.List;
 @Repository
 public interface RiwayatStatusRepository extends JpaRepository<RiwayatStatus, Long> {
     List<RiwayatStatus> findByIdLaporan(Long idLaporan);
+    List<RiwayatStatus> findByIdPengubahAndIdStatus(Long idPengubah, Long idStatus);
 }

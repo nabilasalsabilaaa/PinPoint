@@ -348,7 +348,7 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/busStop"
+                    android:src="@drawable/bus_stop"
                     app:tint="#434653" />
 
                 <TextView

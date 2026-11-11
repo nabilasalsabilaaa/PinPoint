@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/pemerintahBottomNavContainer"
+    android:layout_width="match_parent"
+    android:layout_height="88dp"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
+
+    <!-- Background Bar Putih Melengkung (Floating Navbar) -->
+    <View
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:background="@drawable/bg_navbar"
+        android:elevation="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginBottom="12dp" />
+
+    <!-- 1. Menu Beranda -->
+    <LinearLayout
+        android:id="@+id/navPemerintahHome"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:elevation="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/navPemerintahMap"
+        app:layout_constraintHorizontal_weight="1"
+        android:layout_marginBottom="12dp">
+
+        <ImageView
+            android:id="@+id/ivNavPemerintahHome"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/home"
+            app:tint="#003C90" />
+
+        <TextView
+            android:id="@+id/tvNavPemerintahHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:text="Beranda"
+            android:textColor="#003C90"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- 2. Menu Peta -->
+    <LinearLayout
+        android:id="@+id/navPemerintahMap"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:elevation="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/navPemerintahHome"
+        app:layout_constraintRight_toLeftOf="@id/navPemerintahHistory"
+        app:layout_constraintHorizontal_weight="1"
+        android:layout_marginBottom="12dp">
+
+        <ImageView
+            android:id="@+id/ivNavPemerintahMap"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/location"
+            app:tint="#94A3B8" />
+
+        <TextView
+            android:id="@+id/tvNavPemerintahMap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:text="Peta"
+            android:textColor="#94A3B8"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <!-- 3. Menu Riwayat -->
+    <LinearLayout
+        android:id="@+id/navPemerintahHistory"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:elevation="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/navPemerintahMap"
+        app:layout_constraintRight_toLeftOf="@id/navPemerintahProfile"
+        app:layout_constraintHorizontal_weight="1"
+        android:layout_marginBottom="12dp">
+
+        <ImageView
+            android:id="@+id/ivNavPemerintahHistory"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/verif"
+            app:tint="#94A3B8" />
+
+        <TextView
+            android:id="@+id/tvNavPemerintahHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:text="Riwayat"
+            android:textColor="#94A3B8"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <!-- 4. Menu Profil -->
+    <LinearLayout
+        android:id="@+id/navPemerintahProfile"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:elevation="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/navPemerintahHistory"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_weight="1"
+        android:layout_marginBottom="12dp">
+
+        <ImageView
+            android:id="@+id/ivNavPemerintahProfile"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/user"
+            app:tint="#94A3B8" />
+
+        <TextView
+            android:id="@+id/tvNavPemerintahProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:text="Profil"
+            android:textColor="#94A3B8"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

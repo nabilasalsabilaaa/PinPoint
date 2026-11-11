@@ -41,6 +41,31 @@
             android:name=".DashboardActivity"
             android:exported="false" />
 
+        <!-- Halaman Dashboard Pemerintah / Petugas -->
+        <activity
+            android:name=".PemerintahDashboardActivity"
+            android:exported="false" />
+
+        <!-- Halaman Riwayat Pemerintah / Petugas -->
+        <activity
+            android:name=".PemerintahHistoryActivity"
+            android:exported="false" />
+
+        <!-- Halaman Peta Pemerintah / Petugas -->
+        <activity
+            android:name=".PemerintahMapActivity"
+            android:exported="false" />
+
+        <!-- Halaman Profil Pemerintah / Petugas -->
+        <activity
+            android:name=".PemerintahProfileActivity"
+            android:exported="false" />
+
+        <!-- Halaman Detail Tugas / Laporan Pemerintah -->
+        <activity
+            android:name=".PemerintahDetailTaskActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

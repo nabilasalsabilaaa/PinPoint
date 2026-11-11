@@ -50,8 +50,9 @@ interface ApiService {
 }
 
 object ApiClient {
-    // Gunakan localhost (karena sudah menggunakan ADB Reverse) atau IP Wi-Fi laptop Anda
-    private const val BASE_URL = "http://localhost:8081/"
+    // Gunakan "http://localhost:8081/" saat menggunakan HP Fisik (USB) + ADB Reverse
+    // Atau jika menggunakan Emulator gunakan "http://10.0.2.2:8081/"
+    private const val BASE_URL = "http://192.168.1.39:8081/"
 
     private val client = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)

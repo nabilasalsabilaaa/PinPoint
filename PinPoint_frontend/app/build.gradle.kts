@@ -48,4 +48,6 @@ dependencies {
     // Retrofit untuk HTTP Request ke Backend
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    // OSMDroid untuk Peta OpenStreetMap (Gratis & Tanpa API Key)
+    implementation("org.osmdroid:osmdroid-android:6.1.18")
 }
