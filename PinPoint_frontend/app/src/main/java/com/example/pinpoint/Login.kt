@@ -7,8 +7,13 @@ import android.view.View
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.pinpoint.admin.AdminDashboardActivity
+import com.example.pinpoint.network.ApiClient
+import com.example.pinpoint.network.LoginRequest
+import com.example.pinpoint.network.LoginResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -21,7 +26,6 @@ class Login : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // Inisialisasi View
         val etEmailOrPhone = findViewById<EditText>(R.id.etEmailOrPhone)
         val etPassword = findViewById<EditText>(R.id.etPassword)
         val ivPasswordVisibility = findViewById<ImageView>(R.id.ivPasswordVisibility)
@@ -30,19 +34,24 @@ class Login : AppCompatActivity() {
         val tvSignUpLink = findViewById<View>(R.id.tvSignUpLink)
         val tvForgotPassword = findViewById<View>(R.id.tvForgotPassword)
 
-        // SharedPreferences untuk fitur "Ingat Saya"
         val sharedPreferences = getSharedPreferences("UserSession", MODE_PRIVATE)
-        val isRemembered = sharedPreferences.getBoolean("KEY_REMEMBER_ME", false)
+        val rememberPrefs = getSharedPreferences("RememberMePrefs", MODE_PRIVATE)
+        val permanentPrefs = getSharedPreferences("PermanentUserPrefs", MODE_PRIVATE)
+
+        // Prioritaskan RememberMePrefs yang tidak akan pernah terhapus saat logout
+        val isRemembered = rememberPrefs.getBoolean("KEY_REMEMBER_ME", false) ||
+                sharedPreferences.getBoolean("KEY_REMEMBER_ME", false)
 
         if (isRemembered) {
-            val savedIdentifier = sharedPreferences.getString("KEY_SAVED_IDENTIFIER", "")
-            val savedPassword = sharedPreferences.getString("KEY_SAVED_PASSWORD", "")
-            etEmailOrPhone.setText(savedIdentifier)
-            etPassword.setText(savedPassword)
+            val savedId = rememberPrefs.getString("KEY_SAVED_IDENTIFIER", null)
+                ?: sharedPreferences.getString("KEY_SAVED_IDENTIFIER", "") ?: ""
+            val savedPass = rememberPrefs.getString("KEY_SAVED_PASSWORD", null)
+                ?: sharedPreferences.getString("KEY_SAVED_PASSWORD", "") ?: ""
+            etEmailOrPhone.setText(savedId)
+            etPassword.setText(savedPass)
             cbRememberMe.isChecked = true
         }
 
-        // Toggle Show/Hide Password
         ivPasswordVisibility.setOnClickListener {
             isPasswordVisible = !isPasswordVisible
             etPassword.inputType = if (isPasswordVisible) {
@@ -53,12 +62,6 @@ class Login : AppCompatActivity() {
             etPassword.setSelection(etPassword.text.length)
         }
 
-        // Event Klik "Lupa Kata Sandi?"
-        tvForgotPassword.setOnClickListener {
-            startActivity(Intent(this, ForgotPasswordActivity::class.java))
-        }
-
-        // Tombol Login (Mendukung Email atau Nomor Ponsel berawalan 0)
         btnLogin.setOnClickListener {
             val emailOrPhone = etEmailOrPhone.text.toString().trim()
             val password = etPassword.text.toString().trim()
@@ -68,58 +71,100 @@ class Login : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val request = LoginRequest(identifier = emailOrPhone, password = password)
+            btnLogin.isEnabled = false
+            Toast.makeText(this, "Memproses login...", Toast.LENGTH_SHORT).show()
 
-            ApiClient.instance.login(request).enqueue(object : Callback<LoginResponse> {
-                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                    if (response.isSuccessful) {
-                        val loginData = response.body()
+            ApiClient.instance.login(LoginRequest(emailOrPhone, password))
+                .enqueue(object : Callback<LoginResponse> {
+                    override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                        btnLogin.isEnabled = true
+                        if (response.isSuccessful && response.body() != null) {
+                            val loginData = response.body()!!
 
-                        if (loginData?.token != null) {
-                            val editor = sharedPreferences.edit()
-
-                            // Cek apakah Checkbox "Ingat Saya" dicentang oleh user
-                            if (cbRememberMe.isChecked) {
-                                editor.putString("KEY_TOKEN", loginData.token)
-                                editor.putString("KEY_NAME", loginData.nama)
-                                editor.putBoolean("KEY_IS_LOGGED_IN", true)
-
-                                // Simpan kredensial untuk auto-fill
-                                editor.putBoolean("KEY_REMEMBER_ME", true)
-                                editor.putString("KEY_SAVED_IDENTIFIER", emailOrPhone)
-                                editor.putString("KEY_SAVED_PASSWORD", password)
-                            } else {
-                                // Hapus kredensial jika tidak dicentang
-                                editor.remove("KEY_REMEMBER_ME")
-                                editor.remove("KEY_SAVED_IDENTIFIER")
-                                editor.remove("KEY_SAVED_PASSWORD")
+                            if (loginData.isSuspended == true) {
+                                Toast.makeText(this@Login, "Akun Anda ditangguhkan. Silakan hubungi Admin.", Toast.LENGTH_LONG).show()
+                                return
                             }
-                            editor.apply()
 
-                            Toast.makeText(this@Login, "Selamat datang, ${loginData.nama}!", Toast.LENGTH_SHORT).show()
+                            val resolvedRoleStr = (loginData.role ?: "USER").uppercase()
+                            val resolvedIdRole = loginData.idRole ?: when {
+                                resolvedRoleStr.contains("ADMIN") -> 1L
+                                resolvedRoleStr.contains("PEMERINTAH") || resolvedRoleStr.contains("DINAS") -> 3L
+                                else -> 2L
+                            }
 
-                            // Pindah ke Dashboard
-                            val intent = Intent(this@Login, DashboardActivity::class.java)
-                            startActivity(intent)
+                            val userEmail = (loginData.email ?: emailOrPhone).lowercase()
+                            val permanentPhoto = permanentPrefs.getString("PROFILE_IMAGE_$userEmail", null)
+                                ?: permanentPrefs.getString("PROFILE_IMAGE_LAST", null)
+                            val resolvedPhoto = permanentPhoto ?: loginData.photoUrl
+
+                            // Simpan kredensial Ingat Saya secara permanen
+                            if (cbRememberMe.isChecked) {
+                                rememberPrefs.edit()
+                                    .putBoolean("KEY_REMEMBER_ME", true)
+                                    .putString("KEY_SAVED_IDENTIFIER", emailOrPhone)
+                                    .putString("KEY_SAVED_PASSWORD", password)
+                                    .apply()
+                            } else {
+                                rememberPrefs.edit().clear().apply()
+                            }
+
+                            val displayName = loginData.nama ?: loginData.fullName ?: emailOrPhone
+
+                            sharedPreferences.edit().apply {
+                                putLong("KEY_USER_ID", loginData.id ?: 0L)
+                                putLong("KEY_ID_ROLE", resolvedIdRole)
+                                putString("KEY_TOKEN", loginData.token)
+                                putString("KEY_NAME", displayName)
+                                putString("KEY_EMAIL", loginData.email ?: emailOrPhone)
+                                putString("KEY_ROLE", resolvedRoleStr)
+                                putString("KEY_PROFILE_IMAGE", resolvedPhoto)
+                                putString("KEY_PHONE", loginData.phoneNumber ?: loginData.noTelepon)
+                                putBoolean("KEY_IS_LOGGED_IN", true)
+                                if (cbRememberMe.isChecked) {
+                                    putBoolean("KEY_REMEMBER_ME", true)
+                                    putString("KEY_SAVED_IDENTIFIER", emailOrPhone)
+                                    putString("KEY_SAVED_PASSWORD", password)
+                                } else {
+                                    remove("KEY_REMEMBER_ME")
+                                    remove("KEY_SAVED_IDENTIFIER")
+                                    remove("KEY_SAVED_PASSWORD")
+                                }
+                                apply()
+                            }
+
+                            Toast.makeText(this@Login, "Selamat datang, $displayName!", Toast.LENGTH_SHORT).show()
+
+                            // Pembatasan Role: Hanya Role 1 (ADMIN) yang masuk ke AdminDashboardActivity
+                            // Role 2 (USER) & Role 3 (PEMERINTAH) masuk ke DashboardActivity simpel
+                            val isAdmin = resolvedIdRole == 1L || resolvedRoleStr == "ADMIN" || resolvedRoleStr == "ROLE_ADMIN"
+                            val targetIntent = if (isAdmin) {
+                                Intent(this@Login, AdminDashboardActivity::class.java)
+                            } else {
+                                Intent(this@Login, DashboardActivity::class.java)
+                            }
+                            targetIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(targetIntent)
                             finish()
                         } else {
-                            Toast.makeText(this@Login, "Login gagal: Token tidak ditemukan", Toast.LENGTH_SHORT).show()
+                            val errBody = response.errorBody()?.string()?.takeIf { it.isNotBlank() }
+                                ?: "Email/Nomor Ponsel atau kata sandi salah (${response.code()})"
+                            Toast.makeText(this@Login, errBody, Toast.LENGTH_LONG).show()
                         }
-                    } else {
-                        val errorBody = response.errorBody()?.string() ?: "Email/Nomor Ponsel atau Password salah!"
-                        Toast.makeText(this@Login, "Login Gagal: $errorBody", Toast.LENGTH_LONG).show()
                     }
-                }
 
-                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                    Toast.makeText(this@Login, "Gagal terhubung ke server: ${t.message}", Toast.LENGTH_SHORT).show()
-                }
-            })
+                    override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                        btnLogin.isEnabled = true
+                        Toast.makeText(
+                            this@Login,
+                            "Tidak dapat terhubung ke server backend. Pastikan server menyala & satu jaringan Wi-Fi (${t.localizedMessage})",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                })
         }
 
-        // Event Klik ke Halaman Register
-        tvSignUpLink.setOnClickListener {
-            startActivity(Intent(this, Register::class.java))
-        }
+        tvSignUpLink.setOnClickListener { startActivity(Intent(this, Register::class.java)) }
+        tvForgotPassword.setOnClickListener { startActivity(Intent(this, ForgotPasswordActivity::class.java)) }
     }
 }

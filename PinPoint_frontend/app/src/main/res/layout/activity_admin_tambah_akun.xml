@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F6F8FC"
+    android:background="#F8F9FF"
     android:fillViewport="true">
 
     <LinearLayout
@@ -12,19 +12,24 @@
         android:orientation="vertical"
         android:padding="20dp">
 
+        <!-- 1. Header Navigation -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:layout_marginBottom="20dp">
+
             <ImageView
-                android:id="@+id/btnBackAddUser"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_revert"
+                android:id="@+id/btnBackAddAccount"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/bg_white_rounded_btn"
+                android:padding="8dp"
+                android:src="@drawable/back"
                 app:tint="#0B1C30"
                 android:layout_marginEnd="12dp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -34,86 +39,710 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
+        <!-- 2. Section: Tipe Akun & Wewenang -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Peran / Role Akun *"
+            android:text="Pilih Peran &amp; Tipe Akun *"
             android:textColor="#0B1C30"
             android:textSize="13sp"
             android:textStyle="bold"
-            android:layout_marginBottom="6dp" />
-        <Spinner
-            android:id="@+id/spinnerRole"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@drawable/kolom_form"
-            android:paddingHorizontal="12dp"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="10dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Nama Lengkap *"
-            android:textColor="#0B1C30"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="6dp" />
-        <EditText
-            android:id="@+id/etFullName"
+        <!-- Pilihan 1: Akun Pemerintah (Role 3) -->
+        <LinearLayout
+            android:id="@+id/cardGovernmentAccount"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@drawable/kolom_form"
-            android:hint="Contoh: Hendery Pratama"
-            android:paddingHorizontal="14dp"
-            android:textSize="13sp"
-            android:layout_marginBottom="16dp" />
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card_selected_blue"
+            android:orientation="horizontal"
+            android:padding="14dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginBottom="10dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Alamat Email *"
-            android:textColor="#0B1C30"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="6dp" />
-        <EditText
-            android:id="@+id/etEmail"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@drawable/kolom_form"
-            android:hint="email@pemkot.go.id"
-            android:inputType="textEmailAddress"
-            android:paddingHorizontal="14dp"
-            android:textSize="13sp"
-            android:layout_marginBottom="16dp" />
+            <ImageView
+                android:id="@+id/ivGovIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_circle_blue_btn"
+                android:padding="9dp"
+                android:src="@drawable/ic_building_gov"
+                app:tint="#FFFFFF"
+                android:layout_marginEnd="12dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Kata Sandi Sementara *"
-            android:textColor="#0B1C30"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="6dp" />
-        <EditText
-            android:id="@+id/etTempPassword"
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginEnd="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Akun Pemerintah (Role 3)"
+                    android:textColor="#0B1C30"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="2dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Instansi/Dinas pelaksana teknis untuk menindaklanjuti laporan terverifikasi &amp; update perbaikan lapangan."
+                    android:textColor="#64748B"
+                    android:textSize="11sp"
+                    android:layout_marginBottom="8dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_chip_blue_light"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="3dp"
+                        android:text="Tindak Lanjut Dinas"
+                        android:textColor="#0B3C8C"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="6dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_chip_blue_light"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="3dp"
+                        android:text="Update Progres Fisik"
+                        android:textColor="#0B3C8C"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/ivCheckGovernment"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_check_circle_blue" />
+        </LinearLayout>
+
+        <!-- Pilihan 2: Admin / Super Admin (Role 1) -->
+        <LinearLayout
+            android:id="@+id/cardAdminAccount"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@drawable/kolom_form"
-            android:hint="Minimal 8 karakter"
-            android:inputType="textPassword"
-            android:paddingHorizontal="14dp"
-            android:textSize="13sp"
-            android:layout_marginBottom="24dp" />
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card_unselected"
+            android:orientation="horizontal"
+            android:padding="14dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginBottom="20dp">
+
+            <ImageView
+                android:id="@+id/ivAdminIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_chip_blue_light"
+                android:padding="9dp"
+                android:src="@drawable/ic_shield_check"
+                app:tint="#0B3C8C"
+                android:layout_marginEnd="12dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginEnd="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Admin / Super Admin (Role 1)"
+                    android:textColor="#0B1C30"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="2dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Otoritas penuh pengelolaan master kategori, tata kelola akun pengguna, serta verifikasi laporan masuk."
+                    android:textColor="#64748B"
+                    android:textSize="11sp"
+                    android:layout_marginBottom="8dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_chip_blue_light"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="3dp"
+                        android:text="Verifikasi Laporan"
+                        android:textColor="#0B3C8C"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="6dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_chip_blue_light"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="3dp"
+                        android:text="Kelola Akun &amp; Kategori"
+                        android:textColor="#0B3C8C"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/ivCheckAdmin"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_circle_outline" />
+        </LinearLayout>
+
+        <!-- 3. Section: Identitas Pemilik Akun -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#FFFFFF"
+            android:layout_marginBottom="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Identitas Resmi Pengguna"
+                    android:textColor="#0B1C30"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="14dp" />
+
+                <!-- Field 1: Nama Lengkap -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nama Lengkap / Nama Instansi *"
+                    android:textColor="#0B1C30"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:background="@drawable/kolom_form"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp"
+                    android:layout_marginBottom="12dp">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/user"
+                        app:tint="#0B3C8C"
+                        android:layout_marginEnd="10dp" />
+
+                    <EditText
+                        android:id="@+id/etFullName"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:hint="Masukkan nama lengkap atau dinas..."
+                        android:inputType="textPersonName"
+                        android:textColor="#0B1C30"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <!-- Field 2: Email -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Alamat Email Resmi *"
+                    android:textColor="#0B1C30"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:background="@drawable/kolom_form"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp"
+                    android:layout_marginBottom="12dp">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/mail"
+                        app:tint="#0B3C8C"
+                        android:layout_marginEnd="10dp" />
+
+                    <EditText
+                        android:id="@+id/etOfficialEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:hint="contoh: dinas.pu@makassar.go.id"
+                        android:inputType="textEmailAddress"
+                        android:textColor="#0B1C30"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <!-- Field 3: Nomor Telepon -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nomor Telepon / WhatsApp *"
+                    android:textColor="#0B1C30"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:background="@drawable/kolom_form"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/call"
+                        app:tint="#0B3C8C"
+                        android:layout_marginEnd="10dp" />
+
+                    <EditText
+                        android:id="@+id/etPhoneNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:hint="0812xxxxxxxx"
+                        android:inputType="phone"
+                        android:textColor="#0B1C30"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 4. Section: Hak Akses & Otoritas Sistem (Permanen & Tidak Dapat Diubah Manual) -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#FFFFFF"
+            android:layout_marginBottom="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="14dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hak Akses &amp; Otoritas Sistem"
+                        android:textColor="#0B1C30"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:src="@drawable/ic_lock_outline"
+                            app:tint="#0B3C8C"
+                            android:layout_marginEnd="4dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Otomatis &amp; Permanen"
+                            android:textColor="#0B3C8C"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <!-- Permission Item 1 (Permanently Active for both) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="top"
+                    android:layout_marginBottom="12dp">
+
+                    <ImageView
+                        android:id="@+id/ivPerm1"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_check_circle"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="10dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Akses Laporan Terverifikasi"
+                            android:textColor="#0B1C30"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Melihat dan meninjau daftar laporan kerusakan fasilitas umum yang telah disetujui untuk ditindaklanjuti."
+                            android:textColor="#64748B"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Permission Item 2 (Permanently Active for both) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="top"
+                    android:layout_marginBottom="12dp">
+
+                    <ImageView
+                        android:id="@+id/ivPerm2"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_check_circle"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="10dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Unggah Bukti Perbaikan &amp; Penyelesaian"
+                            android:textColor="#0B1C30"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Mengunggah foto bukti fisik hasil perbaikan di lapangan dan mengonfirmasi penyelesaian laporan."
+                            android:textColor="#64748B"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Permission Item 3 (Permanently Active for both) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="top"
+                    android:layout_marginBottom="12dp">
+
+                    <ImageView
+                        android:id="@+id/ivPerm3"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_check_circle"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="10dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Notifikasi &amp; Pembaruan Status Pekerjaan"
+                            android:textColor="#0B1C30"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Menerima pemberitahuan laporan terverifikasi baru dan memperbarui status progres secara otomatis."
+                            android:textColor="#64748B"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Permission Item 4 (Khusus Admin) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="top"
+                    android:layout_marginBottom="12dp">
+
+                    <ImageView
+                        android:id="@+id/ivPerm4"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_circle_outline"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="10dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/tvPermTitle4"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Verifikasi &amp; Disposisi Laporan Masuk"
+                                android:textColor="#0B1C30"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:background="@drawable/bg_chip_blue_light"
+                                android:paddingHorizontal="6dp"
+                                android:paddingVertical="2dp"
+                                android:text="Khusus Admin"
+                                android:textColor="#0B3C8C"
+                                android:textSize="9sp"
+                                android:textStyle="bold" />
+                        </RelativeLayout>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Memeriksa kebenaran laporan warga, menyaring laporan duplikat, serta menerima atau menolak laporan."
+                            android:textColor="#64748B"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Permission Item 5 (Khusus Admin) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="top">
+
+                    <ImageView
+                        android:id="@+id/ivPerm5"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_circle_outline"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="10dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/tvPermTitle5"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Kelola Master Kategori &amp; Akun"
+                                android:textColor="#0B1C30"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:background="@drawable/bg_chip_blue_light"
+                                android:paddingHorizontal="6dp"
+                                android:paddingVertical="2dp"
+                                android:text="Khusus Admin"
+                                android:textColor="#0B3C8C"
+                                android:textSize="9sp"
+                                android:textStyle="bold" />
+                        </RelativeLayout>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Menambah, mengubah, atau menonaktifkan daftar kategori fasilitas umum serta mengelola akun."
+                            android:textColor="#64748B"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 5. Section: Kredensial & Pengamanan Awal -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#FFFFFF"
+            android:layout_marginBottom="24dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Kredensial Login Awal"
+                    android:textColor="#0B1C30"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Kata Sandi Akun *"
+                        android:textColor="#0B1C30"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_alignParentStart="true" />
+
+                    <TextView
+                        android:id="@+id/btnGeneratePassword"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:text="Buat Sandi Otomatis"
+                        android:textColor="#0B3C8C"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:background="@drawable/kolom_form"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp">
+
+                    <ImageView
+                        android:id="@+id/ivPasswordLockIcon"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_lock_outline"
+                        app:tint="#0B3C8C"
+                        android:layout_marginEnd="10dp" />
+
+                    <EditText
+                        android:id="@+id/etTempPassword"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:text="PinPoint2026"
+                        android:inputType="textPassword"
+                        android:textColor="#0B1C30"
+                        android:textSize="13sp" />
+
+                    <ImageView
+                        android:id="@+id/btnTogglePasswordVisibility"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/mata"
+                        app:tint="#64748B" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 6. Bottom Action Buttons -->
+        <Button
+            android:id="@+id/btnSubmitAccount"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="Simpan &amp; Daftarkan Akun"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:backgroundTint="#0B3C8C"
+            android:layout_marginBottom="12dp" />
 
         <Button
-            android:id="@+id/btnSaveUserAccount"
+            android:id="@+id/btnCancelAccount"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="Buat Akun Sekarang"
-            android:textColor="#FFFFFF"
+            android:layout_height="50dp"
+            android:text="Batalkan &amp; Kembali"
+            android:textAllCaps="false"
+            android:textColor="#0B3C8C"
             android:textSize="13sp"
             android:textStyle="bold"
-            android:backgroundTint="#0B3C8C" />
+            android:backgroundTint="#E8F1FF" />
+
     </LinearLayout>
 </ScrollView>

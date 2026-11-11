@@ -1,133 +1,150 @@
 package com.example.pinpoint
 
-import android.graphics.Color
+import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
+import com.example.pinpoint.network.ApiClient
+import com.example.pinpoint.network.CheckAccountRequest
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
+import org.json.JSONObject
 
 class ForgotPasswordActivity : AppCompatActivity() {
 
-    private enum class SelectedMode { EMAIL, PHONE }
-    private var currentMode = SelectedMode.EMAIL
+    private lateinit var viewPager: ViewPager2
+    private lateinit var tabLayout: TabLayout
+    private lateinit var btnSubmit: Button
+    private lateinit var btnBackToLogin: View
+    private lateinit var adapter: ForgotPasswordPagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_forgot_password)
 
-        val btnTabEmail = findViewById<LinearLayout>(R.id.btnTabEmail)
-        val btnTabPhone = findViewById<LinearLayout>(R.id.btnTabPhone)
-        val ivTabEmailIcon = findViewById<ImageView>(R.id.ivTabEmailIcon)
-        val tvTabEmailText = findViewById<TextView>(R.id.tvTabEmailText)
-        val ivTabPhoneIcon = findViewById<ImageView>(R.id.ivTabPhoneIcon)
-        val tvTabPhoneText = findViewById<TextView>(R.id.tvTabPhoneText)
+        viewPager = findViewById(R.id.viewPagerForgotPassword)
+        tabLayout = findViewById(R.id.tabLayoutForgotPassword)
+        btnSubmit = findViewById(R.id.btnSubmitForgotPassword)
+        btnBackToLogin = findViewById(R.id.btnBackToLogin)
 
-        val tvInputLabel = findViewById<TextView>(R.id.tvInputLabel)
-        val etInput = findViewById<EditText>(R.id.etInput)
-        val tvInfoHint = findViewById<TextView>(R.id.tvInfoHint)
+        adapter = ForgotPasswordPagerAdapter()
+        viewPager.adapter = adapter
 
-        val btnSubmit = findViewById<View>(R.id.btnSubmitForgotPassword)
-        val btnBackToLogin = findViewById<View>(R.id.btnBackToLogin)
-
-        // Switch ke Tab Email
-        btnTabEmail.setOnClickListener {
-            if (currentMode != SelectedMode.EMAIL) {
-                currentMode = SelectedMode.EMAIL
-
-                // Style Tab Email Active
-                btnTabEmail.setBackgroundColor(Color.WHITE)
-                btnTabEmail.elevation = 4f
-                tvTabEmailText.setTextColor(Color.parseColor("#0B1C30"))
-                ivTabEmailIcon.setColorFilter(Color.parseColor("#003C90"))
-
-                // Style Tab Phone Inactive
-                btnTabPhone.background = null
-                btnTabPhone.elevation = 0f
-                tvTabPhoneText.setTextColor(Color.parseColor("#737784"))
-                ivTabPhoneIcon.setColorFilter(Color.parseColor("#737784"))
-
-                // Update Input Text
-                tvInputLabel.text = "Alamat Email"
-                etInput.hint = "contohemail@gmail.com"
-                etInput.inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-                etInput.text.clear()
-                tvInfoHint.text = "Pastikan akun email Anda aktif untuk menerima link pemulihan instan."
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            if (position == 0) {
+                tab.text = "  Email"
+                tab.setIcon(R.drawable.mail)
+            } else {
+                tab.text = "  WhatsApp"
+                tab.setIcon(R.drawable.call)
             }
-        }
+        }.attach()
 
-        // Switch ke Tab Phone
-        btnTabPhone.setOnClickListener {
-            if (currentMode != SelectedMode.PHONE) {
-                currentMode = SelectedMode.PHONE
-
-                // Style Tab Phone Active
-                btnTabPhone.setBackgroundColor(Color.WHITE)
-                btnTabPhone.elevation = 4f
-                tvTabPhoneText.setTextColor(Color.parseColor("#0B1C30"))
-                ivTabPhoneIcon.setColorFilter(Color.parseColor("#003C90"))
-
-                // Style Tab Email Inactive
-                btnTabEmail.background = null
-                btnTabEmail.elevation = 0f
-                tvTabEmailText.setTextColor(Color.parseColor("#737784"))
-                ivTabEmailIcon.setColorFilter(Color.parseColor("#737784"))
-
-                // Update Input Text
-                tvInputLabel.text = "No Telepon"
-                etInput.hint = "+62 891 234 567"
-                etInput.inputType = InputType.TYPE_CLASS_PHONE
-                etInput.text.clear()
-                tvInfoHint.text = "Pastikan Nomor WhatsApp Anda aktif untuk menerima link pemulihan instan."
-            }
-        }
-
-        // Submit Lupa Password / OTP
         btnSubmit.setOnClickListener {
-            val inputValue = etInput.text.toString().trim()
-            if (inputValue.isEmpty()) {
-                val fieldName = if (currentMode == SelectedMode.EMAIL) "email" else "nomor WhatsApp"
-                Toast.makeText(this, "Harap masukkan $fieldName Anda!", Toast.LENGTH_SHORT).show()
+            val currentTab = viewPager.currentItem
+            val currentInput = adapter.getInputValue(currentTab).trim()
+            if (currentInput.isEmpty()) {
+                val label = if (currentTab == 0) "alamat email" else "nomor WhatsApp/telepon"
+                Toast.makeText(this, "Harap masukkan $label Anda!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            val request = CheckAccountRequest(
-                identifier = inputValue,
-                type = if (currentMode == SelectedMode.EMAIL) "EMAIL" else "PHONE"
-            )
+            val reqType = if (currentTab == 0) "EMAIL" else "PHONE"
+            btnSubmit.isEnabled = false
+            btnSubmit.text = "Memeriksa Akun & Mengirim OTP..."
 
-            // Panggil API Pengecekan Akun
-            ApiClient.instance.checkAccount(request).enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+            ApiClient.fetchWithFallback(
+                callFactory = { api -> api.checkAccount(CheckAccountRequest(currentInput, reqType)) },
+                onResponse = { _, response ->
+                    btnSubmit.isEnabled = true
+                    btnSubmit.text = "Kirim Kode OTP (6 Digit)"
+
                     if (response.isSuccessful) {
+                        val rawBody = response.body()?.string() ?: ""
+                        var targetEmail = currentInput
+                        try {
+                            val json = JSONObject(rawBody)
+                            if (json.has("email")) {
+                                targetEmail = json.getString("email")
+                            }
+                        } catch (_: Exception) {}
+
                         Toast.makeText(
                             this@ForgotPasswordActivity,
-                            "Tautan verifikasi / OTP berhasil dikirim!",
+                            "Kode OTP 6 digit telah dikirim ke $targetEmail",
                             Toast.LENGTH_LONG
                         ).show()
-                        finish()
-                    } else {
-                        val errorMsg = response.errorBody()?.string() ?: "Akun tidak terdaftar atau tidak aktif!"
-                        Toast.makeText(this@ForgotPasswordActivity, errorMsg, Toast.LENGTH_SHORT).show()
-                    }
-                }
 
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    Toast.makeText(this@ForgotPasswordActivity, "Gagal terhubung ke server: ${t.message}", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this@ForgotPasswordActivity, OtpVerificationActivity::class.java).apply {
+                            putExtra("EXTRA_MODE", "FORGOT_PASSWORD")
+                            putExtra("EXTRA_EMAIL", targetEmail)
+                            putExtra("EXTRA_IDENTIFIER", currentInput)
+                            putExtra("EXTRA_TYPE", reqType)
+                        }
+                        startActivity(intent)
+                    } else {
+                        val errMsg = response.errorBody()?.string()?.takeIf { it.isNotBlank() }
+                            ?: "Akun tidak ditemukan atau email tidak aktif!"
+                        Toast.makeText(this@ForgotPasswordActivity, errMsg, Toast.LENGTH_LONG).show()
+                    }
+                },
+                onFailure = { _, t ->
+                    btnSubmit.isEnabled = true
+                    btnSubmit.text = "Kirim Kode OTP (6 Digit)"
+                    Toast.makeText(
+                        this@ForgotPasswordActivity,
+                        "Gagal terhubung ke server (${t.localizedMessage})",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
-            })
+            )
         }
 
-        btnBackToLogin.setOnClickListener {
-            finish()
+        btnBackToLogin.setOnClickListener { finish() }
+    }
+
+    class ForgotPasswordPagerAdapter : RecyclerView.Adapter<ForgotPasswordPagerAdapter.PageViewHolder>() {
+        private val holders = mutableMapOf<Int, PageViewHolder>()
+
+        class PageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+            val tvLabel: TextView = view.findViewById(R.id.tvInputLabel)
+            val etInput: EditText = view.findViewById(R.id.etInput)
+            val tvHint: TextView = view.findViewById(R.id.tvInfoHint)
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PageViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_forgot_password_page, parent, false)
+            return PageViewHolder(view)
+        }
+
+        override fun onBindViewHolder(holder: PageViewHolder, position: Int) {
+            holders[position] = holder
+            if (position == 0) {
+                holder.tvLabel.text = "Alamat Email Terdaftar"
+                holder.etInput.hint = "contohemail@gmail.com"
+                holder.etInput.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+                holder.tvHint.text = "Pastikan email Anda aktif. Kode OTP 6 digit akan dikirimkan melalui noreplay.pinpoint@gmail.com."
+            } else {
+                holder.tvLabel.text = "Nomor Telepon / WhatsApp Terdaftar"
+                holder.etInput.hint = "081234567890"
+                holder.etInput.inputType = InputType.TYPE_CLASS_PHONE
+                holder.tvHint.text = "Sistem akan mendeteksi email aktif yang terhubung dengan nomor telepon akun Anda dan mengirimkan kode OTP 6 digit."
+            }
+        }
+
+        override fun getItemCount(): Int = 2
+
+        fun getInputValue(position: Int): String {
+            return holders[position]?.etInput?.text?.toString() ?: ""
         }
     }
 }

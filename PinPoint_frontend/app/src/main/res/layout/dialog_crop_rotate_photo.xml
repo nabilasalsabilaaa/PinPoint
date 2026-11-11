@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="18dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Potong &amp; Putar Foto Profil"
+            android:textColor="#0B1C30"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Geser foto dengan 1 jari, cubit untuk zoom, atau gunakan tombol rotasi di bawah."
+            android:textColor="#64748B"
+            android:textSize="12sp"
+            android:layout_marginBottom="14dp" />
+
+        <!-- Area Interactive Crop & Rotate -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="280dp"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp"
+            android:layout_marginBottom="14dp">
+
+            <com.example.pinpoint.admin.CropRotateImageView
+                android:id="@+id/cropRotateView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </androidx.cardview.widget.CardView>
+
+        <!-- Tombol Cepat Rotasi -90, +90 & Reset -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="12dp">
+
+            <Button
+                android:id="@+id/btnRotateLeft"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="↺ Putar -90°"
+                android:textAllCaps="false"
+                android:textColor="#0B3C8C"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:backgroundTint="#E8F1FF"
+                android:layout_marginEnd="6dp" />
+
+            <Button
+                android:id="@+id/btnRotateRight"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="↻ Putar +90°"
+                android:textAllCaps="false"
+                android:textColor="#0B3C8C"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:backgroundTint="#E8F1FF"
+                android:layout_marginEnd="6dp" />
+
+            <Button
+                android:id="@+id/btnResetCrop"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Reset"
+                android:textAllCaps="false"
+                android:textColor="#475569"
+                android:textSize="12sp"
+                android:backgroundTint="#F1F5F9" />
+        </LinearLayout>
+
+        <!-- Slider Rotasi Halus -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="6dp">
+
+            <TextView
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:text="Rotasi"
+                android:textColor="#475569"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <SeekBar
+                android:id="@+id/seekBarRotation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="360"
+                android:progress="180" />
+
+            <TextView
+                android:id="@+id/tvRotationDegree"
+                android:layout_width="42dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:text="0°"
+                android:textColor="#0B3C8C"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Slider Zoom -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:text="Perbesar"
+                android:textColor="#475569"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <SeekBar
+                android:id="@+id/seekBarZoom"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="350"
+                android:progress="50" />
+
+            <TextView
+                android:id="@+id/tvZoomPercent"
+                android:layout_width="42dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:text="100%"
+                android:textColor="#0B3C8C"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Tombol Batal & Simpan -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnCancelCrop"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_weight="1"
+                android:text="Batal"
+                android:textAllCaps="false"
+                android:textColor="#475569"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:backgroundTint="#F1F5F9"
+                android:layout_marginEnd="10dp" />
+
+            <Button
+                android:id="@+id/btnSaveCrop"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_weight="1"
+                android:text="Simpan Foto"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:backgroundTint="#0B3C8C" />
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
+

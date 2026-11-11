@@ -14,7 +14,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Baris Atas: Ikon, Judul, & Badge Status Aktif -->
+        <!-- Baris Atas: Ikon, Judul, & Badge Status -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,7 +39,7 @@
                 android:layout_toEndOf="@id/ivCategoryIcon"
                 android:layout_toStartOf="@id/tvCategoryStatusBadge"
                 android:layout_centerVertical="true"
-                android:text="Jalan &amp; Jembatan Rusak"
+                android:text="Nama Kategori"
                 android:textColor="#0B1C30"
                 android:textSize="15sp"
                 android:textStyle="bold" />
@@ -53,7 +53,7 @@
                 android:background="@drawable/bg_badge_green_light"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="4dp"
-                android:text="● Aktif"
+                android:text="Aktif"
                 android:textColor="#00897B"
                 android:textSize="11sp"
                 android:textStyle="bold" />
@@ -64,7 +64,7 @@
             android:id="@+id/tvCategoryDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Lubang jalan, aspal retak, trotoar rusak, pembatas jalan ambruk."
+            android:text="Deskripsi kategori..."
             android:textColor="#64748B"
             android:textSize="12sp"
             android:layout_marginBottom="12dp" />
@@ -97,7 +97,7 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Baris Bawah: ID Kategori & Aksi (Edit / Hapus) -->
+        <!-- Baris Bawah: ID Kategori & Aksi -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -108,7 +108,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:text="ID: KTG-MKS-01"
+                android:text="ID: KTG-MKS"
                 android:textColor="#94A3B8"
                 android:textSize="11sp" />
 
@@ -125,7 +125,7 @@
                     android:background="@drawable/bg_badge_blue_light"
                     android:padding="6dp"
                     android:src="@drawable/edit"
-                    app:tint="##0B1C30"
+                    app:tint="#0B1C30"
                     android:layout_marginEnd="8dp" />
 
                 <ImageView
@@ -138,6 +138,5 @@
                     app:tint="#D32F2F" />
             </LinearLayout>
         </RelativeLayout>
-
     </LinearLayout>
 </androidx.cardview.widget.CardView>

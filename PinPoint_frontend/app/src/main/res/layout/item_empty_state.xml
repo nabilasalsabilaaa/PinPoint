@@ -14,6 +14,7 @@
         android:layout_marginBottom="12dp" />
 
     <TextView
+        android:id="@+id/tvEmptyTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Belum Ada Data Laporan"
@@ -23,6 +24,7 @@
         android:layout_marginBottom="4dp" />
 
     <TextView
+        android:id="@+id/tvEmptySubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Data akan muncul secara otomatis saat laporan masyarakat masuk."

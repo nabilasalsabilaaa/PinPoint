@@ -29,7 +29,8 @@
                 android:src="@drawable/back"
                 app:tint="#0B1C30"
                 android:elevation="2dp"
-                android:layout_marginEnd="12dp" />
+                android:layout_marginEnd="12dp"
+                android:contentDescription="Kembali" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -60,6 +61,8 @@
             android:textColor="#0B1C30"
             android:textColorHint="#94A3B8"
             android:textSize="13sp"
+            android:inputType="text"
+            android:importantForAutofill="no"
             android:layout_marginBottom="4dp" />
 
         <TextView
@@ -70,63 +73,34 @@
             android:textSize="11sp"
             android:layout_marginBottom="20dp" />
 
-        <!-- 3. Field Kode Referensi Sistem -->
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <!-- 3. Field Kode Referensi Sistem (Auto-generated) -->
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp">
+            android:text="Kode Referensi Sistem"
+            android:textColor="#0B1C30"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Kode Referensi Sistem"
-                android:textColor="#0B1C30"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:text="Unik &amp; Baku"
-                android:textColor="#0B3C8C"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-        </RelativeLayout>
-
-        <LinearLayout
+        <EditText
+            android:id="@+id/etCategoryCode"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="20dp">
+            android:layout_height="48dp"
+            android:background="@drawable/bg_chip_blue_light"
+            android:enabled="false"
+            android:drawableStart="@android:drawable/ic_menu_agenda"
+            android:drawablePadding="8dp"
+            android:paddingHorizontal="14dp"
+            android:text="Menghitung Kode..."
+            android:textColor="#0B3C8C"
+            android:textStyle="bold"
+            android:textSize="13sp"
+            android:inputType="none"
+            android:importantForAutofill="no"
+            android:layout_marginBottom="20dp" />
 
-            <EditText
-                android:id="@+id/etCategoryCode"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_chip_blue_light"
-                android:enabled="false"
-                android:drawableStart="@android:drawable/ic_menu_agenda"
-                android:drawablePadding="8dp"
-                android:paddingHorizontal="14dp"
-                android:text="KTG-MKS-06"
-                android:textColor="#0B3C8C"
-                android:textStyle="bold"
-                android:textSize="13sp"
-                android:layout_marginEnd="8dp" />
-
-            <ImageView
-                android:id="@+id/btnRefreshCode"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="@drawable/bg_chip_blue_light"
-                android:padding="12dp"
-                android:src="@android:drawable/ic_popup_sync"
-                app:tint="#0B3C8C" />
-        </LinearLayout>
-
-        <!-- 4. Pilih Ikon Visual Radar (8 Kartu Pilihan Ikon) -->
+        <!-- 4. Pilih Ikon Visual Radar -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -151,7 +125,6 @@
                 android:textStyle="bold" />
         </RelativeLayout>
 
-        <!-- Grid Ikon 4 Kolom x 2 Baris -->
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -159,22 +132,24 @@
             android:rowCount="2"
             android:layout_marginBottom="20dp">
 
-            <!-- Card Ikon Jalan (Active/Blue) -->
+            <!-- Card Ikon Jalan -->
             <LinearLayout
+                android:id="@+id/llIconJalan"
                 android:layout_width="0dp"
                 android:layout_height="72dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="4dp"
                 android:background="@drawable/bg_icon_card_active"
                 android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
                 android:orientation="vertical">
-
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/jalan"
-                    app:tint="#FFFFFF" />
-
+                    app:tint="#FFFFFF"
+                    android:contentDescription="Jalan" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -187,20 +162,22 @@
 
             <!-- Card Ikon Lampu -->
             <LinearLayout
+                android:id="@+id/llIconLampu"
                 android:layout_width="0dp"
                 android:layout_height="72dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="4dp"
                 android:background="@drawable/bg_chip_white"
                 android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
                 android:orientation="vertical">
-
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/lamp"
-                    app:tint="#434653" />
-
+                    app:tint="#434653"
+                    android:contentDescription="Lampu" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -210,22 +187,24 @@
                     android:layout_marginTop="4dp" />
             </LinearLayout>
 
-            <!-- Card Ikon Air/Got -->
+            <!-- Card Ikon Air -->
             <LinearLayout
+                android:id="@+id/llIconAir"
                 android:layout_width="0dp"
                 android:layout_height="72dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="4dp"
                 android:background="@drawable/bg_chip_white"
                 android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
                 android:orientation="vertical">
-
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/drainage"
-                    app:tint="#434653" />
-
+                    app:tint="#434653"
+                    android:contentDescription="Air" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -237,20 +216,22 @@
 
             <!-- Card Ikon Taman -->
             <LinearLayout
+                android:id="@+id/llIconTaman"
                 android:layout_width="0dp"
                 android:layout_height="72dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="4dp"
                 android:background="@drawable/bg_chip_white"
                 android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
                 android:orientation="vertical">
-
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/park"
-                    app:tint="#434653" />
-
+                    app:tint="#434653"
+                    android:contentDescription="Taman" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -262,20 +243,22 @@
 
             <!-- Card Ikon Sampah -->
             <LinearLayout
+                android:id="@+id/llIconSampah"
                 android:layout_width="0dp"
                 android:layout_height="72dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="4dp"
                 android:background="@drawable/bg_chip_white"
                 android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
                 android:orientation="vertical">
-
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/delete"
-                    app:tint="#434653" />
-
+                    app:tint="#434653"
+                    android:contentDescription="Sampah" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -287,20 +270,22 @@
 
             <!-- Card Ikon Trotoar -->
             <LinearLayout
+                android:id="@+id/llIconTrotoar"
                 android:layout_width="0dp"
                 android:layout_height="72dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="4dp"
                 android:background="@drawable/bg_chip_white"
                 android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
                 android:orientation="vertical">
-
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/walk"
-                    app:tint="#434653" />
-
+                    app:tint="#434653"
+                    android:contentDescription="Trotoar" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -312,20 +297,22 @@
 
             <!-- Card Ikon Jembatan -->
             <LinearLayout
+                android:id="@+id/llIconJembatan"
                 android:layout_width="0dp"
                 android:layout_height="72dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="4dp"
                 android:background="@drawable/bg_chip_white"
                 android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
                 android:orientation="vertical">
-
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/bridge"
-                    app:tint="#434653" />
-
+                    app:tint="#434653"
+                    android:contentDescription="Jembatan" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -335,22 +322,24 @@
                     android:layout_marginTop="4dp" />
             </LinearLayout>
 
-            <!-- Card Ikon Gedung -->
+            <!-- Card Ikon Halte -->
             <LinearLayout
+                android:id="@+id/llIconHalte"
                 android:layout_width="0dp"
                 android:layout_height="72dp"
                 android:layout_columnWeight="1"
                 android:layout_margin="4dp"
                 android:background="@drawable/bg_chip_white"
                 android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
                 android:orientation="vertical">
-
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/busStop"
-                    app:tint="#434653" />
-
+                    android:src="@drawable/bus_stop"
+                    app:tint="#434653"
+                    android:contentDescription="Halte" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -366,7 +355,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="6dp">
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -374,7 +362,6 @@
                 android:textColor="#0B1C30"
                 android:textSize="13sp"
                 android:textStyle="bold" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -390,11 +377,13 @@
             android:layout_height="100dp"
             android:background="@drawable/kolom_form"
             android:gravity="top|start"
-            android:hint="Deskripsikan kriteria kerusakan yang masuk dalam kategori ini agar warga dan verifikator tidak salah klasifikasi..."
+            android:hint="Deskripsikan kriteria kerusakan..."
             android:padding="12dp"
             android:textColor="#0B1C30"
             android:textColorHint="#94A3B8"
             android:textSize="12sp"
+            android:inputType="textMultiLine"
+            android:importantForAutofill="no"
             android:layout_marginBottom="6dp" />
 
         <TextView
@@ -405,19 +394,7 @@
             android:textSize="11sp"
             android:layout_marginBottom="20dp" />
 
-        <!-- 6. Card Publikasikan Segera (Switch) -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="14dp"
-            app:cardElevation="0dp"
-            app:cardBackgroundColor="#FFFFFF"
-            android:layout_marginBottom="16dp">
-
-
-        </androidx.cardview.widget.CardView>
-
-        <!-- 7. Card Info Sinkronisasi -->
+        <!-- 6. Card Info Sinkronisasi -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -425,27 +402,24 @@
             app:cardElevation="0dp"
             app:cardBackgroundColor="#E8F1FF"
             android:layout_marginBottom="24dp">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="14dp"
                 android:gravity="top">
-
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@android:drawable/ic_dialog_info"
                     app:tint="#0B3C8C"
                     android:layout_marginEnd="10dp"
-                    android:layout_marginTop="2dp" />
-
+                    android:layout_marginTop="2dp"
+                    android:contentDescription="Info" />
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -454,11 +428,10 @@
                         android:textSize="12sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="2dp" />
-
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Kategori baru akan langsung muncul pada aplikasi warga saat membuat laporan dan disinkronkan secara real-time ke radar peta."
+                        android:text="Kategori baru akan langsung muncul pada aplikasi warga dan disinkronkan secara real-time ke radar peta."
                         android:textColor="#434653"
                         android:textSize="11sp"
                         android:lineSpacingExtra="2dp" />
@@ -466,7 +439,7 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- 8. Action Buttons -->
+        <!-- 7. Action Buttons -->
         <Button
             android:id="@+id/btnSaveCategory"
             android:layout_width="match_parent"

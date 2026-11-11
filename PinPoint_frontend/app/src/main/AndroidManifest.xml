@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Izin Akses Internet untuk Retrofit / Spring Boot -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -14,9 +13,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PinPoint"
-        android:usesCleartextTraffic="true"> <!-- Mengizinkan koneksi HTTP lokal (10.0.2.2) -->
+        android:usesCleartextTraffic="true">
 
-        <!-- Halaman Utama (Splash / Onboarding) -->
+        <!-- Pintu Masuk Utama -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -26,19 +25,86 @@
             </intent-filter>
         </activity>
 
-        <!-- Halaman Login -->
         <activity
             android:name=".Login"
             android:exported="false" />
 
-        <!-- Halaman Register -->
         <activity
             android:name=".Register"
             android:exported="false" />
 
-        <!-- Halaman Dashboard -->
+        <activity
+            android:name=".ForgotPasswordActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".OtpVerificationActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ResetPasswordNewActivity"
+            android:exported="false" />
+
         <activity
             android:name=".DashboardActivity"
+            android:exported="false" />
+
+        <!-- Halaman Admin -->
+        <activity
+            android:name=".admin.AdminDashboardActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".admin.VerifikasiLaporanActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".admin.DetailVerifikasiActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".admin.TolakLaporanActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".admin.KategoriActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".admin.AddKategoriActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".admin.EditKategoriActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".admin.KelolaAkunActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".admin.TambahAkunActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".admin.AdminProfilActivity"
+            android:exported="false" />
+
+        <!-- Halaman Sub-Profil -->
+        <activity
+            android:name=".admin.BiodataActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".admin.KeamananAkunActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".admin.BantuanActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".admin.TentangActivity"
             android:exported="false" />
 
     </application>
