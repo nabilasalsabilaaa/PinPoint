@@ -3,148 +3,198 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="14dp"
+    app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
     app:cardBackgroundColor="#FFFFFF"
-    android:layout_marginBottom="12dp">
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:layout_marginBottom="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="14dp">
+        android:padding="16dp">
 
+        <!-- ID Laporan & Badge Status -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp">
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:id="@+id/tvReportIdCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_chip_blue_light"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:text="LP-MKS"
+                android:textColor="#0B3C8C"
+                android:textSize="11sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvReportStatusBadge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_badge_red_light"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
-                android:text="● MENUNGGU VERIFIKASI"
-                android:textColor="#D32F2F"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvReportTimestamp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:text="10 mnt lalu"
-                android:textColor="#94A3B8"
-                android:textSize="11sp" />
+                android:background="@drawable/bg_badge_red_light"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:text="Menunggu"
+                android:textColor="#D32F2F"
+                android:textSize="11sp"
+                android:textStyle="bold" />
         </RelativeLayout>
 
+        <!-- Nama Pelapor & Waktu -->
+        <TextView
+            android:id="@+id/tvReportReporterAndDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pelapor - Waktu"
+            android:textColor="#64748B"
+            android:textSize="11sp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Kategori -->
+        <TextView
+            android:id="@+id/tvReportCategoryBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_chip_blue_light"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:text="Kategori"
+            android:textColor="#0B3C8C"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="10dp" />
+
+        <!-- Konten: Judul & Foto -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginBottom="12dp">
 
-            <ImageView
-                android:id="@+id/ivReportThumbnail"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:scaleType="centerCrop"
-                android:src="@android:drawable/ic_menu_gallery"
-                android:background="#E2E8F0"
-                android:layout_marginEnd="12dp" />
-
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginEnd="12dp">
 
                 <TextView
                     android:id="@+id/tvReportTitle"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Judul Kerusakan Fasilitas"
+                    android:text="Judul Laporan"
                     android:textColor="#0B1C30"
-                    android:textSize="13sp"
+                    android:textSize="15sp"
                     android:textStyle="bold"
-                    android:maxLines="2"
-                    android:ellipsize="end"
                     android:layout_marginBottom="4dp" />
 
-                <!-- Baris Pelapor -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/tvReportDescriptionSnippet"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="2dp">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:src="@drawable/user"
-                        android:layout_marginEnd="6dp"
-                        app:tint="#64748B" />
-
-                    <TextView
-                        android:id="@+id/tvReportUser"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Pelapor: -"
-                        android:textColor="#64748B"
-                        android:textSize="11sp" />
-                </LinearLayout>
-                <!-- Baris Lokasi -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:src="@drawable/location"
-                        android:layout_marginEnd="6dp"
-                        app:tint="#64748B" />
-
-                    <TextView
-                        android:id="@+id/tvReportLocation"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Alamat Lokasi"
-                        android:textColor="#64748B"
-                        android:textSize="11sp" />
-                </LinearLayout>
+                    android:text="Deskripsi..."
+                    android:textColor="#64748B"
+                    android:textSize="12sp"
+                    android:maxLines="2"
+                    android:ellipsize="end" />
             </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp">
+                <ImageView
+                    android:id="@+id/ivReportThumbnail"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:background="#E2E8F0" />
+            </androidx.cardview.widget.CardView>
         </LinearLayout>
 
+        <!-- Lokasi & Tombol Peta -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#F0F4FA"
+            android:padding="10dp"
+            android:layout_marginBottom="14dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@id/btnOpenMap">
+
+                <TextView
+                    android:id="@+id/tvReportLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Alamat"
+                    android:textColor="#0B1C30"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvReportCoordinates"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Koordinat"
+                    android:textColor="#64748B"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/btnOpenMap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/bg_chip_blue_light"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="5dp"
+                android:text="Peta"
+                android:textColor="#0B3C8C"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <!-- Tombol Aksi -->
         <LinearLayout
+            android:id="@+id/llReportActions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/btnQuickReject"
+                android:id="@+id/btnRejectReport"
                 android:layout_width="0dp"
-                android:layout_height="38dp"
+                android:layout_height="44dp"
                 android:layout_weight="1"
-                android:text="✕ Tolak"
+                android:text="Tolak"
                 android:textColor="#D32F2F"
-                android:textSize="12sp"
                 android:backgroundTint="#FFEBEE"
-                android:layout_marginEnd="8dp" />
+                android:layout_marginEnd="10dp" />
 
             <Button
-                android:id="@+id/btnQuickApprove"
+                android:id="@+id/btnVerifyReport"
                 android:layout_width="0dp"
-                android:layout_height="38dp"
+                android:layout_height="44dp"
                 android:layout_weight="1.4"
-                android:text="✓ Validasi Cepat"
+                android:text="Validasi Cepat"
                 android:textColor="#FFFFFF"
-                android:textSize="12sp"
+                android:textStyle="bold"
                 android:backgroundTint="#0B3C8C" />
         </LinearLayout>
     </LinearLayout>

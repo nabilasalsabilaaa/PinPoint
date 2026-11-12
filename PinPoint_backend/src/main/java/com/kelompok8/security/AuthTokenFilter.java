@@ -35,11 +35,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
                 Optional<User> userOpt = userRepository.findByEmail(email);
                 if (userOpt.isPresent() && role != null) {
-                    
+                    String authority = role.toUpperCase().startsWith("ROLE_")
+                            ? role.toUpperCase()
+                            : "ROLE_" + role.toUpperCase();
                     // Menetapkan role user ke dalam Security Context dengan prefix "ROLE_"
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
-                                    email, null, List.of(() -> "ROLE_" + role.toUpperCase()));
+                                    email, null, List.of(() -> authority));
                     
                     authentication.setDetails(
                             new WebAuthenticationDetailsSource().buildDetails(request));

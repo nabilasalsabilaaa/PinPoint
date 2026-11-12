@@ -2,4 +2,18 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="primary_blue">#0B3C8C</color>
+    <color name="dark_navy">#0B1C30</color>
+    <color name="text_secondary">#64748B</color>
+
+    <!-- Card Background Colors -->
+    <color name="blue_light_background">#E8F1FF</color>
+    <color name="gray_light_background">#F1F5F9</color>
+    <color name="screen_background">#F8F9FF</color>
+
+    <!-- Status & Alert Colors -->
+    <color name="red_danger">#D32F2F</color>
+    <color name="red_light_background">#FFEBEE</color>
+    <color name="green_success">#00897B</color>
 </resources>

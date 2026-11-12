@@ -3,63 +3,261 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="14dp"
+    app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
     app:cardBackgroundColor="#FFFFFF"
     android:layout_marginBottom="12dp">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="14dp">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <ImageView
-            android:id="@+id/ivAccountAvatar"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:src="@android:drawable/ic_menu_myplaces"
-            android:background="#EBEEFA"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="12dp" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp">
 
+            <RelativeLayout
+                android:id="@+id/avatarContainer"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="12dp">
+
+                <TextView
+                    android:id="@+id/tvAvatarLetter"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_circle_blue_btn"
+                    android:gravity="center"
+                    android:text="H"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/ivAvatarPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+
+                <!-- Badge Ikon Kecil di Sudut Avatar -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    app:cardCornerRadius="9dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="#0B3C8C">
+                    <ImageView
+                        android:id="@+id/ivAvatarBadge"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="3dp"
+                        android:src="@android:drawable/ic_lock_lock"
+                        app:tint="#FFFFFF" />
+                </androidx.cardview.widget.CardView>
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_toEndOf="@id/avatarContainer"
+                android:layout_toStartOf="@id/btnAccountMoreOption"
+                android:layout_centerVertical="true">
+
+                <TextView
+                    android:id="@+id/tvAccountName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nama Pengguna"
+                    android:textColor="#0B1C30"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvAccountRoleBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_chip_blue_light"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="3dp"
+                    android:text="Peran"
+                    android:textColor="#0B3C8C"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/btnAccountMoreOption"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@android:drawable/ic_menu_more"
+                android:visibility="gone"
+                app:tint="#64748B" />
+        </RelativeLayout>
+
+        <!-- Kontak Info Box -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/containerContactInfo"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_toEndOf="@id/ivAccountAvatar"
-            android:layout_centerVertical="true">
+            android:background="#F8FAFC"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/mail"
+                    app:tint="#94A3B8" />
+                <TextView
+                    android:id="@+id/tvAccountEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="email@example.com"
+                    android:textColor="#475569"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/call"
+                    app:tint="#94A3B8" />
+                <TextView
+                    android:id="@+id/tvAccountPhone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="08123456789"
+                    android:textColor="#475569"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Info Tambahan -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
 
             <TextView
-                android:id="@+id/tvAccountName"
-                android:layout_width="wrap_content"
+                android:id="@+id/tvJoinDate"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Nama Pengguna"
-                android:textColor="#0B1C30"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvAccountEmail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="email@domain.com"
+                android:layout_weight="1"
+                android:text="Bergabung: -"
                 android:textColor="#64748B"
+                android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/tvReportCountBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#E0E7FF"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="3dp"
+                android:text="0 Laporan"
+                android:textColor="#4338CA"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:id="@+id/tvStatusActiveBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#DCFCE7"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="3dp"
+                android:text="AKTIF"
+                android:textColor="#166534"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Pesan Penangguhan (Hidden by Default) -->
+        <LinearLayout
+            android:id="@+id/containerSuspendInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#FFE4E6"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp"
+                android:text="DITANGGUHKAN KARENA SPAM"
+                android:textColor="#E11D48"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+            <TextView
+                android:id="@+id/tvSuspendReason"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFF1F2"
+                android:padding="8dp"
+                android:text="Alasan: -"
+                android:textColor="#991B1B"
                 android:textSize="11sp" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvAccountRoleBadge"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/bg_badge_green_light"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="4dp"
-            android:text="WARGA"
-            android:textColor="#00897B"
-            android:textSize="10sp"
-            android:textStyle="bold" />
-    </RelativeLayout>
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/btnActionLeft"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="Tandai Spam"
+                android:textColor="#B45309"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:backgroundTint="#FEF3C7"
+                android:layout_marginEnd="10dp" />
+            <Button
+                android:id="@+id/btnActionRight"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="Hapus Akun"
+                android:textColor="#D32F2F"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:backgroundTint="#FFEBEE" />
+        </LinearLayout>
+
+    </LinearLayout>
 </androidx.cardview.widget.CardView>

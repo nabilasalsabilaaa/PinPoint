@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F9FF"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp">
+
+            <ImageView
+                android:id="@+id/btnBackKeamanan"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/bg_white_rounded_btn"
+                android:padding="8dp"
+                android:src="@drawable/back"
+                app:tint="#0B1C30" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="Keamanan Akun"
+                android:textColor="#0B1C30"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- 1. Kartu Status Keamanan & Proteksi Sesi -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#E8F1FF"
+            android:layout_marginBottom="18dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="10dp">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_circle_blue_btn"
+                        android:padding="9dp"
+                        android:src="@drawable/ic_shield_check"
+                        app:tint="#FFFFFF"
+                        android:layout_marginEnd="12dp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Proteksi Akun Aktif (JWT &amp; BCrypt)"
+                            android:textColor="#0B1C30"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvSecurityEmailInfo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sesi Terautentikasi: admin@pinpoint.id"
+                            android:textColor="#0B3C8C"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Kata sandi Anda dienkripsi satu arah menggunakan algoritma BCrypt. Perbarui kata sandi secara berkala untuk menjaga keamanan otorisasi verifikasi laporan."
+                    android:textColor="#475569"
+                    android:textSize="11sp"
+                    android:lineSpacingExtra="2dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 2. Form Ubah Kata Sandi -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#FFFFFF"
+            android:layout_marginBottom="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Perbarui Kata Sandi"
+                    android:textColor="#0B1C30"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Masukkan kata sandi saat ini sebelum membuat kata sandi baru."
+                    android:textColor="#64748B"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Sandi Saat Ini -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Kata Sandi Saat Ini *"
+                    android:textColor="#0B1C30"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/kolom_form"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp"
+                    android:layout_marginBottom="14dp">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_lock_outline"
+                        app:tint="#64748B"
+                        android:layout_marginEnd="10dp" />
+
+                    <EditText
+                        android:id="@+id/etCurrentPassword"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:hint="Masukkan kata sandi saat ini"
+                        android:inputType="textPassword"
+                        android:textColor="#0B1C30"
+                        android:textSize="13sp" />
+
+                    <ImageView
+                        android:id="@+id/ivToggleCurrentPass"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/mata"
+                        app:tint="#64748B" />
+                </LinearLayout>
+
+                <!-- Kata Sandi Baru -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Kata Sandi Baru *"
+                        android:textColor="#0B1C30"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvPassStrength"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:text="Minimal 6 karakter"
+                        android:textColor="#64748B"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/kolom_form"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp"
+                    android:layout_marginBottom="14dp">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_lock_outline"
+                        app:tint="#0B3C8C"
+                        android:layout_marginEnd="10dp" />
+
+                    <EditText
+                        android:id="@+id/etNewPassword"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:hint="Buat kata sandi baru"
+                        android:inputType="textPassword"
+                        android:textColor="#0B1C30"
+                        android:textSize="13sp" />
+
+                    <ImageView
+                        android:id="@+id/ivToggleNewPass"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/mata"
+                        app:tint="#64748B" />
+                </LinearLayout>
+
+                <!-- Konfirmasi Kata Sandi Baru -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Konfirmasi Kata Sandi Baru *"
+                    android:textColor="#0B1C30"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/kolom_form"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_lock_outline"
+                        app:tint="#0B3C8C"
+                        android:layout_marginEnd="10dp" />
+
+                    <EditText
+                        android:id="@+id/etConfirmNewPassword"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:hint="Ulangi kata sandi baru"
+                        android:inputType="textPassword"
+                        android:textColor="#0B1C30"
+                        android:textSize="13sp" />
+
+                    <ImageView
+                        android:id="@+id/ivMatchNewPass"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginEnd="8dp"
+                        android:visibility="gone"
+                        android:src="@drawable/ic_check_circle" />
+
+                    <ImageView
+                        android:id="@+id/ivToggleConfirmNewPass"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/mata"
+                        app:tint="#64748B" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Tips Keamanan -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card_unselected"
+            android:orientation="vertical"
+            android:padding="14dp"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rekomendasi Keamanan Sandi:"
+                android:textColor="#0B1C30"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="• Gunakan kombinasi huruf besar, huruf kecil, dan angka.\n• Jangan gunakan kata sandi yang sama dengan email pribadi.\n• Jika fitur 'Ingat Saya' aktif, kata sandi tersimpan akan otomatis diperbarui."
+                android:textColor="#64748B"
+                android:textSize="11sp"
+                android:lineSpacingExtra="2dp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnSaveNewPassword"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:backgroundTint="#0B3C8C"
+            android:text="Simpan Kata Sandi Baru"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:cornerRadius="14dp" />
+
+    </LinearLayout>
+</ScrollView>
+
