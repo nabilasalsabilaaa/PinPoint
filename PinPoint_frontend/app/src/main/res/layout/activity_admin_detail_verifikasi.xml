@@ -99,7 +99,7 @@
                             android:background="@drawable/bg_badge_green_light"
                             android:paddingHorizontal="10dp"
                             android:paddingVertical="4dp"
-                            android:text="● Menunggu Verifikasi"
+                            android:text="Menunggu Verifikasi"
                             android:textColor="#00897B"
                             android:textSize="11sp"
                             android:textStyle="bold" />
@@ -419,6 +419,75 @@
                                 android:textStyle="bold" />
                         </RelativeLayout>
                     </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card 4: Bukti Penyelesaian Pemerintah -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardGovEvidenceDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                android:visibility="gone"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Bukti Penyelesaian Pemerintah"
+                        android:textColor="#0B1C30"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="10dp" />
+
+                    <FrameLayout
+                        android:id="@+id/layoutGovEvidencePhoto"
+                        android:layout_width="match_parent"
+                        android:layout_height="180dp"
+                        android:background="#E2E8F0"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:layout_marginBottom="10dp">
+
+                        <ImageView
+                            android:id="@+id/ivGovEvidencePhoto"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/sampul" />
+
+                        <TextView
+                            android:id="@+id/tvGovEvidencePhotoCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom|end"
+                            android:layout_margin="10dp"
+                            android:background="#B3000000"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"
+                            android:text="Ketuk untuk geser foto"
+                            android:textColor="#FFFFFF"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/tvGovEvidenceNotes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_badge_blue_light"
+                        android:padding="12dp"
+                        android:text="-"
+                        android:textColor="#0B1C30"
+                        android:textSize="13sp"
+                        android:lineSpacingExtra="3dp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 

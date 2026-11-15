@@ -51,35 +51,49 @@ class PemerintahHistoryAdapter(
         holder.tvBeforeLabel.text = item.beforeLabel
         holder.tvAfterLabel.text = item.afterLabel
         holder.tvHistoryNotes.text = item.workNotes
-        holder.tvHistoryTeam.text = "Tim: ${item.teamName}"
+        holder.tvHistoryTeam.text = "Kategori: ${item.categoryName}"
 
-        // Configure Status Badge
-        if (item.status.uppercase() == "ARSIP_DITUTUP") {
-            holder.tvHistoryStatusBadge.text = "● Arsip Ditutup"
-            holder.tvHistoryStatusBadge.background = ContextCompat.getDrawable(context, R.drawable.bg_badge_verified_teal)
-            holder.tvHistoryStatusBadge.setTextColor(Color.parseColor("#00A389"))
-        } else {
-            holder.tvHistoryStatusBadge.text = "● Selesai"
-            holder.tvHistoryStatusBadge.background = ContextCompat.getDrawable(context, R.drawable.bg_badge_green_light)
-            holder.tvHistoryStatusBadge.setTextColor(Color.parseColor("#00A389"))
-        }
+        holder.tvHistoryStatusBadge.text = "Selesai"
+        holder.tvHistoryStatusBadge.background = ContextCompat.getDrawable(context, R.drawable.bg_badge_green_light)
+        holder.tvHistoryStatusBadge.setTextColor(Color.parseColor("#00A389"))
 
-        // Load Images with Glide
         if (item.beforeImageUrl.isNotEmpty()) {
             Glide.with(context)
                 .load(item.beforeImageUrl)
-                .placeholder(android.R.drawable.ic_menu_gallery)
+                .placeholder(R.drawable.sampul)
+                .error(R.drawable.sampul)
                 .into(holder.ivBefore)
+        } else {
+            holder.ivBefore.setImageResource(R.drawable.sampul)
         }
 
         if (item.afterImageUrl.isNotEmpty()) {
             Glide.with(context)
                 .load(item.afterImageUrl)
-                .placeholder(android.R.drawable.ic_menu_gallery)
+                .placeholder(R.drawable.sampul)
+                .error(R.drawable.sampul)
                 .into(holder.ivAfter)
+        } else {
+            holder.ivAfter.setImageResource(R.drawable.sampul)
         }
 
-        // Click listeners
+        holder.ivBefore.setOnClickListener {
+            if (item.allPhotos.isNotEmpty()) {
+                PhotoSliderDialog.show(context, "Dokumentasi Sebelum & Sesudah", item.allPhotos, 0)
+            } else {
+                onDetailClick(item)
+            }
+        }
+
+        holder.ivAfter.setOnClickListener {
+            if (item.allPhotos.isNotEmpty()) {
+                val startIdx = if (item.allPhotos.size > 1) 1 else 0
+                PhotoSliderDialog.show(context, "Dokumentasi Sebelum & Sesudah", item.allPhotos, startIdx)
+            } else {
+                onDetailClick(item)
+            }
+        }
+
         holder.btnDetailDokumentasi.setOnClickListener { onDetailClick(item) }
         holder.itemView.setOnClickListener { onDetailClick(item) }
     }

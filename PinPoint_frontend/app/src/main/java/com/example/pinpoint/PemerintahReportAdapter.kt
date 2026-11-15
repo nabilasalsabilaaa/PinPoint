@@ -40,28 +40,28 @@ class PemerintahReportAdapter(
 
         holder.tvReportCode.text = item.id
         holder.tvReportDate.text = item.date
-        holder.tvCategoryName.text = item.category
+        holder.tvCategoryName.text = item.category.uppercase()
         holder.tvReportTitle.text = item.title
         holder.tvReportLocation.text = item.location
         holder.tvFooterTag.text = item.footerTag
         holder.tvBtnActionText.text = item.actionText
 
-        // Configure Status Badge
+        // Configure Status Badge tanpa emoji
         when (item.status.uppercase()) {
-            "SEDANG_DIPROSES" -> {
-                holder.tvStatusBadge.text = "● Sedang Diproses"
+            "SEDANG_DIPROSES", "DIPROSES" -> {
+                holder.tvStatusBadge.text = "Sedang Diproses"
                 holder.tvStatusBadge.background = ContextCompat.getDrawable(context, R.drawable.bg_badge_purple_light)
                 holder.tvStatusBadge.setTextColor(Color.parseColor("#613EEA"))
             }
             "SELESAI" -> {
-                holder.tvStatusBadge.text = "● Selesai"
+                holder.tvStatusBadge.text = "Selesai"
                 holder.tvStatusBadge.background = ContextCompat.getDrawable(context, R.drawable.bg_badge_green_light)
                 holder.tvStatusBadge.setTextColor(Color.parseColor("#00A389"))
             }
-            else -> { // TERVERIFIKASI
-                holder.tvStatusBadge.text = "● Terverifikasi"
+            else -> {
+                holder.tvStatusBadge.text = "Terverifikasi"
                 holder.tvStatusBadge.background = ContextCompat.getDrawable(context, R.drawable.bg_badge_blue_light)
-                holder.tvStatusBadge.setTextColor(Color.parseColor("#003C90"))
+                holder.tvStatusBadge.setTextColor(Color.parseColor("#0B3C8C"))
             }
         }
 
@@ -71,18 +71,20 @@ class PemerintahReportAdapter(
             holder.tvBtnActionText.setTextColor(Color.WHITE)
         } else {
             holder.btnDetailAndAction.background = ContextCompat.getDrawable(context, R.drawable.bg_btn_secondary)
-            holder.tvBtnActionText.setTextColor(Color.parseColor("#003C90"))
+            holder.tvBtnActionText.setTextColor(Color.parseColor("#0B3C8C"))
         }
 
         // Load Thumbnail with Glide
         if (item.imageUrl.isNotEmpty()) {
             Glide.with(context)
                 .load(item.imageUrl)
-                .placeholder(android.R.drawable.ic_menu_gallery)
+                .placeholder(R.drawable.sampul)
+                .error(R.drawable.sampul)
                 .into(holder.ivReportThumbnail)
+        } else {
+            holder.ivReportThumbnail.setImageResource(R.drawable.sampul)
         }
 
-        // On Click Listener
         holder.btnDetailAndAction.setOnClickListener { onItemClick(item) }
         holder.itemView.setOnClickListener { onItemClick(item) }
     }

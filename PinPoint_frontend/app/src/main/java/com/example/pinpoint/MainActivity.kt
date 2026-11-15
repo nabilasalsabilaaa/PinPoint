@@ -20,11 +20,12 @@ class MainActivity : AppCompatActivity() {
             val idRole = sharedPreferences.getLong("KEY_ID_ROLE", -1L)
             val roleStr = (sharedPreferences.getString("KEY_ROLE", "") ?: "").uppercase()
             val isAdmin = idRole == 1L || roleStr == "ADMIN" || roleStr == "ROLE_ADMIN"
+            val isPemerintah = idRole == 3L || roleStr.contains("PEMERINTAH") || roleStr.contains("DINAS")
 
-            val targetIntent = if (isAdmin) {
-                Intent(this, AdminDashboardActivity::class.java)
-            } else {
-                Intent(this, DashboardActivity::class.java)
+            val targetIntent = when {
+                isAdmin -> Intent(this, AdminDashboardActivity::class.java)
+                isPemerintah -> Intent(this, PemerintahDashboardActivity::class.java)
+                else -> Intent(this, DashboardActivity::class.java)
             }
             startActivity(targetIntent)
             finish()

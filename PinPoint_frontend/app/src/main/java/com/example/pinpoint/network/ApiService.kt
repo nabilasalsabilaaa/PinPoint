@@ -88,8 +88,14 @@ data class ReportDto(
     @SerializedName(value = "locationName", alternate = ["alamat"]) val locationName: String? = null,
     @SerializedName("latitude") val latitude: Double? = -5.1476,
     @SerializedName("longitude") val longitude: Double? = 119.4327,
+    @SerializedName(value = "tingkatKeparahan", alternate = ["tingkat_keparahan", "severity"]) val tingkatKeparahan: String? = null,
     @SerializedName(value = "photoUrl", alternate = ["fotoBukti", "foto_bukti", "fotoProfil"]) val photoUrl: String? = null,
-    @SerializedName(value = "createdAt", alternate = ["tanggalLaporan", "tanggal_laporan"]) val createdAt: String? = null
+    @SerializedName("photoUrls") val photoUrls: List<String>? = null,
+    @SerializedName("evidencePhotoUrls") val evidencePhotoUrls: List<String>? = null,
+    @SerializedName("evidenceNotes") val evidenceNotes: String? = null,
+    @SerializedName("completedBy") val completedBy: String? = null,
+    @SerializedName(value = "createdAt", alternate = ["tanggalLaporan", "tanggal_laporan"]) val createdAt: String? = null,
+    @SerializedName(value = "updatedAt", alternate = ["tanggalUpdate", "tanggal_update"]) val updatedAt: String? = null
 ) {
     fun resolvedId(): Long = id?.toLongOrNull() ?: 0L
 
@@ -111,9 +117,56 @@ data class ReportDto(
 
     fun resolvedLocationName(): String = locationName?.takeIf { it.isNotBlank() } ?: "Lokasi Titik Koordinat GPS"
 
-    fun resolvedPhotoUrl(): String? = photoUrl?.takeIf { it.isNotBlank() }
+    fun resolvedPhotoUrl(): String? {
+        val raw = photoUrl?.takeIf { it.isNotBlank() }
+            ?: photoUrls?.firstOrNull { it.isNotBlank() }
+        return ApiClient.resolveImageUrl(raw)
+    }
+
+    fun resolvedPhotoUrls(): List<String> {
+        val list = mutableListOf<String>()
+        photoUrls?.forEach { p ->
+            val resolved = ApiClient.resolveImageUrl(p)
+            if (!resolved.isNullOrBlank() && !list.contains(resolved)) {
+                list.add(resolved)
+            }
+        }
+        val main = resolvedPhotoUrl()
+        if (!main.isNullOrBlank() && !list.contains(main)) {
+            list.add(0, main)
+        }
+        return list
+    }
+
+    fun resolvedEvidencePhotoUrls(): List<String> {
+        val list = mutableListOf<String>()
+        evidencePhotoUrls?.forEach { p ->
+            val resolved = ApiClient.resolveImageUrl(p)
+            if (!resolved.isNullOrBlank() && !list.contains(resolved)) {
+                list.add(resolved)
+            }
+        }
+        return list
+    }
+
+    fun resolvedEvidenceNotes(): String = evidenceNotes?.takeIf { it.isNotBlank() } ?: ""
+
+    fun resolvedCompletedBy(): String = completedBy?.takeIf { it.isNotBlank() } ?: "Tim Dinas Pemerintah"
+
+    fun resolvedUrgency(): String {
+        val sev = tingkatKeparahan?.takeIf { it.isNotBlank() }?.uppercase()
+        return when {
+            sev == null -> "Prioritas Standar"
+            sev.contains("TINGGI") || sev.contains("BERAT") || sev.contains("PARAH") -> "Urgensi Tinggi"
+            sev.contains("SEDANG") -> "Urgensi Sedang"
+            sev.contains("RENDAH") || sev.contains("RINGAN") -> "Urgensi Rendah"
+            else -> tingkatKeparahan
+        }
+    }
 
     fun resolvedCreatedAt(): String = createdAt?.takeIf { it.isNotBlank() } ?: "Baru saja"
+
+    fun resolvedUpdatedAt(): String = updatedAt?.takeIf { it.isNotBlank() } ?: resolvedCreatedAt()
 
     fun resolvedStatusKey(): String {
         if (!status.isNullOrBlank()) {
@@ -150,6 +203,12 @@ data class ReportDto(
 data class RejectReportRequest(
     @SerializedName("reasonCategory") val reasonCategory: List<String>,
     @SerializedName("rejectionNote") val rejectionNote: String
+)
+
+data class GovernmentCompleteRequest(
+    @SerializedName("keterangan") val keterangan: String,
+    @SerializedName("photoUrls") val photoUrls: List<String> = emptyList(),
+    @SerializedName("sendNotification") val sendNotification: Boolean = true
 )
 
 data class CategoryDto(
@@ -256,6 +315,24 @@ interface ApiService {
         @Body request: RejectReportRequest
     ): Call<Void>
 
+    // --- GOVERNMENT REPORTS ---
+    @GET("api/government/reports")
+    fun getGovernmentReports(@Header("Authorization") token: String): Call<List<ReportDto>>
+
+    @POST("api/government/reports/{id}/process")
+    fun processGovernmentReport(
+        @Header("Authorization") token: String,
+        @Path("id") reportId: String,
+        @Body request: GovernmentCompleteRequest
+    ): Call<ReportDto>
+
+    @POST("api/government/reports/{id}/complete")
+    fun completeGovernmentReport(
+        @Header("Authorization") token: String,
+        @Path("id") reportId: String,
+        @Body request: GovernmentCompleteRequest
+    ): Call<ReportDto>
+
     // --- CATEGORY ---
     @GET("api/categories")
     fun getAllCategories(@Header("Authorization") token: String): Call<List<CategoryDto>>
@@ -302,7 +379,19 @@ interface ApiService {
 
 object ApiClient {
     // Ganti IP di bawah ini jika IP laptop berubah
-    private const val BASE_URL = "http://10.113.109.86:8081/"
+    const val BASE_URL = "http://10.113.109.86:8081/"
+
+    fun resolveImageUrl(raw: String?): String? {
+        if (raw.isNullOrBlank()) return null
+        val trimmed = raw.trim()
+        if (trimmed.startsWith("http://") || trimmed.startsWith("https://") ||
+            trimmed.startsWith("file:") || trimmed.startsWith("content:")
+        ) {
+            return trimmed
+        }
+        val cleanPath = trimmed.removePrefix("/")
+        return BASE_URL + cleanPath
+    }
 
     private val client = OkHttpClient.Builder()
         .connectTimeout(10, TimeUnit.SECONDS)

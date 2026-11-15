@@ -1,12 +1,14 @@
 package com.example.pinpoint
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
-import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -15,13 +17,26 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.pinpoint.admin.DetailVerifikasiActivity
+import com.example.pinpoint.admin.NavbarUtils
+import com.example.pinpoint.network.ApiClient
+import com.example.pinpoint.network.CategoryDto
+import com.example.pinpoint.network.ReportDto
 
 class PemerintahHistoryActivity : AppCompatActivity() {
 
     private lateinit var rvHistory: RecyclerView
     private lateinit var historyAdapter: PemerintahHistoryAdapter
     private lateinit var etSearchHistory: EditText
+    private lateinit var tvEmptyHistory: TextView
+    private lateinit var tvHistoryCompletedCount: TextView
+    private lateinit var tvHistoryCompletionRate: TextView
+    private lateinit var llHistoryCategoryChips: LinearLayout
+
     private val allHistoryList = mutableListOf<PemerintahHistoryItem>()
+    private var categoriesList = listOf<CategoryDto>()
+    private var selectedCategoryId: Long? = null
+    private var selectedCategoryName: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,138 +49,220 @@ class PemerintahHistoryActivity : AppCompatActivity() {
             insets
         }
 
-        // 1. Inisialisasi Views
-        rvHistory = findViewById(R.id.rvPemerintahHistory)
-        etSearchHistory = findViewById(R.id.etSearchHistory)
-        val btnDownloadRecap = findViewById<View>(R.id.btnDownloadRecap)
-
-        // 2. Buat Dummy Data Sesuai Desain Figma Riwayat
-        setupDummyData()
-
-        // 3. Setup RecyclerView & Adapter
-        rvHistory.layoutManager = LinearLayoutManager(this)
-        historyAdapter = PemerintahHistoryAdapter(allHistoryList) { item ->
-            Toast.makeText(this, "Membuka Detail Dokumentasi: ${item.id}", Toast.LENGTH_SHORT).show()
-        }
-        rvHistory.adapter = historyAdapter
-
-        // 4. Setup Pencarian (Search)
+        initViews()
+        setupRecyclerView()
         setupSearch()
+        NavbarUtils.setupPemerintahNavbar(this)
 
-        // 5. Setup Tombol Unduh Rekap
-        btnDownloadRecap.setOnClickListener {
-            Toast.makeText(this, "Mengunduh Rekap Laporan Resmi (PDF/Excel) - TTD Digital Pemkot...", Toast.LENGTH_LONG).show()
-        }
-
-        // 6. Setup Bottom Navigation
-        setupBottomNavigation()
+        loadCategoriesAndHistory()
     }
 
-    private fun setupDummyData() {
+    override fun onResume() {
+        super.onResume()
+        loadCategoriesAndHistory()
+    }
+
+    private fun initViews() {
+        rvHistory = findViewById(R.id.rvPemerintahHistory)
+        etSearchHistory = findViewById(R.id.etSearchHistory)
+        tvEmptyHistory = findViewById(R.id.tvEmptyHistory)
+        tvHistoryCompletedCount = findViewById(R.id.tvHistoryCompletedCount)
+        tvHistoryCompletionRate = findViewById(R.id.tvHistoryCompletionRate)
+        llHistoryCategoryChips = findViewById(R.id.llHistoryCategoryChips)
+    }
+
+    private fun setupRecyclerView() {
+        rvHistory.layoutManager = LinearLayoutManager(this)
+        historyAdapter = PemerintahHistoryAdapter(emptyList()) { item ->
+            // Saat card diklik mengarahkan ke Detail Verifikasi
+            val intent = Intent(this, DetailVerifikasiActivity::class.java)
+            intent.putExtra("REPORT_ID", item.reportId)
+            startActivity(intent)
+        }
+        rvHistory.adapter = historyAdapter
+    }
+
+    private fun loadCategoriesAndHistory() {
+        val sharedPreferences = getSharedPreferences("UserSession", MODE_PRIVATE)
+        val rawToken = sharedPreferences.getString("KEY_TOKEN", "") ?: ""
+        val token = if (rawToken.startsWith("Bearer ")) rawToken else "Bearer $rawToken"
+
+        ApiClient.fetchWithFallback(
+            callFactory = { api -> api.getAllCategories(token) },
+            onResponse = { _, response ->
+                if (response.isSuccessful && response.body() != null) {
+                    categoriesList = response.body()!!.filter { it.resolvedIsActive() }
+                    renderCategoryChips()
+                }
+            },
+            onFailure = { _, _ -> }
+        )
+
+        ApiClient.fetchWithFallback(
+            callFactory = { api -> api.getAllReports(token, null) },
+            onResponse = { _, response ->
+                if (response.isSuccessful && response.body() != null) {
+                    bindDatabaseHistory(response.body()!!)
+                }
+            },
+            onFailure = { _, _ ->
+                Toast.makeText(this@PemerintahHistoryActivity, "Gagal memuat riwayat dari server", Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
+
+    private fun bindDatabaseHistory(reports: List<ReportDto>) {
+        val verifiedCount = reports.count { it.resolvedStatusKey() == "TERVERIFIKASI" }
+        val inProgressCount = reports.count { it.resolvedStatusKey() == "DIPROSES" }
+        val completedReports = reports.filter { it.resolvedStatusKey() == "SELESAI" }
+        val completedCount = completedReports.size
+        val totalGovReports = verifiedCount + inProgressCount + completedCount
+
+        tvHistoryCompletedCount.text = completedCount.toString()
+        val rate = if (totalGovReports > 0) {
+            (completedCount * 100.0 / totalGovReports)
+        } else {
+            0.0
+        }
+        tvHistoryCompletionRate.text = String.format("%.1f%%", rate)
+
         allHistoryList.clear()
+        completedReports.forEach { dto ->
+            val beforePhoto = dto.resolvedPhotoUrl() ?: ""
+            val evPhotos = dto.resolvedEvidencePhotoUrls()
+            val afterPhoto = evPhotos.firstOrNull() ?: beforePhoto
+            val combinedPhotos = mutableListOf<String>()
+            dto.resolvedPhotoUrls().forEach { if (!combinedPhotos.contains(it)) combinedPhotos.add(it) }
+            evPhotos.forEach { if (!combinedPhotos.contains(it)) combinedPhotos.add(it) }
 
-        allHistoryList.add(
-            PemerintahHistoryItem(
-                id = "#LP-MKS-0840",
-                finishDate = "Selesai 14 Feb 2025",
-                status = "ARSIP_DITUTUP",
-                title = "Pengaspalan Ruas Amblas Pettarani",
-                location = "Jl. A.P. Pettarani, Rappocini (Depan Telkom)",
-                sectionHeader = "📄 Komparasi Hasil Pengerjaan (BAP-0840)",
-                sectionSubHeader = "Ketuk untuk perbesar",
-                beforeImageUrl = "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?w=300",
-                beforeLabel = "SEBELUM",
-                afterImageUrl = "https://images.unsplash.com/photo-1584467735813-9942d367425f?w=300",
-                afterLabel = "SESUDAH",
-                workNotes = "💬 Catatan Pengerjaan: Pengaspalan hotmix 4m tuntas oleh Regu Bina Marga. Volume aspal 3.2 ton, drainase sisi barat dinormalisasi.",
-                teamName = "Regu 03 Bina Marga"
-            )
-        )
+            val notes = dto.resolvedEvidenceNotes().takeIf { it.isNotBlank() }
+                ?: dto.resolvedDescription()
 
-        allHistoryList.add(
-            PemerintahHistoryItem(
-                id = "#LP-MKS-0812",
-                finishDate = "Selesai 12 Feb 2025",
-                status = "SELESAI",
-                title = "Penggantian Tiang & LED PJU Roboh",
-                location = "Jl. Urip Sumoharjo, Panakkukang (Flyover Km 4)",
-                sectionHeader = "📄 Dokumentasi Tiang PJU & Iluminasi Malam",
-                sectionSubHeader = "⏱️ 4 Jam Pengerjaan",
-                beforeImageUrl = "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=300",
-                beforeLabel = "KERUSAKAN",
-                afterImageUrl = "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=300",
-                afterLabel = "TERPASANG",
-                workNotes = "⚡ Catatan Pengerjaan: Penggantian tiang oktagonal 9m dan modul luminer LED Smart Streetlight 120W. Tegangan listrik stabil 220V.",
-                teamName = "Regu Elektrikal PJU"
+            allHistoryList.add(
+                PemerintahHistoryItem(
+                    reportId = dto.resolvedId().toString(),
+                    id = dto.resolvedCode(),
+                    categoryId = dto.idKategori,
+                    categoryName = dto.resolvedCategoryName(),
+                    finishDate = "Selesai ${dto.resolvedUpdatedAt()}",
+                    status = "SELESAI",
+                    title = dto.resolvedTitle(),
+                    location = dto.resolvedLocationName(),
+                    sectionHeader = "Komparasi Hasil Pengerjaan (${dto.resolvedCode()})",
+                    sectionSubHeader = "Ketuk foto untuk geser",
+                    beforeImageUrl = beforePhoto,
+                    beforeLabel = "SEBELUM",
+                    afterImageUrl = afterPhoto,
+                    afterLabel = "SESUDAH",
+                    allPhotos = combinedPhotos,
+                    workNotes = "Catatan Pengerjaan: $notes",
+                    teamName = dto.resolvedCompletedBy()
+                )
             )
-        )
+        }
 
-        allHistoryList.add(
-            PemerintahHistoryItem(
-                id = "#LP-MKS-0790",
-                finishDate = "Selesai 10 Feb 2025",
-                status = "SELESAI",
-                title = "Pemberishan Sedimen Saluran Primer",
-                location = "Jl. Letjen Hertasning, Rappocini (Kanal Barat)",
-                sectionHeader = "🖼️ Foto Bukti Pengerjaan Drainase (3 Dokumentasi)",
-                sectionSubHeader = "BAP-0790",
-                beforeImageUrl = "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?w=300",
-                beforeLabel = "PENGERUKAN",
-                afterImageUrl = "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300",
-                afterLabel = "ALIRAN BERSIH",
-                workNotes = "💧 Catatan Pengerjaan: Pengangkatan 18 m³ sedimen lumpur dan pemotongan akar liar penyumbat gorong-gorong. Arus air kini mengalir lancar menuju kanal utama.",
-                teamName = "Satgas Drainase Wilayah III"
+        renderCategoryChips()
+        applySearchAndCategoryFilter()
+    }
+
+    private fun renderCategoryChips() {
+        llHistoryCategoryChips.removeAllViews()
+        val density = resources.displayMetrics.density
+        val padH = (14 * density).toInt()
+        val padV = (8 * density).toInt()
+        val marginEnd = (8 * density).toInt()
+
+        val chipViews = mutableListOf<Pair<TextView, CategoryDto?>>()
+
+        fun createChip(label: String, category: CategoryDto?): TextView {
+            val tv = TextView(this)
+            tv.text = label
+            tv.textSize = 12f
+            tv.setPadding(padH, padV, padH, padV)
+            val lp = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
             )
-        )
+            lp.marginEnd = marginEnd
+            tv.layoutParams = lp
+            tv.isClickable = true
+            tv.isFocusable = true
+            chipViews.add(Pair(tv, category))
+            return tv
+        }
+
+        val allChip = createChip("Semua", null)
+        llHistoryCategoryChips.addView(allChip)
+
+        categoriesList.forEach { cat ->
+            val chip = createChip(cat.resolvedName(), cat)
+            llHistoryCategoryChips.addView(chip)
+        }
+
+        fun updateChipStyles() {
+            chipViews.forEach { (tv, cat) ->
+                val isSelected = (selectedCategoryId == null && cat == null) ||
+                    (cat != null && cat.resolvedId() == selectedCategoryId)
+                if (isSelected) {
+                    tv.setBackgroundResource(R.drawable.bg_chip_selected)
+                    tv.setTextColor(Color.WHITE)
+                    tv.setTypeface(null, Typeface.BOLD)
+                } else {
+                    tv.setBackgroundResource(R.drawable.bg_chip_unselected)
+                    tv.setTextColor(Color.parseColor("#434653"))
+                    tv.setTypeface(null, Typeface.NORMAL)
+                }
+            }
+        }
+
+        chipViews.forEach { (tv, cat) ->
+            tv.setOnClickListener {
+                selectedCategoryId = cat?.resolvedId()
+                selectedCategoryName = cat?.resolvedName()
+                updateChipStyles()
+                applySearchAndCategoryFilter()
+            }
+        }
+
+        updateChipStyles()
     }
 
     private fun setupSearch() {
         etSearchHistory.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val query = s.toString().lowercase().trim()
-                val filtered = allHistoryList.filter {
-                    it.title.lowercase().contains(query) ||
-                            it.id.lowercase().contains(query) ||
-                            it.location.lowercase().contains(query) ||
-                            it.teamName.lowercase().contains(query)
-                }
-                historyAdapter.updateList(filtered)
+                applySearchAndCategoryFilter()
             }
             override fun afterTextChanged(s: Editable?) {}
         })
     }
 
-    private fun setupBottomNavigation() {
-        val navHome = findViewById<View>(R.id.navPemerintahHome)
-        val navMap = findViewById<View>(R.id.navPemerintahMap)
-        val navHistory = findViewById<View>(R.id.navPemerintahHistory)
-        val navProfile = findViewById<View>(R.id.navPemerintahProfile)
+    private fun applySearchAndCategoryFilter() {
+        val query = etSearchHistory.text?.toString()?.lowercase()?.trim() ?: ""
 
-        // Highlight History in bottom nav
-        val ivHistory = findViewById<ImageView>(R.id.ivNavPemerintahHistory)
-        val tvHistory = findViewById<TextView>(R.id.tvNavPemerintahHistory)
-        ivHistory?.setColorFilter(android.graphics.Color.parseColor("#003C90"))
-        tvHistory?.setTextColor(android.graphics.Color.parseColor("#003C90"))
-        tvHistory?.setTypeface(null, android.graphics.Typeface.BOLD)
+        val filtered = allHistoryList.filter { item ->
+            val matchesCategory = (selectedCategoryId == null && selectedCategoryName.isNullOrBlank()) ||
+                (selectedCategoryId != null && item.categoryId == selectedCategoryId) ||
+                (!selectedCategoryName.isNullOrBlank() && item.categoryName.equals(selectedCategoryName, ignoreCase = true))
 
-        navHome?.setOnClickListener {
-            startActivity(Intent(this, PemerintahDashboardActivity::class.java))
-            finish()
+            val matchesSearch = query.isEmpty() ||
+                item.title.lowercase().contains(query) ||
+                item.id.lowercase().contains(query) ||
+                item.location.lowercase().contains(query) ||
+                item.categoryName.lowercase().contains(query) ||
+                item.workNotes.lowercase().contains(query) ||
+                item.teamName.lowercase().contains(query)
+
+            matchesCategory && matchesSearch
         }
 
-        navMap?.setOnClickListener {
-            startActivity(Intent(this, PemerintahMapActivity::class.java))
-            finish()
-        }
-
-        navHistory?.setOnClickListener {
-            // Already here
-        }
-
-        navProfile?.setOnClickListener {
-            startActivity(Intent(this, PemerintahProfileActivity::class.java))
-            finish()
+        historyAdapter.updateList(filtered)
+        if (filtered.isEmpty()) {
+            tvEmptyHistory.visibility = View.VISIBLE
+            rvHistory.visibility = View.GONE
+        } else {
+            tvEmptyHistory.visibility = View.GONE
+            rvHistory.visibility = View.VISIBLE
         }
     }
 }

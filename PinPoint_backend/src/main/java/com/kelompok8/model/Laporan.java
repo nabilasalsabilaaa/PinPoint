@@ -60,6 +60,18 @@ public class Laporan {
     @Transient
     private String fotoProfil;
 
+    @Transient
+    private java.util.List<String> photoUrls = new java.util.ArrayList<>();
+
+    @Transient
+    private java.util.List<String> evidencePhotoUrls = new java.util.ArrayList<>();
+
+    @Transient
+    private String evidenceNotes;
+
+    @Transient
+    private String completedBy;
+
     @JsonProperty("reportCode")
     public String getReportCode() {
         int year = tanggalLaporan != null ? tanggalLaporan.getYear() : 2026;
@@ -123,7 +135,39 @@ public class Laporan {
     public void setFotoProfil(String fotoProfil) { this.fotoProfil = fotoProfil; }
 
     @JsonProperty("photoUrl")
-    public String getPhotoUrl() { return fotoProfil; }
+    public String getPhotoUrl() {
+        if (fotoProfil != null && !fotoProfil.isBlank()) return fotoProfil;
+        if (photoUrls != null && !photoUrls.isEmpty()) return photoUrls.get(0);
+        return null;
+    }
+
+    @JsonProperty("photoUrls")
+    public java.util.List<String> getPhotoUrls() { return photoUrls; }
+    public void setPhotoUrls(java.util.List<String> photoUrls) { this.photoUrls = photoUrls; }
+
+    @JsonProperty("evidencePhotoUrls")
+    public java.util.List<String> getEvidencePhotoUrls() { return evidencePhotoUrls; }
+    public void setEvidencePhotoUrls(java.util.List<String> evidencePhotoUrls) { this.evidencePhotoUrls = evidencePhotoUrls; }
+
+    @JsonProperty("evidenceNotes")
+    public String getEvidenceNotes() { return evidenceNotes; }
+    public void setEvidenceNotes(String evidenceNotes) { this.evidenceNotes = evidenceNotes; }
+
+    @JsonProperty("completedBy")
+    public String getCompletedBy() { return completedBy; }
+    public void setCompletedBy(String completedBy) { this.completedBy = completedBy; }
+
+    @JsonProperty("updatedAt")
+    public String getUpdatedAt() {
+        LocalDateTime ref = tanggalUpdate != null ? tanggalUpdate : tanggalLaporan;
+        if (ref == null) return "-";
+        try {
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm", new Locale("id", "ID"));
+            return ref.format(fmt);
+        } catch (Exception e) {
+            return ref.toLocalDate().toString();
+        }
+    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

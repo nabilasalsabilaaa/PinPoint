@@ -1,9 +1,9 @@
 package com.example.pinpoint
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -13,17 +13,27 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.pinpoint.admin.NavbarUtils
+import com.example.pinpoint.network.ApiClient
+import com.example.pinpoint.network.ReportDto
 
 class PemerintahDashboardActivity : AppCompatActivity() {
 
     private lateinit var rvReports: RecyclerView
     private lateinit var reportAdapter: PemerintahReportAdapter
+    private lateinit var tvEmptyReports: TextView
+
+    private lateinit var tvStatPerluAksi: TextView
+    private lateinit var tvStatVerified: TextView
+    private lateinit var tvStatInProgress: TextView
+    private lateinit var tvStatCompleted: TextView
 
     private lateinit var chipFilterAll: TextView
     private lateinit var chipFilterVerified: TextView
     private lateinit var chipFilterInProgress: TextView
 
-    private val allReportsList = mutableListOf<PemerintahReport>()
+    private val activeReportsList = mutableListOf<PemerintahReport>()
+    private var currentFilterStatus: String = "ALL"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,153 +46,171 @@ class PemerintahDashboardActivity : AppCompatActivity() {
             insets
         }
 
-        // 1. Inisialisasi Views
+        initViews()
+        setupRecyclerView()
+        setupFilterChips()
+        NavbarUtils.setupPemerintahNavbar(this)
+
+        findViewById<View>(R.id.btnCallTeam)?.setOnClickListener {
+            Toast.makeText(this, "Menghubungi Tim Siaga Respon Cepat...", Toast.LENGTH_SHORT).show()
+        }
+
+        loadGovernmentDashboardData()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateOfficerGreeting()
+        loadGovernmentDashboardData()
+    }
+
+    private fun initViews() {
         rvReports = findViewById(R.id.rvPemerintahReports)
+        tvEmptyReports = findViewById(R.id.tvEmptyPemerintahReports)
+
+        tvStatPerluAksi = findViewById(R.id.tvStatPerluAksi)
+        tvStatVerified = findViewById(R.id.tvStatVerified)
+        tvStatInProgress = findViewById(R.id.tvStatInProgress)
+        tvStatCompleted = findViewById(R.id.tvStatCompleted)
+
         chipFilterAll = findViewById(R.id.chipFilterAll)
         chipFilterVerified = findViewById(R.id.chipFilterVerified)
         chipFilterInProgress = findViewById(R.id.chipFilterInProgress)
 
-        val btnCallTeam = findViewById<View>(R.id.btnCallTeam)
+        updateOfficerGreeting()
+    }
 
-        // 2. Buat Dummy Data Sesuai Desain Figma
-        setupDummyData()
+    private fun updateOfficerGreeting() {
+        val sharedPreferences = getSharedPreferences("UserSession", MODE_PRIVATE)
+        val userName = sharedPreferences.getString("KEY_NAME", null)?.takeIf { it.isNotBlank() } ?: "Petugas"
+        findViewById<TextView>(R.id.tvOfficerName)?.text = userName
+    }
 
-        // 3. Setup RecyclerView & Adapter
+    private fun setupRecyclerView() {
         rvReports.layoutManager = LinearLayoutManager(this)
-        reportAdapter = PemerintahReportAdapter(allReportsList) { report ->
+        reportAdapter = PemerintahReportAdapter(emptyList()) { report ->
             val intent = Intent(this, PemerintahDetailTaskActivity::class.java)
-            intent.putExtra("REPORT_ID", report.id)
+            intent.putExtra("REPORT_ID", report.reportId)
             startActivity(intent)
         }
         rvReports.adapter = reportAdapter
-
-        // 4. Setup Filter Chips
-        setupFilterChips()
-
-        // 5. Setup Action Banner "Panggil Tim"
-        btnCallTeam.setOnClickListener {
-            Toast.makeText(this, "Menghubungi Tim Siaga Respon Cepat Posko Pettarani...", Toast.LENGTH_LONG).show()
-        }
-
-        // 6. Setup Bottom Navigation Clicks
-        setupBottomNavigation()
     }
 
-    private fun setupDummyData() {
-        allReportsList.clear()
-        allReportsList.add(
-            PemerintahReport(
-                id = "#LP-MKS-0840",
-                date = "14 Feb 2025",
-                category = "JALAN & JEMBATAN",
-                title = "Lubang jalan sedalam 12cm di lajur cepat membahayakan pengendara motor",
-                location = "Jl. A.P. Pettarani (Depan Menara Bosowa), Rappocini",
-                imageUrl = "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?w=300",
-                status = "TERVERIFIKASI",
-                footerTag = "⚠️ Urgensi Tinggi",
-                actionText = "Detail & Tindak Lanjut ➔",
-                isPrimaryButton = true
-            )
-        )
+    private fun loadGovernmentDashboardData() {
+        val sharedPreferences = getSharedPreferences("UserSession", MODE_PRIVATE)
+        val rawToken = sharedPreferences.getString("KEY_TOKEN", "") ?: ""
+        val token = if (rawToken.startsWith("Bearer ")) rawToken else "Bearer $rawToken"
 
-        allReportsList.add(
-            PemerintahReport(
-                id = "#LP-MKS-0838",
-                date = "13 Feb 2025",
-                category = "PENERANGAN JALAN",
-                title = "Tiang lampu miring 30 derajat rawan roboh pasca tertabrak",
-                location = "Jl. Perintis Kemerdekaan KM 10, Tamalanrea, Makassar",
-                imageUrl = "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=300",
-                status = "SEDANG_DIPROSES",
-                footerTag = "👥 Regu B-Tamalanrea",
-                actionText = "Detail & Tindak Lanjut ➔",
-                isPrimaryButton = false
-            )
+        ApiClient.fetchWithFallback(
+            callFactory = { api -> api.getAllReports(token, null) },
+            onResponse = { _, response ->
+                if (response.isSuccessful && response.body() != null) {
+                    val allDto = response.body()!!
+                    updateStatsAndList(allDto)
+                }
+            },
+            onFailure = { _, _ ->
+                Toast.makeText(this@PemerintahDashboardActivity, "Gagal memuat data laporan dari server", Toast.LENGTH_SHORT).show()
+            }
         )
+    }
 
-        allReportsList.add(
-            PemerintahReport(
-                id = "#LP-MKS-0835",
-                date = "13 Feb 2025",
-                category = "SALURAN & DRAINASE",
-                title = "Sedimen lumpur tebal menyumbat gorong-gorong pembuangan",
-                location = "Jl. Hertasning Baru, Panakkukang, Makassar",
-                imageUrl = "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?w=300",
-                status = "TERVERIFIKASI",
-                footerTag = "⏰ Jadwal Esok Hari",
-                actionText = "Detail & Tindak Lanjut ➔",
-                isPrimaryButton = false
+    private fun updateStatsAndList(reports: List<ReportDto>) {
+        // Laporan hasil verifikasi dari admin memiliki status TERVERIFIKASI, DIPROSES, atau SELESAI
+        val verifiedCount = reports.count { it.resolvedStatusKey() == "TERVERIFIKASI" }
+        val inProgressCount = reports.count { it.resolvedStatusKey() == "DIPROSES" }
+        val completedCount = reports.count { it.resolvedStatusKey() == "SELESAI" }
+        val perluAksiCount = verifiedCount + inProgressCount
+
+        tvStatPerluAksi.text = perluAksiCount.toString()
+        tvStatVerified.text = verifiedCount.toString()
+        tvStatInProgress.text = inProgressCount.toString()
+        tvStatCompleted.text = completedCount.toString()
+
+        chipFilterAll.text = "Semua Tugas ($perluAksiCount)"
+        chipFilterVerified.text = "Terverifikasi ($verifiedCount)"
+        chipFilterInProgress.text = "Sedang Diproses ($inProgressCount)"
+
+        activeReportsList.clear()
+        val tasksReadyForGov = reports.filter {
+            val status = it.resolvedStatusKey()
+            status == "TERVERIFIKASI" || status == "DIPROSES"
+        }
+
+        tasksReadyForGov.forEach { dto ->
+            val statusKey = dto.resolvedStatusKey()
+            activeReportsList.add(
+                PemerintahReport(
+                    reportId = dto.resolvedId().toString(),
+                    id = dto.resolvedCode(),
+                    date = dto.resolvedCreatedAt(),
+                    category = dto.resolvedCategoryName(),
+                    title = dto.resolvedTitle(),
+                    location = dto.resolvedLocationName(),
+                    imageUrl = dto.resolvedPhotoUrl() ?: "",
+                    status = if (statusKey == "DIPROSES") "SEDANG_DIPROSES" else "TERVERIFIKASI",
+                    footerTag = "Pelapor: ${dto.resolvedReporterName()}",
+                    actionText = "Detail & Tindak Lanjut",
+                    isPrimaryButton = statusKey == "TERVERIFIKASI"
+                )
             )
-        )
+        }
+
+        applyCurrentFilter()
     }
 
     private fun setupFilterChips() {
         chipFilterAll.setOnClickListener {
+            currentFilterStatus = "ALL"
             selectChip(chipFilterAll)
             unselectChip(chipFilterVerified)
             unselectChip(chipFilterInProgress)
-            reportAdapter.updateList(allReportsList)
+            applyCurrentFilter()
         }
 
         chipFilterVerified.setOnClickListener {
+            currentFilterStatus = "TERVERIFIKASI"
             unselectChip(chipFilterAll)
             selectChip(chipFilterVerified)
             unselectChip(chipFilterInProgress)
-            val filtered = allReportsList.filter { it.status.uppercase() == "TERVERIFIKASI" }
-            reportAdapter.updateList(filtered)
+            applyCurrentFilter()
         }
 
         chipFilterInProgress.setOnClickListener {
+            currentFilterStatus = "SEDANG_DIPROSES"
             unselectChip(chipFilterAll)
             unselectChip(chipFilterVerified)
             selectChip(chipFilterInProgress)
-            val filtered = allReportsList.filter { it.status.uppercase() == "SEDANG_DIPROSES" }
-            reportAdapter.updateList(filtered)
+            applyCurrentFilter()
+        }
+    }
+
+    private fun applyCurrentFilter() {
+        val filtered = when (currentFilterStatus) {
+            "TERVERIFIKASI" -> activeReportsList.filter { it.status == "TERVERIFIKASI" }
+            "SEDANG_DIPROSES" -> activeReportsList.filter { it.status == "SEDANG_DIPROSES" }
+            else -> activeReportsList.toList()
+        }
+
+        reportAdapter.updateList(filtered)
+        if (filtered.isEmpty()) {
+            tvEmptyReports.visibility = View.VISIBLE
+            rvReports.visibility = View.GONE
+        } else {
+            tvEmptyReports.visibility = View.GONE
+            rvReports.visibility = View.VISIBLE
         }
     }
 
     private fun selectChip(chip: TextView) {
         chip.background = ContextCompat.getDrawable(this, R.drawable.bg_chip_selected)
         chip.setTextColor(ContextCompat.getColor(this, android.R.color.white))
+        chip.setTypeface(null, android.graphics.Typeface.BOLD)
     }
 
     private fun unselectChip(chip: TextView) {
         chip.background = ContextCompat.getDrawable(this, R.drawable.bg_chip_unselected)
-        chip.setTextColor(android.graphics.Color.parseColor("#434653"))
-    }
-
-    private fun setupBottomNavigation() {
-        val navHome = findViewById<View>(R.id.navPemerintahHome)
-        val navMap = findViewById<View>(R.id.navPemerintahMap)
-        val navHistory = findViewById<View>(R.id.navPemerintahHistory)
-        val navProfile = findViewById<View>(R.id.navPemerintahProfile)
-
-        val ivHome = findViewById<ImageView>(R.id.ivNavPemerintahHome)
-        val tvHome = findViewById<TextView>(R.id.tvNavPemerintahHome)
-        ivHome?.setColorFilter(android.graphics.Color.parseColor("#003C90"))
-        tvHome?.setTextColor(android.graphics.Color.parseColor("#003C90"))
-        tvHome?.setTypeface(null, android.graphics.Typeface.BOLD)
-
-        navHome?.setOnClickListener {
-            Toast.makeText(this, "Anda berada di Beranda Pemerintah", Toast.LENGTH_SHORT).show()
-        }
-
-        navMap?.setOnClickListener {
-            val intent = Intent(this, PemerintahMapActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-
-        navHistory?.setOnClickListener {
-            val intent = Intent(this, PemerintahHistoryActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-
-        navProfile?.setOnClickListener {
-            val intent = Intent(this, PemerintahProfileActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
+        chip.setTextColor(Color.parseColor("#434653"))
+        chip.setTypeface(null, android.graphics.Typeface.NORMAL)
     }
 }

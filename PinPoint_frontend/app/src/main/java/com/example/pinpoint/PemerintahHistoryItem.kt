@@ -1,17 +1,21 @@
 package com.example.pinpoint
 
 data class PemerintahHistoryItem(
+    val reportId: String,
     val id: String,
+    val categoryId: Long?,
+    val categoryName: String,
     val finishDate: String,
-    val status: String,          // "ARSIP_DITUTUP" or "SELESAI"
+    val status: String,
     val title: String,
     val location: String,
-    val sectionHeader: String,   // e.g. "Komparasi Hasil Pengerjaan (BAP-0840)"
-    val sectionSubHeader: String,// e.g. "Ketuk untuk perbesar" or "4 Jam Pengerjaan"
+    val sectionHeader: String,
+    val sectionSubHeader: String,
     val beforeImageUrl: String,
-    val beforeLabel: String,     // "SEBELUM", "KERUSAKAN", "PENGERUKAN"
+    val beforeLabel: String,
     val afterImageUrl: String,
-    val afterLabel: String,      // "SESUDAH", "TERPASANG", "ALIRAN BERSIH"
+    val afterLabel: String,
+    val allPhotos: List<String> = emptyList(),
     val workNotes: String,
     val teamName: String
 )

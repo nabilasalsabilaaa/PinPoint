@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F6F8FC">
+    android:background="#F8F9FF">
 
     <!-- Scrollable Content -->
     <ScrollView
@@ -23,7 +23,7 @@
             android:paddingHorizontal="16dp"
             android:paddingTop="24dp">
 
-            <!-- 1. Header Salam Sugeng -->
+            <!-- 1. Header Salam -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -36,16 +36,16 @@
                     android:layout_height="wrap_content"
                     android:text="Halo, "
                     android:textColor="#0B1C30"
-                    android:textSize="24sp"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tvOfficerName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sugeng"
-                    android:textColor="#003C90"
-                    android:textSize="24sp"
+                    android:text="Petugas"
+                    android:textColor="#0B3C8C"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -96,16 +96,17 @@
                                     android:background="@drawable/bg_badge_blue_light"
                                     android:gravity="center"
                                     android:text="!"
-                                    android:textColor="#003C90"
+                                    android:textColor="#0B3C8C"
                                     android:textSize="11sp"
                                     android:textStyle="bold" />
                             </RelativeLayout>
 
                             <TextView
+                                android:id="@+id/tvStatPerluAksi"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="12dp"
-                                android:text="12"
+                                android:text="0"
                                 android:textColor="#0B1C30"
                                 android:textSize="26sp"
                                 android:textStyle="bold" />
@@ -114,7 +115,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="Laporan Baru"
+                                android:text="Tugas Aktif"
                                 android:textColor="#737784"
                                 android:textSize="10sp" />
                         </LinearLayout>
@@ -144,11 +145,12 @@
                                 android:textSize="12sp" />
 
                             <TextView
+                                android:id="@+id/tvStatVerified"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="16dp"
-                                android:text="28"
-                                android:textColor="#003C90"
+                                android:text="0"
+                                android:textColor="#0B3C8C"
                                 android:textSize="26sp"
                                 android:textStyle="bold" />
 
@@ -186,10 +188,11 @@
                                 android:textSize="12sp" />
 
                             <TextView
+                                android:id="@+id/tvStatInProgress"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="16dp"
-                                android:text="8"
+                                android:text="0"
                                 android:textColor="#613EEA"
                                 android:textSize="26sp"
                                 android:textStyle="bold" />
@@ -227,10 +230,11 @@
                                 android:textSize="12sp" />
 
                             <TextView
+                                android:id="@+id/tvStatCompleted"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="16dp"
-                                android:text="142"
+                                android:text="0"
                                 android:textColor="#00A389"
                                 android:textSize="26sp"
                                 android:textStyle="bold" />
@@ -239,7 +243,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="Bulan Ini"
+                                android:text="Laporan Tuntas"
                                 android:textColor="#737784"
                                 android:textSize="10sp" />
                         </LinearLayout>
@@ -280,7 +284,7 @@
                         android:background="@drawable/bg_chip_selected"
                         android:paddingHorizontal="14dp"
                         android:paddingVertical="8dp"
-                        android:text="Semua Tugas (40)"
+                        android:text="Semua Tugas (0)"
                         android:textColor="#FFFFFF"
                         android:textSize="12sp"
                         android:textStyle="bold"
@@ -294,7 +298,7 @@
                         android:background="@drawable/bg_chip_unselected"
                         android:paddingHorizontal="14dp"
                         android:paddingVertical="8dp"
-                        android:text="● Terverifikasi (28)"
+                        android:text="Terverifikasi (0)"
                         android:textColor="#434653"
                         android:textSize="12sp"
                         android:layout_marginEnd="8dp" />
@@ -307,11 +311,25 @@
                         android:background="@drawable/bg_chip_unselected"
                         android:paddingHorizontal="14dp"
                         android:paddingVertical="8dp"
-                        android:text="● Sedang Diproses (8)"
+                        android:text="Sedang Diproses (0)"
                         android:textColor="#434653"
                         android:textSize="12sp" />
                 </LinearLayout>
             </HorizontalScrollView>
+
+            <!-- Empty State -->
+            <TextView
+                android:id="@+id/tvEmptyPemerintahReports"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_white_card"
+                android:gravity="center"
+                android:padding="24dp"
+                android:text="Belum ada tugas laporan pada status ini."
+                android:textColor="#64748B"
+                android:textSize="13sp"
+                android:visibility="gone"
+                android:layout_marginBottom="16dp" />
 
             <!-- 5. Daftar Laporan (RecyclerView) -->
             <androidx.recyclerview.widget.RecyclerView
@@ -328,7 +346,7 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="#003C90"
+                app:cardBackgroundColor="#0B3C8C"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="20dp">
 
@@ -350,7 +368,7 @@
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:background="@drawable/bg_circle_blue_btn"
-                            android:backgroundTint="#0B3C8C"
+                            android:backgroundTint="#1E4E9E"
                             android:layout_marginEnd="12dp">
 
                             <ImageView
@@ -378,7 +396,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="2 regu stand by di Posko Pettarani"
+                                android:text="Tim teknis siap ditugaskan ke lokasi laporan"
                                 android:textColor="#90CAF9"
                                 android:textSize="11sp" />
                         </LinearLayout>
@@ -394,7 +412,7 @@
                         android:paddingHorizontal="14dp"
                         android:paddingVertical="9dp"
                         android:text="Panggil Tim"
-                        android:textColor="#003C90"
+                        android:textColor="#0B3C8C"
                         android:textSize="12sp"
                         android:textStyle="bold"
                         android:clickable="true"
@@ -405,12 +423,12 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Floating Bottom Navigation -->
+    <!-- Floating Bottom Navigation (Selaras dengan Admin) -->
     <include
         android:id="@+id/bottomNavContainer"
         layout="@layout/layout_pemerintah_bottom_nav"
         android:layout_width="match_parent"
-        android:layout_height="88dp"
+        android:layout_height="96dp"
         android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

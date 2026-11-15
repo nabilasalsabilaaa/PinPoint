@@ -31,14 +31,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="#LP-MKS-0840"
-                    android:textColor="#003C90"
+                    android:textColor="#0B3C8C"
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="  •  "
+                    android:text="  |  "
                     android:textColor="#94A3B8"
                     android:textSize="12sp" />
 
@@ -60,8 +60,8 @@
                 android:background="@drawable/bg_badge_blue_light"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="4dp"
-                android:text="● Terverifikasi"
-                android:textColor="#003C90"
+                android:text="Terverifikasi"
+                android:textColor="#0B3C8C"
                 android:textSize="10sp"
                 android:textStyle="bold" />
         </RelativeLayout>
@@ -91,15 +91,15 @@
                         android:layout_width="14dp"
                         android:layout_height="14dp"
                         android:src="@drawable/category"
-                        app:tint="#003C90"
+                        app:tint="#0B3C8C"
                         android:layout_marginEnd="4dp" />
 
                     <TextView
                         android:id="@+id/tvCategoryName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="JALAN &amp; JEMBATAN"
-                        android:textColor="#003C90"
+                        android:text="INFRASTRUKTUR JALAN"
+                        android:textColor="#0B3C8C"
                         android:textSize="11sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -108,7 +108,7 @@
                     android:id="@+id/tvReportTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Lubang jalan sedalam 12cm di lajur cepat membahayakan pengendara motor"
+                    android:text="Judul Laporan"
                     android:textColor="#0B1C30"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -122,7 +122,7 @@
                 android:layout_width="72dp"
                 android:layout_height="72dp"
                 android:scaleType="centerCrop"
-                android:src="@android:drawable/ic_menu_gallery"
+                android:src="@drawable/sampul"
                 android:background="#E2E8F0" />
         </LinearLayout>
 
@@ -140,14 +140,14 @@
                 android:layout_width="14dp"
                 android:layout_height="14dp"
                 android:src="@drawable/location"
-                app:tint="#003C90"
+                app:tint="#0B3C8C"
                 android:layout_marginEnd="6dp" />
 
             <TextView
                 android:id="@+id/tvReportLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Jl. A.P. Pettarani (Depan Menara Bosowa), Rappocini"
+                android:text="Lokasi Laporan"
                 android:textColor="#475569"
                 android:textSize="11sp"
                 android:singleLine="true"
@@ -164,9 +164,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:text="⚠️ Urgensi Tinggi"
-                android:textColor="#D32F2F"
-                android:textSize="12sp"
+                android:text="Pelapor: Warga"
+                android:textColor="#475569"
+                android:textSize="11sp"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -187,7 +187,7 @@
                     android:id="@+id/tvBtnActionText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Detail &amp; Tindak Lanjut ➔"
+                    android:text="Detail &amp; Tindak Lanjut"
                     android:textColor="#FFFFFF"
                     android:textSize="11sp"
                     android:textStyle="bold" />

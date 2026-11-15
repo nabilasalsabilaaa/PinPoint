@@ -5,26 +5,29 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F6F8FC">
+    android:background="#F8F9FF">
 
     <!-- Top App Bar -->
     <LinearLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="#FFFFFF"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
+        android:padding="16dp"
         android:elevation="2dp"
         android:layout_alignParentTop="true">
 
         <ImageView
             android:id="@+id/btnBack"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@android:drawable/ic_menu_revert"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_white_rounded_btn"
+            android:padding="8dp"
+            android:src="@drawable/back"
             app:tint="#0B1C30"
+            android:elevation="1dp"
             android:layout_marginEnd="16dp"
             android:clickable="true"
             android:focusable="true" />
@@ -34,7 +37,7 @@
             android:layout_height="wrap_content"
             android:text="Detail Laporan &amp; Aksi Perbaikan"
             android:textColor="#0B1C30"
-            android:textSize="16sp"
+            android:textSize="17sp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -55,7 +58,7 @@
             android:layout_height="48dp"
             android:background="@drawable/bg_btn_primary"
             android:gravity="center"
-            android:text="✔ Tandai Selesai &amp; Simpan Bukti"
+            android:text="Tandai Selesai &amp; Kirim Bukti"
             android:textColor="#FFFFFF"
             android:textSize="13sp"
             android:textStyle="bold"
@@ -69,8 +72,8 @@
             android:layout_height="48dp"
             android:background="@drawable/bg_btn_secondary"
             android:gravity="center"
-            android:text="📑 Simpan Draft"
-            android:textColor="#003C90"
+            android:text="Tandai Sedang Diproses"
+            android:textColor="#0B3C8C"
             android:textSize="13sp"
             android:textStyle="bold"
             android:clickable="true"
@@ -120,8 +123,8 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentStart="true"
                             android:layout_centerVertical="true"
-                            android:text="#LP-MKS-0840"
-                            android:textColor="#003C90"
+                            android:text="#LP-MKS-2026-0001"
+                            android:textColor="#0B3C8C"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
@@ -131,14 +134,24 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
-                            android:background="@drawable/bg_badge_purple_light"
+                            android:background="@drawable/bg_badge_blue_light"
                             android:paddingHorizontal="10dp"
                             android:paddingVertical="4dp"
-                            android:text="● SEDANG DIPROSES"
-                            android:textColor="#613EEA"
+                            android:text="Terverifikasi"
+                            android:textColor="#0B3C8C"
                             android:textSize="10sp"
                             android:textStyle="bold" />
                     </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/tvDetailReportTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Judul Laporan"
+                        android:textColor="#0B1C30"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -150,14 +163,14 @@
                             android:id="@+id/tvDetailDate"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="🕒 14 Feb 2025, 08:30 WITA"
+                            android:text="Memuat tanggal..."
                             android:textColor="#737784"
                             android:textSize="12sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="  •  "
+                            android:text="  |  "
                             android:textColor="#94A3B8"
                             android:textSize="12sp" />
 
@@ -165,7 +178,7 @@
                             android:id="@+id/tvDetailUrgency"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Urgensi Tinggi"
+                            android:text="Prioritas Standar"
                             android:textColor="#D32F2F"
                             android:textSize="12sp"
                             android:textStyle="bold" />
@@ -213,17 +226,31 @@
                                     android:layout_height="20dp"
                                     android:layout_gravity="center"
                                     android:src="@drawable/user"
-                                    app:tint="#003C90" />
+                                    app:tint="#0B3C8C" />
                             </FrameLayout>
 
-                            <TextView
-                                android:id="@+id/tvReporterName"
+                            <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Andi Muhammad"
-                                android:textColor="#0B1C30"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/tvReporterName"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Nama Pelapor"
+                                    android:textColor="#0B1C30"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tvReporterPhone"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="-"
+                                    android:textColor="#64748B"
+                                    android:textSize="11sp" />
+                            </LinearLayout>
                         </LinearLayout>
 
                         <TextView
@@ -235,8 +262,8 @@
                             android:background="@drawable/bg_badge_blue_light"
                             android:paddingHorizontal="10dp"
                             android:paddingVertical="4dp"
-                            android:text="Jalan &amp; Jembatan"
-                            android:textColor="#003C90"
+                            android:text="Kategori"
+                            android:textColor="#0B3C8C"
                             android:textSize="11sp"
                             android:textStyle="bold" />
                     </RelativeLayout>
@@ -253,7 +280,7 @@
                             android:id="@+id/tvDetailLocationTitle"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="📍 Jl. A.P. Pettarani No. 42"
+                            android:text="Lokasi Laporan"
                             android:textColor="#0B1C30"
                             android:textSize="12sp"
                             android:textStyle="bold"
@@ -263,7 +290,7 @@
                             android:id="@+id/tvDetailLocationSub"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="(Depan Menara Bosowa), Kec. Rappocini, Makassar"
+                            android:text="Kota Makassar, Sulawesi Selatan"
                             android:textColor="#475569"
                             android:textSize="11sp"
                             android:layout_marginBottom="8dp" />
@@ -278,7 +305,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentStart="true"
                                 android:layout_centerVertical="true"
-                                android:text="⊙ GPS: -5.1523, 119.4382"
+                                android:text="GPS: -5.1476, 119.4327"
                                 android:textColor="#737784"
                                 android:textSize="11sp" />
 
@@ -288,8 +315,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerVertical="true"
-                                android:text="Buka Peta Navigasi ↗"
-                                android:textColor="#003C90"
+                                android:text="Buka Peta Navigasi"
+                                android:textColor="#0B3C8C"
                                 android:textSize="11sp"
                                 android:textStyle="bold"
                                 android:clickable="true"
@@ -317,7 +344,7 @@
                             android:id="@+id/tvCitizenDescription"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="&quot;Lubang jalan sedalam 12cm di lajur kanan arah Flyover. Sering membuat motor oleng dan hampir jatuh.&quot;"
+                            android:text="-"
                             android:textColor="#0B1C30"
                             android:textSize="12sp"
                             android:lineSpacingExtra="3dp" />
@@ -333,32 +360,50 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentStart="true"
                             android:layout_centerVertical="true"
-                            android:text="⚠️ FOTO KONDISI AWAL DARI WARGA"
+                            android:text="FOTO KONDISI AWAL DARI WARGA"
                             android:textColor="#D32F2F"
                             android:textSize="11sp"
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/tvInitialPhotoTimestamp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
-                            android:text="14 Feb, 08:24 WITA"
+                            android:text="-"
                             android:textColor="#737784"
                             android:textSize="11sp" />
                     </RelativeLayout>
 
                     <FrameLayout
+                        android:id="@+id/layoutConditionBefore"
                         android:layout_width="match_parent"
                         android:layout_height="180dp"
-                        android:background="#E2E8F0">
+                        android:background="#E2E8F0"
+                        android:clickable="true"
+                        android:focusable="true">
 
                         <ImageView
                             android:id="@+id/ivConditionBefore"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scaleType="centerCrop"
-                            android:src="@android:drawable/ic_menu_gallery" />
+                            android:src="@drawable/sampul" />
+
+                        <TextView
+                            android:id="@+id/tvBeforePhotoCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="top|end"
+                            android:layout_margin="10dp"
+                            android:background="#B3000000"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"
+                            android:text="Ketuk untuk perbesar / geser"
+                            android:textColor="#FFFFFF"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -429,7 +474,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Lengkapi verifikasi pengerjaan untuk validasi pemerintah"
+                                android:text="Unggah foto bukti pengerjaan (bisa lebih dari 1 foto) &amp; keterangan"
                                 android:textColor="#737784"
                                 android:textSize="11sp" />
                         </LinearLayout>
@@ -445,18 +490,19 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentStart="true"
                             android:layout_centerVertical="true"
-                            android:text="✔ FOTO BUKTI SELESAI DIPERBAIKI"
+                            android:text="FOTO BUKTI SELESAI DIPERBAIKI"
                             android:textColor="#00A389"
                             android:textSize="11sp"
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/tvAfterPhotoCountBadge"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
-                            android:text="📍 Geotagged"
-                            android:textColor="#003C90"
+                            android:text="Belum ada foto dipilih"
+                            android:textColor="#0B3C8C"
                             android:textSize="11sp"
                             android:textStyle="bold" />
                     </RelativeLayout>
@@ -468,7 +514,7 @@
                         android:background="#E2E8F0"
                         android:clickable="true"
                         android:focusable="true"
-                        android:layout_marginBottom="16dp">
+                        android:layout_marginBottom="10dp">
 
                         <ImageView
                             android:id="@+id/ivConditionAfter"
@@ -492,17 +538,55 @@
                         </FrameLayout>
 
                         <TextView
+                            android:id="@+id/tvAfterPhotoOverlayHint"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="bottom"
                             android:background="#99000000"
                             android:paddingHorizontal="12dp"
                             android:paddingVertical="6dp"
-                            android:text="Tersertifikasi Geotag &amp; Waktu\nMakassar, 14 Feb 2025 • 15:42 WITA"
+                            android:text="Ketuk untuk memilih foto bukti perbaikan (bisa pilih lebih dari 1 foto)"
                             android:textColor="#FFFFFF"
                             android:textSize="11sp"
                             android:textStyle="bold" />
                     </FrameLayout>
+
+                    <!-- Action Buttons for Multiple Photos -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp">
+
+                        <TextView
+                            android:id="@+id/btnAddMoreEvidencePhoto"
+                            android:layout_width="0dp"
+                            android:layout_height="38dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_btn_secondary"
+                            android:gravity="center"
+                            android:text="Tambah Foto Bukti"
+                            android:textColor="#0B3C8C"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:layout_marginEnd="8dp"
+                            android:clickable="true"
+                            android:focusable="true" />
+
+                        <TextView
+                            android:id="@+id/btnPreviewEvidencePhotos"
+                            android:layout_width="0dp"
+                            android:layout_height="38dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_location_box"
+                            android:gravity="center"
+                            android:text="Lihat &amp; Geser Foto (0)"
+                            android:textColor="#0B1C30"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:clickable="true"
+                            android:focusable="true" />
+                    </LinearLayout>
 
                     <TextView
                         android:layout_width="match_parent"
@@ -520,8 +604,9 @@
                         android:background="@drawable/kolom_form"
                         android:gravity="top"
                         android:padding="12dp"
-                        android:text="Penebalan aspal hotmix dan pemadatan lubang jalan sepanjang 4 meter telah rampung dan siap dilalui dengan aman."
+                        android:hint="Tuliskan keterangan hasil perbaikan fasilitas umum di lapangan..."
                         android:textColor="#0B1C30"
+                        android:textColorHint="#94A3B8"
                         android:textSize="12sp"
                         android:lineSpacingExtra="3dp"
                         android:layout_marginBottom="16dp" />
