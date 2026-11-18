@@ -47,7 +47,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
                 btnTabEmail.setBackgroundColor(Color.WHITE)
                 btnTabEmail.elevation = 4f
                 tvTabEmailText.setTextColor(Color.parseColor("#0B1C30"))
-                ivTabEmailIcon.setColorFilter(Color.parseColor("#003C90"))
+                ivTabEmailIcon.setColorFilter(Color.parseColor("#0B58CA"))
 
                 // Style Tab Phone Inactive
                 btnTabPhone.background = null
@@ -73,7 +73,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
                 btnTabPhone.setBackgroundColor(Color.WHITE)
                 btnTabPhone.elevation = 4f
                 tvTabPhoneText.setTextColor(Color.parseColor("#0B1C30"))
-                ivTabPhoneIcon.setColorFilter(Color.parseColor("#003C90"))
+                ivTabPhoneIcon.setColorFilter(Color.parseColor("#0B58CA"))
 
                 // Style Tab Email Inactive
                 btnTabEmail.background = null

@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="#0B3C8C"
+                app:cardBackgroundColor="@color/primary_blue"
                 android:layout_marginBottom="20dp">
 
                 <RelativeLayout
@@ -81,7 +81,7 @@
                         android:paddingHorizontal="16dp"
                         android:paddingVertical="10dp"
                         android:text="Periksa →"
-                        android:textColor="#0B3C8C"
+                        android:textColor="@color/primary_blue"
                         android:textSize="13sp"
                         android:textStyle="bold" />
                 </RelativeLayout>
@@ -269,7 +269,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:text="Lihat Semua"
-                    android:textColor="#0B3C8C"
+                    android:textColor="@color/primary_blue"
                     android:textSize="12sp"
                     android:textStyle="bold" />
             </RelativeLayout>

@@ -89,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:text="Unik &amp; Baku"
-                android:textColor="#0B3C8C"
+                android:textColor="@color/primary_blue"
                 android:textSize="12sp"
                 android:textStyle="bold" />
         </RelativeLayout>
@@ -111,7 +111,7 @@
                 android:drawablePadding="8dp"
                 android:paddingHorizontal="14dp"
                 android:text="KTG-MKS-06"
-                android:textColor="#0B3C8C"
+                android:textColor="@color/primary_blue"
                 android:textStyle="bold"
                 android:textSize="13sp"
                 android:layout_marginEnd="8dp" />
@@ -123,7 +123,7 @@
                 android:background="@drawable/bg_chip_blue_light"
                 android:padding="12dp"
                 android:src="@android:drawable/ic_popup_sync"
-                app:tint="#0B3C8C" />
+                app:tint="@color/primary_blue" />
         </LinearLayout>
 
         <!-- 4. Pilih Ikon Visual Radar (8 Kartu Pilihan Ikon) -->
@@ -146,7 +146,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:text="Ikon Terpilih: Jalan"
-                android:textColor="#0B3C8C"
+                android:textColor="@color/primary_blue"
                 android:textSize="12sp"
                 android:textStyle="bold" />
         </RelativeLayout>
@@ -348,7 +348,7 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/busStop"
+                    android:src="@drawable/bus_stop"
                     app:tint="#434653" />
 
                 <TextView
@@ -437,7 +437,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@android:drawable/ic_dialog_info"
-                    app:tint="#0B3C8C"
+                    app:tint="@color/primary_blue"
                     android:layout_marginEnd="10dp"
                     android:layout_marginTop="2dp" />
 
@@ -450,7 +450,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="SINKRONISASI"
-                        android:textColor="#0B3C8C"
+                        android:textColor="@color/primary_blue"
                         android:textSize="12sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="2dp" />
@@ -475,7 +475,7 @@
             android:textColor="#FFFFFF"
             android:textSize="13sp"
             android:textStyle="bold"
-            android:backgroundTint="#0B3C8C"
+            android:backgroundTint="@color/primary_blue"
             android:layout_marginBottom="12dp" />
 
         <Button

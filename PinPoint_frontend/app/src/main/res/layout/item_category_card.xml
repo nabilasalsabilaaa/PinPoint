@@ -125,7 +125,7 @@
                     android:background="@drawable/bg_badge_blue_light"
                     android:padding="6dp"
                     android:src="@drawable/edit"
-                    app:tint="##0B1C30"
+                    app:tint="#0B1C30"
                     android:layout_marginEnd="8dp" />
 
                 <ImageView

@@ -2,8 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Izin Akses Internet untuk Retrofit / Spring Boot -->
+    <!-- Izin Akses Internet & Kamera -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -36,9 +37,34 @@
             android:name=".Register"
             android:exported="false" />
 
-        <!-- Halaman Dashboard -->
+        <!-- Halaman Dashboard User -->
         <activity
             android:name=".DashboardActivity"
+            android:exported="false" />
+
+        <!-- Halaman Form Pelaporan -->
+        <activity
+            android:name=".FormPelaporanActivity"
+            android:exported="false" />
+
+        <!-- Halaman Detail Laporan & Timeline -->
+        <activity
+            android:name=".DetailLaporanActivity"
+            android:exported="false" />
+
+        <!-- Halaman Tab Riwayat Laporan -->
+        <activity
+            android:name=".RiwayatActivity"
+            android:exported="false" />
+
+        <!-- Halaman Notifikasi -->
+        <activity
+            android:name=".NotifikasiActivity"
+            android:exported="false" />
+
+        <!-- Halaman Profil User -->
+        <activity
+            android:name=".ProfilActivity"
             android:exported="false" />
 
     </application>

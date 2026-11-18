@@ -186,7 +186,7 @@ class Register : AppCompatActivity() {
         val startTerms = termsText.indexOf("Syarat & Ketentuan")
         if (startTerms != -1) {
             spannableString.setSpan(
-                ForegroundColorSpan(Color.parseColor("#003C90")),
+                ForegroundColorSpan(Color.parseColor("#0B58CA")),
                 startTerms, startTerms + "Syarat & Ketentuan".length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
@@ -195,7 +195,7 @@ class Register : AppCompatActivity() {
         val startPrivacy = termsText.indexOf("Kebijakan Privasi")
         if (startPrivacy != -1) {
             spannableString.setSpan(
-                ForegroundColorSpan(Color.parseColor("#003C90")),
+                ForegroundColorSpan(Color.parseColor("#0B58CA")),
                 startPrivacy, startPrivacy + "Kebijakan Privasi".length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )

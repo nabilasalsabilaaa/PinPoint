@@ -353,7 +353,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Login here"
-                        android:textColor="#003C90"
+                        android:textColor="@color/primary_blue"
                         android:textSize="14sp"
                         android:textStyle="bold" />
                 </LinearLayout>

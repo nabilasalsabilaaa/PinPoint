@@ -78,28 +78,34 @@ class Login : AppCompatActivity() {
                         if (loginData?.token != null) {
                             val editor = sharedPreferences.edit()
 
+                            // Selalu simpan data sesi pengguna aktif yang diterima dari backend
+                            editor.putString("KEY_TOKEN", loginData.token)
+                            editor.putString("KEY_NAME", loginData.nama)
+                            editor.putString("KEY_EMAIL", loginData.email)
+                            editor.putString("KEY_ROLE", loginData.role)
+
                             // Cek apakah Checkbox "Ingat Saya" dicentang oleh user
                             if (cbRememberMe.isChecked) {
-                                editor.putString("KEY_TOKEN", loginData.token)
-                                editor.putString("KEY_NAME", loginData.nama)
                                 editor.putBoolean("KEY_IS_LOGGED_IN", true)
-
-                                // Simpan kredensial untuk auto-fill
                                 editor.putBoolean("KEY_REMEMBER_ME", true)
                                 editor.putString("KEY_SAVED_IDENTIFIER", emailOrPhone)
                                 editor.putString("KEY_SAVED_PASSWORD", password)
                             } else {
-                                // Hapus kredensial jika tidak dicentang
+                                editor.putBoolean("KEY_IS_LOGGED_IN", false)
                                 editor.remove("KEY_REMEMBER_ME")
                                 editor.remove("KEY_SAVED_IDENTIFIER")
                                 editor.remove("KEY_SAVED_PASSWORD")
                             }
                             editor.apply()
 
-                            Toast.makeText(this@Login, "Selamat datang, ${loginData.nama}!", Toast.LENGTH_SHORT).show()
+                            val displayName = loginData.nama ?: "Pengguna"
+                            Toast.makeText(this@Login, "Selamat datang, $displayName!", Toast.LENGTH_SHORT).show()
 
-                            // Pindah ke Dashboard
-                            val intent = Intent(this@Login, DashboardActivity::class.java)
+                            // Pindah ke Dashboard dengan membawa data sesi
+                            val intent = Intent(this@Login, DashboardActivity::class.java).apply {
+                                putExtra("EXTRA_NAME", loginData.nama)
+                                putExtra("EXTRA_EMAIL", loginData.email)
+                            }
                             startActivity(intent)
                             finish()
                         } else {
