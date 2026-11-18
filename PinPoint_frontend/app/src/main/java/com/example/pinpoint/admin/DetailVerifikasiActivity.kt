@@ -13,6 +13,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.example.pinpoint.PhotoSliderDialog
 import com.example.pinpoint.R
 import com.example.pinpoint.network.ApiClient
 import com.example.pinpoint.network.ReportDto
@@ -116,7 +117,7 @@ class DetailVerifikasiActivity : AppCompatActivity() {
                     val report = response.body()!!
                     currentReport = report
                     tvReportIdCode.text = "ID ${report.resolvedCode()}"
-                    tvReportStatusBadge.text = "● ${report.resolvedStatusDisplay()}"
+                    tvReportStatusBadge.text = report.resolvedStatusDisplay()
                     tvReportTitle.text = "${report.resolvedCategoryName()} - ${report.resolvedTitle()}"
                     tvCitizenDescription.text = report.resolvedDescription()
                     val lat = report.latitude ?: -5.1476
@@ -125,7 +126,56 @@ class DetailVerifikasiActivity : AppCompatActivity() {
                     tvReportAddressTitle.text = report.resolvedLocationName()
                     tvReporterNameValue.text = report.resolvedReporterName()
                     tvReporterPhone.text = report.resolvedReporterPhone()
-                    tvPhotoMetaInfo.text = "Kategori: ${report.resolvedCategoryName()} • ${report.resolvedCreatedAt()}"
+                    val citizenPhotos = report.resolvedPhotoUrls()
+                    tvPhotoMetaInfo.text = "Kategori: ${report.resolvedCategoryName()} | ${report.resolvedCreatedAt()}"
+
+                    ivReportPhoto.setOnClickListener {
+                        if (citizenPhotos.isNotEmpty()) {
+                            PhotoSliderDialog.show(
+                                this@DetailVerifikasiActivity,
+                                "Foto Laporan Warga (${citizenPhotos.size} Foto)",
+                                citizenPhotos,
+                                0
+                            )
+                        }
+                    }
+
+                    val cardGovEvidence = findViewById<View>(R.id.cardGovEvidenceDetail)
+                    val ivGovEvidence = findViewById<ImageView>(R.id.ivGovEvidencePhoto)
+                    val tvGovEvidenceCount = findViewById<TextView>(R.id.tvGovEvidencePhotoCount)
+                    val tvGovEvidenceNotes = findViewById<TextView>(R.id.tvGovEvidenceNotes)
+                    val layoutGovEvidencePhoto = findViewById<View>(R.id.layoutGovEvidencePhoto)
+
+                    val evPhotos = report.resolvedEvidencePhotoUrls()
+                    val evNotes = report.resolvedEvidenceNotes()
+                    if (evPhotos.isNotEmpty() || evNotes.isNotBlank()) {
+                        cardGovEvidence?.visibility = View.VISIBLE
+                        tvGovEvidenceNotes?.text = if (evNotes.isNotBlank()) {
+                            "Catatan Pengerjaan (${report.resolvedCompletedBy()}): $evNotes"
+                        } else {
+                            "Diselesaikan oleh ${report.resolvedCompletedBy()}"
+                        }
+                        if (evPhotos.isNotEmpty() && ivGovEvidence != null) {
+                            tvGovEvidenceCount?.text = "${evPhotos.size} Foto Bukti - Ketuk untuk geser"
+                            Glide.with(this@DetailVerifikasiActivity)
+                                .load(evPhotos[0])
+                                .placeholder(R.drawable.sampul)
+                                .error(R.drawable.sampul)
+                                .into(ivGovEvidence)
+                            layoutGovEvidencePhoto?.setOnClickListener {
+                                PhotoSliderDialog.show(
+                                    this@DetailVerifikasiActivity,
+                                    "Foto Bukti Perbaikan (${evPhotos.size} Foto)",
+                                    evPhotos,
+                                    0
+                                )
+                            }
+                        } else {
+                            layoutGovEvidencePhoto?.visibility = View.GONE
+                        }
+                    } else {
+                        cardGovEvidence?.visibility = View.GONE
+                    }
 
                     when (report.resolvedStatusKey()) {
                         "MENUNGGU_VERIFIKASI" -> {

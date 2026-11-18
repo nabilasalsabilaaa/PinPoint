@@ -45,7 +45,13 @@ class AdminDashboardActivity : AppCompatActivity() {
         val roleStr = (sharedPreferences.getString("KEY_ROLE", "") ?: "").uppercase()
         val isAdmin = idRole == 1L || roleStr == "ADMIN" || roleStr == "ROLE_ADMIN"
         if (!isAdmin) {
-            startActivity(Intent(this, com.example.pinpoint.DashboardActivity::class.java))
+            val isPemerintah = idRole == 3L || roleStr.contains("PEMERINTAH") || roleStr.contains("DINAS")
+            val redirectIntent = if (isPemerintah) {
+                Intent(this, com.example.pinpoint.PemerintahDashboardActivity::class.java)
+            } else {
+                Intent(this, com.example.pinpoint.DashboardActivity::class.java)
+            }
+            startActivity(redirectIntent)
             finish()
             return
         }

@@ -135,13 +135,19 @@ class Login : AppCompatActivity() {
 
                             Toast.makeText(this@Login, "Selamat datang, $displayName!", Toast.LENGTH_SHORT).show()
 
-                            // Pembatasan Role: Hanya Role 1 (ADMIN) yang masuk ke AdminDashboardActivity
-                            // Role 2 (USER) & Role 3 (PEMERINTAH) masuk ke DashboardActivity simpel
+                            // Pembatasan & Routing Role:
+                            // Role 1 (ADMIN) -> AdminDashboardActivity
+                            // Role 3 (PEMERINTAH) -> PemerintahDashboardActivity
+                            // Role 2 (USER) -> DashboardActivity
                             val isAdmin = resolvedIdRole == 1L || resolvedRoleStr == "ADMIN" || resolvedRoleStr == "ROLE_ADMIN"
-                            val targetIntent = if (isAdmin) {
-                                Intent(this@Login, AdminDashboardActivity::class.java)
-                            } else {
-                                Intent(this@Login, DashboardActivity::class.java)
+                            val isPemerintah = resolvedIdRole == 3L ||
+                                    resolvedRoleStr.contains("PEMERINTAH") ||
+                                    resolvedRoleStr.contains("DINAS")
+
+                            val targetIntent = when {
+                                isAdmin -> Intent(this@Login, AdminDashboardActivity::class.java)
+                                isPemerintah -> Intent(this@Login, PemerintahDashboardActivity::class.java)
+                                else -> Intent(this@Login, DashboardActivity::class.java)
                             }
                             targetIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(targetIntent)
