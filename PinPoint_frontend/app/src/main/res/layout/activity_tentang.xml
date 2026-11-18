@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F9FF"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginBottom="32dp">
+
+        <ImageView
+            android:id="@+id/btnBackTentang"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_white_rounded_btn"
+            android:padding="8dp"
+            android:src="@drawable/back"
+            app:tint="#0B1C30" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="Tentang Aplikasi"
+            android:textColor="#0B1C30"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center"
+        android:src="@mipmap/ic_launcher_round"
+        android:layout_marginBottom="24dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="PinPoint Admin"
+        android:textColor="#0B1C30"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Versi 1.0.0 (Stable)"
+        android:textColor="#64748B"
+        android:textSize="14sp"
+        android:layout_marginBottom="32dp" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:text="PinPoint adalah platform manajemen infrastruktur publik yang dirancang untuk mempermudah koordinasi antara masyarakat dan pemerintah daerah. Aplikasi ini memungkinkan admin untuk memverifikasi laporan kerusakan fasilitas umum secara real-time dan meneruskannya ke dinas terkait demi pelayanan publik yang lebih responsif."
+            android:textColor="#434653"
+            android:textSize="14sp"
+            android:lineSpacingExtra="4dp" />
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

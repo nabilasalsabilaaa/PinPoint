@@ -1,163 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="[suspicious link removed]"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F6F8FC">
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/bottomNavContainer"
-        android:clipToPadding="false"
-        android:paddingBottom="24dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="16dp"
-            android:paddingTop="24dp">
-
-            <!-- 1. Header Judul -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Kelola Kategori Fasilitas"
-                android:textColor="#0B1C30"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="16dp" />
-
-            <!-- 2. Card Statistik (Kategori Aktif & Total Laporan) -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="#E8F1FF"
-                android:layout_marginBottom="16dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp"
-                    android:gravity="center_vertical">
-
-                    <!-- Sisi Kiri: Statistik Kategori Aktif -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1.2"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-
-                        <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@android:drawable/ic_popup_sync"
-                            android:background="@drawable/bg_circle_blue_btn"
-                            android:backgroundTint="#D0E2FF"
-                            android:padding="6dp"
-                            app:tint="#0B3C8C"
-                            android:layout_marginEnd="10dp" />
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Statistik"
-                                android:textColor="#64748B"
-                                android:textSize="11sp" />
-
-                            <TextView
-                                android:id="@+id/tvStatCategoryActive"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="0 Kategori Aktif"
-                                android:textColor="#0B1C30"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <!-- Pembatas Garis Vertikal -->
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="36dp"
-                        android:background="#CBD5E1"
-                        android:layout_marginHorizontal="8dp" />
-
-                    <!-- Sisi Kanan: Total Laporan -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="end">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Total"
-                            android:textColor="#64748B"
-                            android:textSize="11sp" />
-
-                        <TextView
-                            android:id="@+id/tvStatTotalReportsCategory"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0 Laporan"
-                            android:textColor="#0B3C8C"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- 3. Tombol Tambah Kategori Baru -->
-            <Button
-                android:id="@+id/btnAddCategory"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="+ Tambah Kategori Baru"
-                android:textColor="#FFFFFF"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:backgroundTint="#0B3C8C"
-                android:layout_marginBottom="16dp" />
-
-            <!-- 4. Tombol Search (Cari Kategori Kerusakan) -->
-            <EditText
-                android:id="@+id/etSearchCategory"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@drawable/kolom_form"
-                android:hint="Cari kategori kerusakan..."
-                android:drawableStart="@android:drawable/ic_menu_search"
-                android:drawablePadding="10dp"
-                android:paddingHorizontal="14dp"
-                android:textColor="#0B1C30"
-                android:textColorHint="#94A3B8"
-                android:textSize="13sp"
-                android:layout_marginBottom="16dp" />
-
-            <!-- 5. Segmen List Kategori (RecyclerView Kosong) -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvCategoryList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                tools:listitem="@layout/item_category_card" />
-
-        </LinearLayout>
-    </ScrollView>
 
     <!-- Bottom Navigation Bar -->
     <include
@@ -166,5 +13,155 @@
         android:layout_width="match_parent"
         android:layout_height="96dp"
         android:layout_alignParentBottom="true" />
+
+    <!-- Konten Utama -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomNavContainer"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="24dp">
+
+        <!-- Header Judul -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="Kelola Kategori Fasilitas"
+            android:textColor="#0B1C30"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <!-- Card Statistik -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="#E8F1FF"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.2"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/bg_circle_blue_btn"
+                        android:backgroundTint="#D0E2FF"
+                        android:padding="6dp"
+                        android:src="@android:drawable/ic_popup_sync"
+                        app:tint="#0B3C8C" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Statistik"
+                            android:textColor="#64748B"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:id="@+id/tvStatCategoryActive"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0 Kategori Aktif"
+                            android:textColor="#0B1C30"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="36dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:background="#CBD5E1" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total"
+                        android:textColor="#64748B"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/tvStatTotalReportsCategory"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0 Laporan"
+                        android:textColor="#0B3C8C"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Search Bar -->
+        <EditText
+            android:id="@+id/etSearchCategory"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/kolom_form"
+            android:drawableStart="@android:drawable/ic_menu_search"
+            android:drawablePadding="10dp"
+            android:hint="Cari kategori..."
+            android:paddingHorizontal="14dp"
+            android:textColor="#0B1C30"
+            android:textColorHint="#94A3B8"
+            android:textSize="13sp" />
+
+        <!-- Segmen List Kategori -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvCategoryList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="80dp"
+            android:scrollbars="vertical"
+            tools:listitem="@layout/item_category_card" />
+
+    </LinearLayout>
+
+    <!-- Floating Action Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnAddCategoryFAB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@id/bottomNavContainer"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="4dp"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="#0B3C8C"
+        app:tint="#FFFFFF"
+        app:fabSize="normal"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.PinPoint.CircleFAB"
+        android:contentDescription="Tambah Kategori" />
 
 </RelativeLayout>

@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F9FF"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp">
+
+            <ImageView
+                android:id="@+id/btnBackBantuan"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/bg_white_rounded_btn"
+                android:padding="8dp"
+                android:src="@drawable/back"
+                app:tint="#0B1C30" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="Pusat Bantuan &amp; FAQ"
+                android:textColor="#0B1C30"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Section 1: Pertanyaan Sering Diajukan (FAQ Accordion) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PERTANYAAN SERING DIAJUKAN (FAQ)"
+            android:textColor="#64748B"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05"
+            android:layout_marginBottom="10dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#FFFFFF"
+            android:layout_marginBottom="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- FAQ 1 -->
+                <LinearLayout
+                    android:id="@+id/faqHeader1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Bagaimana cara memverifikasi laporan warga yang masuk?"
+                        android:textColor="#0B1C30"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="8dp" />
+
+                    <ImageView
+                        android:id="@+id/ivFaqArrow1"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_chevron_down"
+                        app:tint="#0B3C8C" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvFaqAnswer1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingBottom="16dp"
+                    android:text="Anda dapat menekan tombol 'Validasi Cepat' langsung pada kartu laporan di Dashboard/Verifikasi untuk menyetujui laporan secara instan, atau menekan kartu laporan untuk memeriksa foto bukti &amp; koordinat GPS terlebih dahulu sebelum meneruskannya ke Dinas terkait."
+                    android:textColor="#475569"
+                    android:textSize="12sp"
+                    android:lineSpacingExtra="3dp"
+                    android:visibility="visible" />
+
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
+
+                <!-- FAQ 2 -->
+                <LinearLayout
+                    android:id="@+id/faqHeader2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Apa ketentuan saat menolak laporan warga?"
+                        android:textColor="#0B1C30"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="8dp" />
+
+                    <ImageView
+                        android:id="@+id/ivFaqArrow2"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_chevron_down"
+                        app:tint="#0B3C8C" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvFaqAnswer2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingBottom="16dp"
+                    android:text="Saat menolak laporan, Admin wajib memilih minimal satu atau beberapa alasan utama penolakan (misalnya Foto Buram, Bukan Kewenangan Pemkot, Duplikat, atau Lokasi Tidak Sesuai) serta mengisi penjelasan lengkap minimal 20 karakter agar pelapor menerima alasan yang jelas dan santun."
+                    android:textColor="#475569"
+                    android:textSize="12sp"
+                    android:lineSpacingExtra="3dp"
+                    android:visibility="gone" />
+
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
+
+                <!-- FAQ 3 -->
+                <LinearLayout
+                    android:id="@+id/faqHeader3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Bagaimana cara menambahkan kategori fasilitas umum baru?"
+                        android:textColor="#0B1C30"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="8dp" />
+
+                    <ImageView
+                        android:id="@+id/ivFaqArrow3"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_chevron_down"
+                        app:tint="#0B3C8C" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvFaqAnswer3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingBottom="16dp"
+                    android:text="Masuk ke menu Kategori pada navigasi bawah, tekan tombol '+ Tambah Kategori Baru', isi nama dan deskripsi kategori, lalu pilih ikon visual. Kategori yang aktif otomatis muncul sebagai filter di halaman Dashboard dan Verifikasi Laporan."
+                    android:textColor="#475569"
+                    android:textSize="12sp"
+                    android:lineSpacingExtra="3dp"
+                    android:visibility="gone" />
+
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
+
+                <!-- FAQ 4 -->
+                <LinearLayout
+                    android:id="@+id/faqHeader4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Apa perbedaan peran Admin, User, dan Pemerintah?"
+                        android:textColor="#0B1C30"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="8dp" />
+
+                    <ImageView
+                        android:id="@+id/ivFaqArrow4"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_chevron_down"
+                        app:tint="#0B3C8C" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvFaqAnswer4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingBottom="16dp"
+                    android:text="• Role 1 (Admin): Mengelola master kategori, akun pengguna, dan memverifikasi laporan masuk.\n• Role 2 (User/Warga): Melaporkan kerusakan fasilitas umum dan memantau status tindak lanjut.\n• Role 3 (Pemerintah/Dinas): Menerima laporan terverifikasi dan memperbarui bukti pengerjaan lapangan."
+                    android:textColor="#475569"
+                    android:textSize="12sp"
+                    android:lineSpacingExtra="3dp"
+                    android:visibility="gone" />
+
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
+
+                <!-- FAQ 5 -->
+                <LinearLayout
+                    android:id="@+id/faqHeader5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Mengapa email dan nomor telepon pada Biodata tidak bisa diubah?"
+                        android:textColor="#0B1C30"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="8dp" />
+
+                    <ImageView
+                        android:id="@+id/ivFaqArrow5"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_chevron_down"
+                        app:tint="#0B3C8C" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvFaqAnswer5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingBottom="16dp"
+                    android:text="Email kedinasan dan nomor telepon terdaftar sebagai identitas otentikasi resmi dan log audit sistem PinPoint. Jika terdapat perubahan data kepegawaian, silakan hubungi Call Center TI di bawah ini."
+                    android:textColor="#475569"
+                    android:textSize="12sp"
+                    android:lineSpacingExtra="3dp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Section 2: Call Center & Layanan Pengaduan Teknis -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CALL CENTER &amp; BANTUAN TEKNIS"
+            android:textColor="#64748B"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05"
+            android:layout_marginBottom="10dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#FFFFFF"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
+
+                    <ImageView
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
+                        android:background="@drawable/bg_chip_blue_light"
+                        android:padding="10dp"
+                        android:src="@drawable/call"
+                        app:tint="#0B3C8C"
+                        android:layout_marginEnd="12dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Call Center PinPoint 24 Jam"
+                            android:textColor="#0B1C30"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Senin - Minggu • Layanan Darurat &amp; Helpdesk TI"
+                            android:textColor="#64748B"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_badge_blue_light"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:layout_marginBottom="14dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hotline Telepon: (0411) 112 / 0811-411-0112"
+                        android:textColor="#0B3C8C"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/tvSupportEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Email: noreplay.pinpoint@gmail.com"
+                        android:textColor="#0B1C30"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btnCallCenterPhone"
+                        android:layout_width="0dp"
+                        android:layout_height="46dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="6dp"
+                        android:backgroundTint="#0B3C8C"
+                        android:text="Hubungi Call Center"
+                        android:textAllCaps="false"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/btnCallCenterWa"
+                        android:layout_width="0dp"
+                        android:layout_height="46dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp"
+                        android:backgroundTint="#E8F5E9"
+                        android:text="Chat WhatsApp"
+                        android:textAllCaps="false"
+                        android:textColor="#1B5E20"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+</ScrollView>

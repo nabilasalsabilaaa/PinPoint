@@ -12,10 +12,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
     Optional<User> findByNoTelepon(String noTelepon);
-    // Gunakan query eksplisit ini agar pencarian hibrida email / no_telepon / nama 100% akurat
-    @Query("SELECT u FROM User u WHERE u.email = :id1 OR u.noTelepon = :id2 OR LOWER(u.nama) = LOWER(:id1)")
-    Optional<User> findByEmailOrNoTelepon(@Param("id1") String identifier1, @Param("id2") String identifier2);
+    // Gunakan query eksplisit ini agar pencarian hibrida email / no_telepon 100% akurat
+    @Query("SELECT u FROM User u WHERE LOWER(u.email) = LOWER(:email) OR u.noTelepon = :noTelepon")
+    Optional<User> findByEmailOrNoTelepon(@Param("email") String email, @Param("noTelepon") String noTelepon);
 
     boolean existsByEmail(String email);
     boolean existsByNoTelepon(String noTelepon);
+
+    @Query(value = "SELECT setval(pg_get_serial_sequence('users', 'id'), COALESCE((SELECT MAX(id) FROM users), 1))", nativeQuery = true)
+    Long syncSequence();
 }

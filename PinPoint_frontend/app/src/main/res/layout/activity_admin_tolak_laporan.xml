@@ -3,29 +3,33 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F6F8FC"
+    android:background="#F8F9FF"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="20dp">
 
-        <!-- Back Header -->
+        <!-- 1. Header Navigation Bar -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="20dp">
+
             <ImageView
-                android:id="@+id/btnBackTolak"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_revert"
+                android:id="@+id/btnBackRejectReport"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/bg_white_rounded_btn"
+                android:padding="8dp"
+                android:src="@drawable/back"
                 app:tint="#0B1C30"
                 android:layout_marginEnd="12dp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -35,113 +39,516 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Warning Info Box -->
+        <!-- 2. Ringkasan Laporan -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#FFFFFF"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp">
+
+                    <TextView
+                        android:id="@+id/tvReportIdCode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/bg_chip_blue_light"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="4dp"
+                        android:text="#LP-MKS-2026-0001"
+                        android:textColor="#0B3C8C"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvReportStatusBadge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/bg_badge_red_light"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="4dp"
+                        android:text="● Tahap Verifikasi"
+                        android:textColor="#D32F2F"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/tvReportTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Kerusakan Ruas Jalan Utama"
+                    android:textColor="#0B1C30"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="10dp">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_shield_check"
+                        app:tint="#1B5E20"
+                        android:layout_marginEnd="6dp" />
+
+                    <TextView
+                        android:id="@+id/tvReporterName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pelapor: Warga Makassar"
+                        android:textColor="#434653"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_badge_blue_light"
+                    android:orientation="horizontal"
+                    android:padding="10dp"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/location"
+                        app:tint="#0B3C8C"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:id="@+id/tvReportLocation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Jl. A. P. Pettarani, Makassar"
+                        android:textColor="#0B1C30"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 3. Warning Card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#FFEBEE"
+            android:layout_marginBottom="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="14dp"
+                android:gravity="top">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@android:drawable/ic_popup_reminder"
+                    app:tint="#C62828"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="2dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Perhatian: Alasan penolakan akan dikirimkan langsung sebagai notifikasi resmi kepada pelapor melalui aplikasi dan pesan WhatsApp terintegrasi."
+                    android:textColor="#B71C1C"
+                    android:textSize="12sp"
+                    android:lineSpacingExtra="2dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 4. Pilih Alasan Utama (Multi-Select) -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_alignParentStart="true">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/verif"
+                    app:tint="#0B3C8C"
+                    android:layout_marginEnd="6dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pilih Alasan Utama"
+                    android:textColor="#0B1C30"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvSelectedReasonCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:text="Wajib Dipilih (Bisa > 1)"
+                android:textColor="#C62828"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <!-- Container for 5 Multi-Select Cards -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFEBEE"
-            android:padding="12dp"
+            android:orientation="vertical"
+            android:layout_marginBottom="20dp">
+
+            <!-- Reason 1 -->
+            <LinearLayout
+                android:id="@+id/cardReason1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card_unselected"
+                android:orientation="horizontal"
+                android:padding="14dp"
+                android:gravity="top"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginBottom="10dp">
+
+                <ImageView
+                    android:id="@+id/ivCheckReason1"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_circle_outline"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginTop="2dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Data Laporan Tidak Jelas / Foto Buram"
+                        android:textColor="#0B1C30"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="3dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Foto kerusakan kurang representatif atau tidak terbaca sistem."
+                        android:textColor="#64748B"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Reason 2 -->
+            <LinearLayout
+                android:id="@+id/cardReason2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card_unselected"
+                android:orientation="horizontal"
+                android:padding="14dp"
+                android:gravity="top"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginBottom="10dp">
+
+                <ImageView
+                    android:id="@+id/ivCheckReason2"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_circle_outline"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginTop="2dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Bukan Kewenangan Pemkot / Dinas PU"
+                        android:textColor="#0B1C30"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="3dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Merupakan Jalan Nasional, Jalan Provinsi, atau kawasan swasta/developer."
+                        android:textColor="#64748B"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Reason 3 -->
+            <LinearLayout
+                android:id="@+id/cardReason3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card_unselected"
+                android:orientation="horizontal"
+                android:padding="14dp"
+                android:gravity="top"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginBottom="10dp">
+
+                <ImageView
+                    android:id="@+id/ivCheckReason3"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_circle_outline"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginTop="2dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Laporan Duplikat"
+                        android:textColor="#0B1C30"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="3dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Kerusakan di titik yang sama sudah dilaporkan sebelumnya."
+                        android:textColor="#64748B"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Reason 4 -->
+            <LinearLayout
+                android:id="@+id/cardReason4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card_unselected"
+                android:orientation="horizontal"
+                android:padding="14dp"
+                android:gravity="top"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginBottom="10dp">
+
+                <ImageView
+                    android:id="@+id/ivCheckReason4"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_circle_outline"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginTop="2dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Lokasi GPS Tidak Sesuai / Fiktif"
+                        android:textColor="#0B1C30"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="3dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Titik koordinat GPS tidak sinkron dengan foto atau kondisi riil."
+                        android:textColor="#64748B"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Reason 5 -->
+            <LinearLayout
+                android:id="@+id/cardReason5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card_unselected"
+                android:orientation="horizontal"
+                android:padding="14dp"
+                android:gravity="top"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:id="@+id/ivCheckReason5"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_circle_outline"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginTop="2dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Lainnya"
+                        android:textColor="#0B1C30"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="3dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Tuliskan keterangan dan justifikasi penolakan secara spesifik di bawah."
+                        android:textColor="#64748B"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- 5. Penjelasan Lengkap untuk Pelapor * -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_alignParentStart="true">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Penjelasan Lengkap untuk Pelapor "
+                    android:textColor="#0B1C30"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="*"
+                    android:textColor="#C62828"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvCharCounter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="0 / 250"
+                android:textColor="#64748B"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <EditText
+            android:id="@+id/etRejectDescription"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:background="@drawable/kolom_form"
+            android:gravity="top|start"
+            android:padding="14dp"
+            android:maxLength="250"
+            android:hint="Tuliskan penjelasan dan justifikasi penolakan secara rinci, informatif, dan santun bagi warga..."
+            android:textColor="#0B1C30"
+            android:textSize="13sp"
+            android:lineSpacingExtra="3dp"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="24dp">
+
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
                 android:src="@android:drawable/ic_dialog_info"
-                app:tint="#D32F2F"
-                android:layout_marginEnd="8dp" />
+                app:tint="#0B3C8C"
+                android:layout_marginEnd="6dp" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Alasan penolakan akan dikirimkan sebagai notifikasi resmi kepada pelapor melalui aplikasi."
-                android:textColor="#D32F2F"
+                android:text="Minimal 20 karakter agar penjelasan informatif dan santun bagi warga."
+                android:textColor="#64748B"
                 android:textSize="11sp" />
         </LinearLayout>
 
-        <!-- Radio Group Alasan Utama -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pilih Alasan Utama *"
-            android:textColor="#0B1C30"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
-
-        <RadioGroup
-            android:id="@+id/rgReasonReject"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp">
-
-            <RadioButton
-                android:id="@+id/rbReason1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Data Laporan Tidak Jelas / Foto Buram"
-                android:textColor="#0B1C30"
-                android:textSize="13sp"
-                android:paddingVertical="8dp" />
-
-            <RadioButton
-                android:id="@+id/rbReason2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Bukan Kewenangan Pemkot / Dinas PU"
-                android:textColor="#0B1C30"
-                android:textSize="13sp"
-                android:paddingVertical="8dp" />
-
-            <RadioButton
-                android:id="@+id/rbReason3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Laporan Duplikat"
-                android:textColor="#0B1C30"
-                android:textSize="13sp"
-                android:paddingVertical="8dp" />
-
-            <RadioButton
-                android:id="@+id/rbReason4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Lokasi GPS Tidak Sesuai / Fiktif"
-                android:textColor="#0B1C30"
-                android:textSize="13sp"
-                android:paddingVertical="8dp" />
-        </RadioGroup>
-
-        <!-- Input Penjelasan -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Penjelasan Lengkap untuk Pelapor *"
-            android:textColor="#0B1C30"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
-
-        <EditText
-            android:id="@+id/etRejectExplanation"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:background="@drawable/kolom_form"
-            android:gravity="top|start"
-            android:hint="Tuliskan alasan penolakan secara jelas..."
-            android:padding="12dp"
-            android:textSize="13sp"
-            android:layout_marginBottom="24dp" />
-
-        <!-- Confirm Reject Button -->
+        <!-- 6. Buttons -->
         <Button
             android:id="@+id/btnConfirmReject"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="Konfirmasi Tolak Laporan"
+            android:layout_height="52dp"
+            android:text="✕  Konfirmasi Tolak Laporan"
+            android:textAllCaps="false"
             android:textColor="#FFFFFF"
-            android:textSize="13sp"
             android:textStyle="bold"
-            android:backgroundTint="#D32F2F" />
+            android:textSize="14sp"
+            android:backgroundTint="#B71C1C"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/btnCancelReject"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="←  Batalkan &amp; Kembali"
+            android:textAllCaps="false"
+            android:textColor="#0B1C30"
+            android:textStyle="bold"
+            android:textSize="13sp"
+            android:backgroundTint="#E8F1FF" />
 
     </LinearLayout>
 </ScrollView>

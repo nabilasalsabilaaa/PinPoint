@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Basic Colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- Brand / Primary Blue Palette (PinPoint Design System) -->
-    <color name="primary_blue">#0B58CA</color>
+    <color name="primary_blue">#0B3C8C</color>
+    <color name="dark_navy">#0B1C30</color>
+    <color name="text_secondary">#64748B</color>
+
+    <!-- Card Background Colors -->
+    <color name="blue_light_background">#E8F1FF</color>
+    <color name="gray_light_background">#F1F5F9</color>
+    <color name="screen_background">#F8F9FF</color>
+
+    <!-- Status & Alert Colors -->
+    <color name="red_danger">#D32F2F</color>
+    <color name="red_light_background">#FFEBEE</color>
+    <color name="green_success">#00897B</color>
+
+    <!-- Extended Palette for Modul Warga -->
     <color name="primary_blue_dark">#084298</color>
     <color name="primary_blue_light">#EEF4FF</color>
     <color name="primary_blue_soft">#EBF3FE</color>
     <color name="primary_blue_border">#BFDBFE</color>
     <color name="primary_blue_muted">#93C5FD</color>
 
-    <!-- Neutral Background & Surface -->
     <color name="bg_app">#F8FAFC</color>
     <color name="bg_surface">#FFFFFF</color>
     <color name="bg_input">#EFF4FF</color>
     <color name="border_light">#E2E8F0</color>
     <color name="border_subtle">#CBD5E1</color>
 
-    <!-- Typography Colors -->
     <color name="text_primary">#0B1C30</color>
-    <color name="text_secondary">#475569</color>
     <color name="text_tertiary">#64748B</color>
     <color name="text_muted">#94A3B8</color>
     <color name="text_on_primary">#FFFFFF</color>
 
-    <!-- Semantic / Status Colors -->
-    <!-- Diproses (Mint / Teal) -->
     <color name="status_diproses">#0F766E</color>
     <color name="status_diproses_bg">#CCFBF1</color>
-
-    <!-- Selesai (Blue / Success) -->
     <color name="status_selesai">#0B58CA</color>
     <color name="status_selesai_bg">#DBEAFE</color>
-
-    <!-- Menunggu (Sky Blue / Info) -->
     <color name="status_menunggu">#0284C7</color>
     <color name="status_menunggu_bg">#E0F2FE</color>
-
-    <!-- Ditolak / Kritis / Danger (Red) -->
     <color name="status_ditolak">#B91C1C</color>
     <color name="status_ditolak_bg">#FEE2E2</color>
     <color name="status_kritis">#B91C1C</color>
     <color name="status_kritis_bg">#FEF2F2</color>
 
-    <!-- General Feedback -->
     <color name="success">#16A34A</color>
     <color name="success_bg">#DCFCE7</color>
     <color name="error">#DC2626</color>
