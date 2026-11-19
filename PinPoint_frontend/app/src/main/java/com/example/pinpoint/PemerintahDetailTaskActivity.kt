@@ -131,15 +131,31 @@ class PemerintahDetailTaskActivity : AppCompatActivity() {
 
         findViewById<View>(R.id.btnOpenNavMap).setOnClickListener {
             val report = currentReport
-            val lat = report?.latitude ?: -5.1476
-            val lng = report?.longitude ?: 119.4327
-            val label = report?.resolvedLocationName() ?: "Lokasi Laporan"
-            val uri = Uri.parse("geo:$lat,$lng?q=$lat,$lng(${Uri.encode(label)})")
-            try {
-                startActivity(Intent(Intent.ACTION_VIEW, uri))
-            } catch (_: Exception) {
-                Toast.makeText(this, "Koordinat GPS: $lat, $lng", Toast.LENGTH_SHORT).show()
+            if (report == null) {
+                Toast.makeText(this, "Data laporan belum tersedia", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            val lat = report.latitude
+            val lng = report.longitude
+            if (lat == null || lng == null ||
+                !lat.isFinite() || !lng.isFinite() ||
+                lat !in -90.0..90.0 || lng !in -180.0..180.0 ||
+                (lat == 0.0 && lng == 0.0)
+            ) {
+                Toast.makeText(this, "Koordinat GPS laporan tidak tersedia", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            // Buka halaman peta Pemerintah dan minta halaman tersebut langsung membuat rute
+            // menuju laporan yang sedang dibuka ini.
+            val navigationIntent = Intent(this, PemerintahMapActivity::class.java).apply {
+                putExtra(
+                    PemerintahMapActivity.EXTRA_OPEN_ROUTE_REPORT_ID,
+                    report.resolvedId().toString()
+                )
+            }
+            startActivity(navigationIntent)
         }
 
         layoutConditionBefore.setOnClickListener {

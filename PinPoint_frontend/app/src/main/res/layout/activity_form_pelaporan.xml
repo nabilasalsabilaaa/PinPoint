@@ -214,55 +214,50 @@
             </LinearLayout>
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardMapPreview"
                 android:layout_width="match_parent"
-                android:layout_height="170dp"
+                android:layout_height="180dp"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
+                app:cardElevation="2dp"
                 android:layout_marginBottom="10dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#DBEAFE">
+                    android:layout_height="match_parent">
 
-                    <ImageView
+                    <com.google.android.gms.maps.MapView
+                        android:id="@+id/googleFormMapView"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/sampul" />
+                        android:layout_height="match_parent" />
 
-                    <!-- Floating Target GPS Button -->
+                    <!-- Floating Target GPS Button (Pojok Kanan Atas) -->
                     <LinearLayout
                         android:id="@+id/btnLocateMe"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
                         android:layout_alignParentEnd="true"
                         android:layout_margin="10dp"
                         android:background="@drawable/bg_white_rounded_btn"
-                        android:elevation="3dp"
+                        android:elevation="4dp"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:gravity="center">
 
                         <ImageView
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:src="@drawable/ic_my_location"
-                            app:tint="#0B1C30" />
+                            app:tint="#0B3C8C" />
                     </LinearLayout>
 
-                    <!-- Pin Marker & Callout Label di Tengah -->
+                    <!-- Pin Marker & Callout Label di Tengah Peta Live -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:gravity="center"
-                        android:orientation="vertical">
-
-                        <!-- Icon Pin Merah -->
-                        <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@drawable/location"
-                            app:tint="#DC2626" />
+                        android:orientation="vertical"
+                        android:elevation="6dp">
 
                         <!-- Dark Address Callout Label -->
                         <TextView
@@ -272,10 +267,26 @@
                             android:background="@drawable/bg_map_bottom_overlay"
                             android:gravity="center"
                             android:paddingHorizontal="10dp"
-                            android:paddingVertical="5dp"
-                            android:text="Jl. Letjen Hertasing No. 88, Kec.\nPanakkukang, Makassar"
+                            android:paddingVertical="4dp"
+                            android:text="Mendeteksi lokasi terkini..."
                             android:textColor="#FFFFFF"
-                            android:textSize="10sp" />
+                            android:textSize="10sp"
+                            android:layout_marginBottom="2dp" />
+
+                        <!-- Icon Pin Merah -->
+                        <ImageView
+                            android:layout_width="34dp"
+                            android:layout_height="34dp"
+                            android:src="@drawable/location"
+                            app:tint="#DC2626" />
+
+                        <!-- Shadow dot -->
+                        <View
+                            android:layout_width="6dp"
+                            android:layout_height="6dp"
+                            android:background="@drawable/bg_badge_red_circle"
+                            android:alpha="0.4"
+                            android:layout_marginTop="-2dp" />
                     </LinearLayout>
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>

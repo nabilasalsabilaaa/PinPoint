@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PinPoint</string>
+    <!-- Ganti YOUR_GOOGLE_MAPS_API_KEY_HERE dengan Google Maps API Key Anda jika ada -->
+    <string name="google_maps_key" translatable="false">AIzaSyAfSRoh8OKwBmI7KajR3lkkcp77oZ_8YOw</string>
 </resources>

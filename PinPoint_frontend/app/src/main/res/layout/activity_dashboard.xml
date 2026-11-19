@@ -252,13 +252,10 @@
                     android:layout_height="match_parent"
                     android:background="#DBEAFE">
 
-                    <!-- Gambar Peta Latar Belakang -->
-                    <ImageView
-                        android:id="@+id/ivMapPreview"
+                    <com.google.android.gms.maps.MapView
+                        android:id="@+id/googleDashboardMapView"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/sampul" />
+                        android:layout_height="match_parent" />
 
                     <!-- Floating Pill: Makassar & Sekitarnya -->
                     <LinearLayout
@@ -348,14 +345,13 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Ketuk pin pada peta untuk info detail"
+                            android:text="Ketuk pin pada peta untuk info laporan"
                             android:textColor="#FFFFFF"
                             android:textSize="11sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="3 Terdekat"
                             android:textColor="#2DD4BF"
                             android:textSize="11sp"
                             android:textStyle="bold" />

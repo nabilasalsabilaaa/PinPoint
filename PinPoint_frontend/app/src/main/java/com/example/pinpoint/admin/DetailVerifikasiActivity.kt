@@ -2,7 +2,6 @@ package com.example.pinpoint.admin
 
 import android.content.Intent
 import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -17,6 +16,12 @@ import com.example.pinpoint.PhotoSliderDialog
 import com.example.pinpoint.R
 import com.example.pinpoint.network.ApiClient
 import com.example.pinpoint.network.ReportDto
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 
 class DetailVerifikasiActivity : AppCompatActivity() {
 
@@ -37,7 +42,9 @@ class DetailVerifikasiActivity : AppCompatActivity() {
     private lateinit var btnApproveReport: Button
     private lateinit var btnRejectReport: Button
     private lateinit var layoutActionButtons: LinearLayout
-    private lateinit var mapContainer: FrameLayout
+    private lateinit var googleAdminVerifyMapView: MapView
+    private var googleMap: GoogleMap? = null
+    private var reportMarker: Marker? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +52,8 @@ class DetailVerifikasiActivity : AppCompatActivity() {
 
         reportId = intent.getStringExtra("REPORT_ID")
         initViews()
+
+        setupGoogleMap(savedInstanceState)
 
         btnBackDetailVerify.setOnClickListener { finish() }
 
@@ -68,25 +77,33 @@ class DetailVerifikasiActivity : AppCompatActivity() {
             }
             startActivity(intent)
         }
-
-        mapContainer.setOnClickListener {
-            currentReport?.let { r ->
-                val lat = r.latitude ?: -5.1476
-                val lng = r.longitude ?: 119.4327
-                val uri = Uri.parse("geo:$lat,$lng?q=$lat,$lng(${Uri.encode(r.resolvedTitle())})")
-                val mapIntent = Intent(Intent.ACTION_VIEW, uri)
-                try {
-                    startActivity(mapIntent)
-                } catch (_: Exception) {}
-            }
-        }
     }
 
     override fun onResume() {
         super.onResume()
+        googleAdminVerifyMapView.onResume()
         reportId?.let { loadReportDetail(it) }
     }
 
+    override fun onPause() {
+        googleAdminVerifyMapView.onPause()
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        googleAdminVerifyMapView.onDestroy()
+        super.onDestroy()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        googleAdminVerifyMapView.onLowMemory()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        googleAdminVerifyMapView.onSaveInstanceState(outState)
+    }
     private fun initViews() {
         btnBackDetailVerify = findViewById(R.id.btnBackDetailVerify)
         tvReportIdCode = findViewById(R.id.tvReportIdCode)
@@ -102,7 +119,6 @@ class DetailVerifikasiActivity : AppCompatActivity() {
         btnApproveReport = findViewById(R.id.btnApproveReport)
         btnRejectReport = findViewById(R.id.btnRejectReport)
         layoutActionButtons = findViewById(R.id.layoutActionButtons)
-        mapContainer = findViewById(R.id.mapContainer)
     }
 
     private fun loadReportDetail(id: String) {
@@ -120,9 +136,7 @@ class DetailVerifikasiActivity : AppCompatActivity() {
                     tvReportStatusBadge.text = report.resolvedStatusDisplay()
                     tvReportTitle.text = "${report.resolvedCategoryName()} - ${report.resolvedTitle()}"
                     tvCitizenDescription.text = report.resolvedDescription()
-                    val lat = report.latitude ?: -5.1476
-                    val lng = report.longitude ?: 119.4327
-                    tvGpsCoordinatesBadge.text = String.format("%.4f, %.4f", lat, lng)
+                    updateReportMarker()
                     tvReportAddressTitle.text = report.resolvedLocationName()
                     tvReporterNameValue.text = report.resolvedReporterName()
                     tvReporterPhone.text = report.resolvedReporterPhone()
@@ -237,5 +251,60 @@ class DetailVerifikasiActivity : AppCompatActivity() {
                 }
             )
         }
+    }
+
+    private fun setupGoogleMap(savedInstanceState: Bundle?) {
+        googleAdminVerifyMapView =
+            findViewById(R.id.googleAdminVerifyMapView)
+
+        googleAdminVerifyMapView.onCreate(savedInstanceState)
+
+        googleAdminVerifyMapView.getMapAsync { map ->
+            googleMap = map
+
+            map.uiSettings.isZoomControlsEnabled = true
+            map.uiSettings.isMapToolbarEnabled = false
+            map.uiSettings.isCompassEnabled = true
+
+            updateReportMarker()
+        }
+    }
+
+    private fun updateReportMarker() {
+        val report = currentReport ?: return
+        val map = googleMap ?: return
+
+        val lat = report.latitude
+        val lng = report.longitude
+
+        if (lat == null || lng == null ||
+            !lat.isFinite() || !lng.isFinite() ||
+            lat !in -90.0..90.0 ||
+            lng !in -180.0..180.0 ||
+            (lat == 0.0 && lng == 0.0)
+        ) {
+            tvGpsCoordinatesBadge.text = "Koordinat tidak tersedia"
+            reportMarker?.remove()
+            reportMarker = null
+            return
+        }
+
+        val location = LatLng(lat, lng)
+
+        tvGpsCoordinatesBadge.text =
+            String.format("%.6f, %.6f", lat, lng)
+
+        reportMarker?.remove()
+
+        reportMarker = map.addMarker(
+            MarkerOptions()
+                .position(location)
+                .title(report.resolvedTitle())
+                .snippet(report.resolvedLocationName())
+        )
+
+        map.animateCamera(
+            CameraUpdateFactory.newLatLngZoom(location, 17f)
+        )
     }
 }

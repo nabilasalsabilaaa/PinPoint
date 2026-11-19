@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainPilihLokasi"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F9FF">
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/googleMapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- 2. Header Bar Atas (Floating) -->
+    <LinearLayout
+        android:id="@+id/headerPilihLokasi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_margin="16dp"
+        android:background="@drawable/bg_white_card"
+        android:elevation="6dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="12dp">
+
+        <ImageView
+            android:id="@+id/btnBackPicker"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="#0B1C30" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pilih Titik Lokasi Laporan"
+                android:textColor="#0B1C30"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Geser peta ke titik fasilitas umum"
+                android:textColor="#64748B"
+                android:textSize="11sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 3. Pin Marker Tetap di Tengah Layar (Center Target Pin) -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:elevation="8dp">
+
+        <!-- Callout Label Kecil -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_map_bottom_overlay"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:text="Geser peta ke titik ini"
+            android:textColor="#FFFFFF"
+            android:textSize="10sp"
+            android:layout_marginBottom="2dp" />
+
+        <!-- Ikon Pin Merah -->
+        <ImageView
+            android:id="@+id/ivCenterPin"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:src="@drawable/location"
+            app:tint="#DC2626" />
+
+        <!-- Titik Bayangan di Ujung Bawah Pin -->
+        <View
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:background="@drawable/bg_badge_red_circle"
+            android:alpha="0.4"
+            android:layout_marginTop="-2dp" />
+    </LinearLayout>
+
+    <!-- 4. Tombol Floating GPS (Kembali ke Lokasi Saya) -->
+    <FrameLayout
+        android:id="@+id/btnGpsMyLocation"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_above="@id/bottomCardLocation"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_white_rounded_btn"
+        android:elevation="6dp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_my_location"
+            app:tint="#0B3C8C" />
+    </FrameLayout>
+
+    <!-- 5. Card Informasi Lokasi & Tombol Konfirmasi di Bawah -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/bottomCardLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
+        app:cardBackgroundColor="#FFFFFF">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="18dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="20dp">
+
+            <!-- Drag Handle Bar Kecil -->
+            <View
+                android:layout_width="36dp"
+                android:layout_height="4dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/bg_drag_handle"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Row Header Lokasi & Badge Koordinat -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layout_marginBottom="6dp">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/location"
+                    app:tint="#0B3C8C"
+                    android:layout_marginEnd="6dp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="LOKASI TERPILIH"
+                    android:textColor="#0B3C8C"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvSelectedCoordinates"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_badge_blue_light"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="3dp"
+                    android:text="Lat: - • Lng: -"
+                    android:textColor="#0B3C8C"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Alamat Jalan Hasil Geocoding -->
+            <TextView
+                android:id="@+id/tvSelectedAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:text="Mendeteksi posisi titik lokasi..."
+                android:textColor="#0B1C30"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:lineSpacingExtra="2dp"
+                android:layout_marginBottom="14dp" />
+
+            <!-- Tombol Konfirmasi: Gunakan Lokasi Ini -->
+            <Button
+                android:id="@+id/btnConfirmLocation"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_btn_rounded_blue"
+                app:backgroundTint="@null"
+                android:text="Gunakan Lokasi Ini"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

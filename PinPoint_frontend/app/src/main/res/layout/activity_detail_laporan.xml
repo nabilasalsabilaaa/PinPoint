@@ -226,6 +226,7 @@
                             android:layout_marginEnd="4dp" />
 
                         <TextView
+                            android:id="@+id/tvGeotagCoordinates"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="-5.1477, 119.4327"
@@ -313,10 +314,13 @@
 
             <!-- 5. Mini Map Card -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardDetailMap"
                 android:layout_width="match_parent"
                 android:layout_height="140dp"
                 app:cardCornerRadius="14dp"
                 app:cardElevation="0dp"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_marginBottom="20dp">
 
                 <RelativeLayout
@@ -324,37 +328,10 @@
                     android:layout_height="match_parent"
                     android:background="#DBEAFE">
 
-                    <ImageView
+                    <com.google.android.gms.maps.MapView
+                        android:id="@+id/googleDetailMapView"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/sampul" />
-
-                    <!-- Pin Titik Rusak di Tengah -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/bg_urgency_critical"
-                            android:paddingHorizontal="8dp"
-                            android:paddingVertical="3dp"
-                            android:text="Titik Rusak"
-                            android:textColor="#FFFFFF"
-                            android:textSize="9sp"
-                            android:textStyle="bold" />
-
-                        <ImageView
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:src="@drawable/location"
-                            app:tint="#DC2626" />
-                    </LinearLayout>
+                        android:layout_height="match_parent" />
 
                     <!-- Floating Pill: Panakkukang, Makassar (Bawah) -->
                     <LinearLayout

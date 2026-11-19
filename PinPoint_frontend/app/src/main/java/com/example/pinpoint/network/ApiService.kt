@@ -86,8 +86,8 @@ data class ReportDto(
     @SerializedName("reporterName") val reporterName: String? = null,
     @SerializedName(value = "noTelepon", alternate = ["reporterPhone", "no_telepon"]) val reporterPhone: String? = null,
     @SerializedName(value = "locationName", alternate = ["alamat"]) val locationName: String? = null,
-    @SerializedName("latitude") val latitude: Double? = -5.1476,
-    @SerializedName("longitude") val longitude: Double? = 119.4327,
+    @SerializedName("latitude") val latitude: Double? = null,
+    @SerializedName("longitude") val longitude: Double? = null,
     @SerializedName(value = "tingkatKeparahan", alternate = ["tingkat_keparahan", "severity"]) val tingkatKeparahan: String? = null,
     @SerializedName(value = "photoUrl", alternate = ["fotoBukti", "foto_bukti", "fotoProfil"]) val photoUrl: String? = null,
     @SerializedName("photoUrls") val photoUrls: List<String>? = null,
@@ -446,7 +446,7 @@ interface ApiService {
 
 object ApiClient {
     // Ganti IP di bawah ini jika IP laptop berubah
-    const val BASE_URL = "http://10.113.109.86:8081/"
+    const val BASE_URL = "http://10.5.70.43:8081/"
 
     fun resolveImageUrl(raw: String?): String? {
         if (raw.isNullOrBlank()) return null

@@ -1,23 +1,41 @@
 package com.example.pinpoint.admin
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Typeface
+import android.location.Location
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.pinpoint.PilihLokasiActivity
 import com.example.pinpoint.R
 import com.example.pinpoint.adapter.ReportAdapter
 import com.example.pinpoint.network.ApiClient
 import com.example.pinpoint.network.CategoryDto
 import com.example.pinpoint.network.ReportDto
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 
-class AdminDashboardActivity : AppCompatActivity() {
+class AdminDashboardActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var tvAdminGreeting: TextView
     private lateinit var tvCriticalCount: TextView
@@ -35,6 +53,31 @@ class AdminDashboardActivity : AppCompatActivity() {
     private var allReports = listOf<ReportDto>()
     private var selectedCategoryId: Long? = null
     private var selectedCategoryName: String? = null
+
+    // Google Maps SDK & Lokasi Admin
+    private var googleMap: GoogleMap? = null
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var hasCenteredAdminMap = false
+
+    // Auto-refresh laporan di dashboard admin secara real-time
+    private val autoRefreshHandler = android.os.Handler(android.os.Looper.getMainLooper())
+    private val autoRefreshRunnable = object : Runnable {
+        override fun run() {
+            loadDashboardData()
+            autoRefreshHandler.postDelayed(this, 15000)
+        }
+    }
+
+    private val locationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val fine = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
+        val coarse = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+        if (fine || coarse) {
+            enableMyLocationOnAdminMap()
+            detectAndCenterAdminLocation()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +101,8 @@ class AdminDashboardActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_admin_dashboard)
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
         initViews()
         setupBottomNavigation()
         setupRecyclerView()
@@ -68,6 +113,15 @@ class AdminDashboardActivity : AppCompatActivity() {
         tvSeeAllReports.setOnClickListener { openVerify() }
         btnCheckCritical.setOnClickListener { openVerify() }
 
+        // Setup Google Maps Persebaran Laporan
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.adminMapFragment) as? SupportMapFragment
+        mapFragment?.getMapAsync(this)
+
+        findViewById<View>(R.id.btnAdminOpenFullMap).setOnClickListener {
+            val intent = Intent(this, PilihLokasiActivity::class.java)
+            startActivity(intent)
+        }
+
         loadRegisteredCategories()
         loadDashboardData()
     }
@@ -76,7 +130,12 @@ class AdminDashboardActivity : AppCompatActivity() {
         super.onResume()
         updateGreeting()
         loadRegisteredCategories()
-        loadDashboardData()
+        autoRefreshHandler.post(autoRefreshRunnable)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        autoRefreshHandler.removeCallbacks(autoRefreshRunnable)
     }
 
     private fun initViews() {
@@ -91,6 +150,106 @@ class AdminDashboardActivity : AppCompatActivity() {
         llDashboardCategoryChips = findViewById(R.id.llDashboardCategoryChips)
         rvRecentReports = findViewById(R.id.rvRecentReports)
         updateGreeting()
+    }
+
+    override fun onMapReady(map: GoogleMap) {
+        googleMap = map
+
+        map.uiSettings.isZoomControlsEnabled = true
+        map.uiSettings.isCompassEnabled = true
+
+        val defaultPos = LatLng(-5.147665, 119.432731)
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultPos, 13f))
+
+        if (hasLocationPermission()) {
+            enableMyLocationOnAdminMap()
+            if (!hasCenteredAdminMap) {
+                detectAndCenterAdminLocation()
+            }
+        } else {
+            locationPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+
+        // Klik InfoWindow pada marker langsung membuka detail verifikasi laporan
+        map.setOnInfoWindowClickListener { marker ->
+            val reportId = marker.snippet?.substringAfter("ID: ")?.substringBefore("\n")?.trim()
+            if (!reportId.isNullOrBlank()) {
+                val intent = Intent(this, DetailVerifikasiActivity::class.java).apply {
+                    putExtra("REPORT_ID", reportId)
+                }
+                startActivity(intent)
+            }
+        }
+
+        syncMapMarkers(allReports)
+    }
+
+    private fun hasLocationPermission(): Boolean {
+        val fine = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        val coarse = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+        return fine == PackageManager.PERMISSION_GRANTED || coarse == PackageManager.PERMISSION_GRANTED
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun enableMyLocationOnAdminMap() {
+        if (hasLocationPermission()) {
+            googleMap?.isMyLocationEnabled = true
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun detectAndCenterAdminLocation() {
+        if (!hasLocationPermission()) return
+
+        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+            .addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    val latLng = LatLng(location.latitude, location.longitude)
+                    googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14f))
+                    hasCenteredAdminMap = true
+                } else {
+                    fusedLocationClient.lastLocation.addOnSuccessListener { lastLoc: Location? ->
+                        if (lastLoc != null) {
+                            val latLng = LatLng(lastLoc.latitude, lastLoc.longitude)
+                            googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14f))
+                            hasCenteredAdminMap = true
+                        }
+                    }
+                }
+            }
+    }
+
+    private fun syncMapMarkers(reports: List<ReportDto>) {
+        val map = googleMap ?: return
+        map.clear()
+
+        reports.forEach { report ->
+            val lat = report.latitude ?: return@forEach
+            val lng = report.longitude ?: return@forEach
+            val pos = LatLng(lat, lng)
+
+            val markerColor = when (report.resolvedStatusKey()) {
+                "MENUNGGU_VERIFIKASI" -> BitmapDescriptorFactory.HUE_ORANGE
+                "TERVERIFIKASI" -> BitmapDescriptorFactory.HUE_AZURE
+                "DIPROSES" -> BitmapDescriptorFactory.HUE_VIOLET
+                "SELESAI" -> BitmapDescriptorFactory.HUE_GREEN
+                "DITOLAK" -> BitmapDescriptorFactory.HUE_RED
+                else -> BitmapDescriptorFactory.HUE_RED
+            }
+
+            map.addMarker(
+                MarkerOptions()
+                    .position(pos)
+                    .title("${report.resolvedCode()}: ${report.resolvedTitle()}")
+                    .snippet("ID: ${report.resolvedId()}\n${report.resolvedLocationName()}")
+                    .icon(BitmapDescriptorFactory.defaultMarker(markerColor))
+            )
+        }
     }
 
     private fun updateGreeting() {
@@ -236,6 +395,7 @@ class AdminDashboardActivity : AppCompatActivity() {
                     allReports = response.body()!!
                     updateStatsFromReports(allReports)
                     applyFilterAndStats()
+                    syncMapMarkers(allReports)
                 }
             },
             onFailure = { _, _ -> }
@@ -266,6 +426,7 @@ class AdminDashboardActivity : AppCompatActivity() {
             }
         }
         reportAdapter.updateData(filtered)
+        syncMapMarkers(filtered)
     }
 
     private fun quickVerifyReport(report: ReportDto) {

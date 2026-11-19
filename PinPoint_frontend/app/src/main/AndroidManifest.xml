@@ -3,7 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -14,7 +17,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PinPoint"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:name=".PinPointApp">
+
+        <!-- Google Maps API Key Meta-Data -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
 
         <!-- Pintu Masuk Utama -->
         <activity
@@ -53,6 +62,11 @@
 
         <activity
             android:name=".FormPelaporanActivity"
+            android:exported="false" />
+
+        <!-- Halaman Interaktif Pemilihan Titik Lokasi Peta (Maps Picker) -->
+        <activity
+            android:name=".PilihLokasiActivity"
             android:exported="false" />
 
         <activity
