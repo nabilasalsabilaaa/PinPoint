@@ -97,6 +97,10 @@ public class GovernmentReportService {
         Laporan laporan = laporanRepository.findById(idLaporan)
                 .orElseThrow(() -> new RuntimeException("Laporan tidak ditemukan"));
 
+        if (laporan.getIdStatus() != null && laporan.getIdStatus().equals(5L)) {
+            throw new RuntimeException("Laporan sudah ditandai selesai dan tidak dapat diubah lagi.");
+        }
+
         User pemerintah = resolveUserOrFallback(emailPemerintah, 3L);
 
         // ID Status 4 = Diproses / Dikerjakan
@@ -175,6 +179,10 @@ public class GovernmentReportService {
     ) {
         Laporan laporan = laporanRepository.findById(idLaporan)
                 .orElseThrow(() -> new RuntimeException("Laporan tidak ditemukan"));
+
+        if (laporan.getIdStatus() != null && laporan.getIdStatus().equals(5L)) {
+            throw new RuntimeException("Laporan sudah ditandai selesai dan tidak dapat diubah lagi.");
+        }
 
         User pemerintah = resolveUserOrFallback(emailPemerintah, 3L);
 

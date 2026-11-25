@@ -38,13 +38,10 @@
 
         <ImageView
             android:id="@+id/ivNavPemerintahHome"
-            android:layout_width="44dp"
-            android:layout_height="30dp"
-            android:paddingHorizontal="11dp"
-            android:paddingVertical="4dp"
-            android:background="@drawable/bg_nav_icon_active_blue"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
             android:src="@drawable/home"
-            app:tint="#FFFFFF" />
+            app:tint="#0B58CA" />
 
         <TextView
             android:id="@+id/tvNavPemerintahHome"
@@ -75,10 +72,8 @@
 
         <ImageView
             android:id="@+id/ivNavPemerintahMap"
-            android:layout_width="44dp"
-            android:layout_height="30dp"
-            android:paddingHorizontal="11dp"
-            android:paddingVertical="4dp"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
             android:src="@drawable/location"
             app:tint="#94A3B8" />
 
@@ -110,10 +105,8 @@
 
         <ImageView
             android:id="@+id/ivNavPemerintahHistory"
-            android:layout_width="44dp"
-            android:layout_height="30dp"
-            android:paddingHorizontal="11dp"
-            android:paddingVertical="4dp"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
             android:src="@drawable/verif"
             app:tint="#94A3B8" />
 
@@ -145,10 +138,8 @@
 
         <ImageView
             android:id="@+id/ivNavPemerintahProfile"
-            android:layout_width="44dp"
-            android:layout_height="30dp"
-            android:paddingHorizontal="11dp"
-            android:paddingVertical="4dp"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
             android:src="@drawable/user"
             app:tint="#94A3B8" />
 

@@ -51,11 +51,7 @@ object NavbarUtils {
     }
 
     private fun applySlideTransition(activity: Activity, fromIndex: Int, toIndex: Int) {
-        if (toIndex >= fromIndex) {
-            activity.overridePendingTransition(R.anim.fade_in_smooth, R.anim.fade_out_smooth)
-        } else {
-            activity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
-        }
+        activity.overridePendingTransition(0, 0)
     }
 
     fun setupAdminNavbar(activity: Activity) {
@@ -229,7 +225,6 @@ object NavbarUtils {
         navReportCenter?.setOnClickListener {
             val intent = Intent(activity, FormPelaporanActivity::class.java)
             activity.startActivity(intent)
-            activity.overridePendingTransition(R.anim.fade_in_smooth, R.anim.fade_out_smooth)
         }
 
         navNotif?.setOnClickListener {
@@ -281,26 +276,15 @@ object NavbarUtils {
     }
 
     private fun setTabState(icon: ImageView?, text: TextView?, isActive: Boolean) {
+        icon?.setBackgroundResource(0)
+        icon?.scaleX = 1f
+        icon?.scaleY = 1f
         if (isActive) {
-            icon?.setBackgroundResource(R.drawable.bg_nav_icon_active_blue)
-            icon?.imageTintList = ColorStateList.valueOf(Color.WHITE)
-            icon?.scaleX = 0.86f
-            icon?.scaleY = 0.86f
-            icon?.animate()
-                ?.scaleX(1f)
-                ?.scaleY(1f)
-                ?.setDuration(200)
-                ?.setInterpolator(DecelerateInterpolator())
-                ?.start()
-
+            icon?.imageTintList = ColorStateList.valueOf(Color.parseColor(COLOR_ACTIVE_TEXT))
             text?.setTextColor(Color.parseColor(COLOR_ACTIVE_TEXT))
             text?.setTypeface(null, Typeface.BOLD)
         } else {
-            icon?.setBackgroundResource(0)
             icon?.imageTintList = ColorStateList.valueOf(Color.parseColor(COLOR_INACTIVE))
-            icon?.scaleX = 1f
-            icon?.scaleY = 1f
-
             text?.setTextColor(Color.parseColor(COLOR_INACTIVE))
             text?.setTypeface(null, Typeface.NORMAL)
         }

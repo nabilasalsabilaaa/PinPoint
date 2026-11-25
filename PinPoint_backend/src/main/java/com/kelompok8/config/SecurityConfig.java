@@ -21,28 +21,40 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll()
-                // .requestMatchers(
-                //     "/api/auth/**",
-                //     "/swagger-ui/**",
-                //     "/swagger-ui.html",
-                //     "/v3/api-docs/**",
-                //     "/webjars/**"
-                // ).permitAll()
-                // .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
-                // .requestMatchers(HttpMethod.GET, "/api/user/reports/map").permitAll()
+                // 1. Endpoint publik (Autentikasi, Swagger, File Media, Peta & Baca Kategori)
+                .requestMatchers(
+                    "/api/auth/**",
+                    "/api/files/**",
+                    "/swagger-ui/**",
+                    "/swagger-ui.html",
+                    "/v3/api-docs/**",
+                    "/webjars/**"
+                ).permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/user/reports/map").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/user/reports/*").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/user/reports/*/evidence").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/user/reports/*/status-history").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/admin/reports").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/admin/reports/*").permitAll()
 
-                // .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                // .requestMatchers("/api/government/**").hasRole("PEMERINTAH")
-                // .requestMatchers("/api/user/**").hasRole("USER")
+                // 2. Endpoint profil & ubah sandi (boleh diakses oleh seluruh role yang terautentikasi)
+                .requestMatchers("/api/admin/profile", "/api/admin/change-password").authenticated()
 
-                // // 3. Aturan manajemen Kategori (hanya ADMIN untuk tulis/ubah/hapus)
-                // .requestMatchers(HttpMethod.POST, "/api/categories/**").hasRole("ADMIN")
-                // .requestMatchers(HttpMethod.PUT, "/api/categories/**").hasRole("ADMIN")
-                // .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasRole("ADMIN")
+                // 3. Otorisasi Role ADMIN (verifikasi, penolakan, kelola akun, statistik, CRUD kategori)
+                .requestMatchers("/api/admin/dashboard/**").hasRole("ADMIN")
+                .requestMatchers("/api/admin/users/**").hasRole("ADMIN")
+                .requestMatchers("/api/admin/reports/*/verify", "/api/admin/reports/*/approve", "/api/admin/reports/*/reject").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/categories/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/categories/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasRole("ADMIN")
 
-                // // 4. Endpoint lainnya wajib membawa Token JWT yang sah
-                // .anyRequest().authenticated()
+                // 4. Otorisasi Role PEMERINTAH (dan ADMIN untuk disposisi/monitoring)
+                .requestMatchers("/api/government/**").hasAnyRole("PEMERINTAH", "DINAS", "ADMIN")
+
+                // 5. Otorisasi Role USER & endpoint lainnya wajib membawa Token JWT yang sah
+                .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN", "PEMERINTAH")
+                .anyRequest().authenticated()
             )
             .formLogin(form -> form.disable())
             .httpBasic(basic -> basic.disable());

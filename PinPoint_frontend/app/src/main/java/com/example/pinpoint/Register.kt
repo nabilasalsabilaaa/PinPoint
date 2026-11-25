@@ -14,9 +14,12 @@ import android.view.View
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.example.pinpoint.network.ApiClient
 import com.example.pinpoint.network.RegisterRequest
 
@@ -29,6 +32,22 @@ class Register : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
+        val rootView = findViewById<View>(R.id.registerRoot)
+        val svSignUp = findViewById<ScrollView>(R.id.svSignUp)
+
+        ViewCompat.setOnApplyWindowInsetsListener(rootView) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val bottomPadding = maxOf(systemBars.bottom, imeInsets.bottom)
+            v.setPadding(systemBars.left, 0, systemBars.right, bottomPadding)
+            if (imeInsets.bottom > 0) {
+                currentFocus?.let { focused ->
+                    scrollViewToChild(svSignUp, focused)
+                }
+            }
+            insets
+        }
+
         setupLabelStyles()
 
         val etFullName = findViewById<EditText>(R.id.etFullName)
@@ -36,6 +55,15 @@ class Register : AppCompatActivity() {
         val etPhone = findViewById<EditText>(R.id.etPhone)
         val etPassword = findViewById<EditText>(R.id.etPassword)
         val etConfirmPassword = findViewById<EditText>(R.id.etConfirmPassword)
+
+        listOf(etFullName, etEmail, etPhone, etPassword, etConfirmPassword).forEach { field ->
+            field.setOnFocusChangeListener { v, hasFocus ->
+                if (hasFocus) scrollViewToChild(svSignUp, v)
+            }
+            field.setOnClickListener { v ->
+                scrollViewToChild(svSignUp, v)
+            }
+        }
         val ivPasswordVisibility = findViewById<ImageView>(R.id.ivPasswordVisibility)
         val ivConfirmPasswordVisibility = findViewById<ImageView>(R.id.ivConfirmPasswordVisibility)
         val ivPasswordMatchIcon = findViewById<ImageView>(R.id.ivPasswordMatchIcon)
@@ -88,11 +116,12 @@ class Register : AppCompatActivity() {
         btnSignUp.setOnClickListener {
             val name = etFullName.text.toString().trim()
             val email = etEmail.text.toString().trim()
-            val phone = etPhone.text.toString().trim()
+            val rawPhone = etPhone.text.toString().trim()
+            val phone = normalizePhoneNumber(rawPhone)
             val password = etPassword.text.toString()
             val confirm = etConfirmPassword.text.toString()
 
-            if (name.isEmpty() || email.isEmpty() || phone.isEmpty() || password.isEmpty()) {
+            if (name.isEmpty() || email.isEmpty() || rawPhone.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Harap lengkapi seluruh data wajib!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -100,6 +129,12 @@ class Register : AppCompatActivity() {
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 etEmail.error = "Format email tidak valid"
                 Toast.makeText(this, "Masukkan alamat email yang aktif dan valid!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (phone.length < 9 || phone.length > 15 || !phone.startsWith("0") || !phone.all { it.isDigit() }) {
+                etPhone.error = "Format nomor ponsel tidak valid"
+                Toast.makeText(this, "Masukkan nomor ponsel yang valid (awalan 0 atau 62)!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -159,6 +194,31 @@ class Register : AppCompatActivity() {
         }
 
         tvLoginLink.setOnClickListener { finish() }
+    }
+
+    private fun scrollViewToChild(scrollView: ScrollView, target: View) {
+        scrollView.postDelayed({
+            val rect = android.graphics.Rect()
+            target.getDrawingRect(rect)
+            try {
+                scrollView.offsetDescendantRectToMyCoords(target, rect)
+                val targetY = (rect.top - 140).coerceAtLeast(0)
+                scrollView.smoothScrollTo(0, targetY)
+            } catch (_: Exception) {
+                target.requestRectangleOnScreen(rect, false)
+            }
+        }, 180)
+    }
+
+    private fun normalizePhoneNumber(raw: String): String {
+        val cleaned = raw.trim().replace(Regex("[\\s\\-().]"), "")
+        if (cleaned.isEmpty()) return ""
+        return when {
+            cleaned.startsWith("+62") -> "0" + cleaned.substring(3)
+            cleaned.startsWith("62") -> "0" + cleaned.substring(2)
+            cleaned.startsWith("8") -> "0$cleaned"
+            else -> cleaned
+        }
     }
 
     private fun setupLabelStyles() {

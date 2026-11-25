@@ -31,6 +31,7 @@ class PemerintahDetailTaskActivity : AppCompatActivity() {
 
     private var reportId: String? = null
     private var currentReport: ReportDto? = null
+    private var isReportCompleted: Boolean = false
 
     private lateinit var tvDetailId: TextView
     private lateinit var tvDetailStatusBadge: TextView
@@ -59,6 +60,10 @@ class PemerintahDetailTaskActivity : AppCompatActivity() {
     private lateinit var switchCloseTicket: SwitchCompat
     private lateinit var btnMarkCompleted: TextView
     private lateinit var btnSaveDraft: TextView
+    private lateinit var bottomActionContainer: View
+    private lateinit var ivCameraBadgeOverlay: View
+    private lateinit var layoutSwitchCloseTicket: View
+    private lateinit var tvEvidenceSectionSubtitle: TextView
 
     private val citizenPhotoUrls = mutableListOf<String>()
     private val evidenceDisplayUrls = mutableListOf<String>()
@@ -126,6 +131,10 @@ class PemerintahDetailTaskActivity : AppCompatActivity() {
         switchCloseTicket = findViewById(R.id.switchCloseTicket)
         btnMarkCompleted = findViewById(R.id.btnMarkCompleted)
         btnSaveDraft = findViewById(R.id.btnSaveDraft)
+        bottomActionContainer = findViewById(R.id.bottomActionContainer)
+        ivCameraBadgeOverlay = findViewById(R.id.ivCameraBadgeOverlay)
+        layoutSwitchCloseTicket = findViewById(R.id.layoutSwitchCloseTicket)
+        tvEvidenceSectionSubtitle = findViewById(R.id.tvEvidenceSectionSubtitle)
     }
 
     private fun setupListeners() {
@@ -183,13 +192,17 @@ class PemerintahDetailTaskActivity : AppCompatActivity() {
                     evidenceDisplayUrls,
                     0
                 )
-            } else {
+            } else if (!isReportCompleted) {
                 pickMultipleImagesLauncher.launch("image/*")
+            } else {
+                Toast.makeText(this, "Tidak ada foto bukti perbaikan untuk ditampilkan", Toast.LENGTH_SHORT).show()
             }
         }
 
         btnAddMoreEvidencePhoto.setOnClickListener {
-            pickMultipleImagesLauncher.launch("image/*")
+            if (!isReportCompleted) {
+                pickMultipleImagesLauncher.launch("image/*")
+            }
         }
 
         btnPreviewEvidencePhotos.setOnClickListener {
@@ -320,6 +333,37 @@ class PemerintahDetailTaskActivity : AppCompatActivity() {
             tvAfterPhotoOverlayHint.text = "Bukti perbaikan telah tercatat pada laporan selesai"
             ivConditionAfter.setImageResource(R.drawable.sampul)
         }
+
+        // Jika laporan sudah ditandai selesai, kunci form & hilangkan tombol aksi agar tidak bisa diedit kembali
+        isReportCompleted = report.resolvedStatusKey() == "SELESAI"
+        applyCompletedReadOnlyState(isReportCompleted)
+    }
+
+    private fun applyCompletedReadOnlyState(completed: Boolean) {
+        if (completed) {
+            bottomActionContainer.visibility = View.GONE
+            btnAddMoreEvidencePhoto.visibility = View.GONE
+            ivCameraBadgeOverlay.visibility = View.GONE
+            layoutSwitchCloseTicket.visibility = View.GONE
+            tvEvidenceSectionSubtitle.text = "Laporan telah diselesaikan secara resmi dan tidak dapat diubah lagi"
+
+            etWorkNotes.isEnabled = false
+            etWorkNotes.isFocusable = false
+            etWorkNotes.isFocusableInTouchMode = false
+            etWorkNotes.isCursorVisible = false
+            etWorkNotes.keyListener = null
+
+            if (evidenceDisplayUrls.isNotEmpty()) {
+                tvAfterPhotoCountBadge.text = "${evidenceDisplayUrls.size} Foto Bukti"
+                tvAfterPhotoOverlayHint.text = "Ketuk untuk melihat & menggeser foto bukti perbaikan"
+            }
+        } else {
+            bottomActionContainer.visibility = View.VISIBLE
+            btnAddMoreEvidencePhoto.visibility = View.VISIBLE
+            ivCameraBadgeOverlay.visibility = View.VISIBLE
+            layoutSwitchCloseTicket.visibility = View.VISIBLE
+            tvEvidenceSectionSubtitle.text = "Unggah foto bukti pengerjaan (bisa lebih dari 1 foto) & keterangan"
+        }
     }
 
     private fun addSelectedEvidenceUris(uris: List<Uri>) {
@@ -348,8 +392,12 @@ class PemerintahDetailTaskActivity : AppCompatActivity() {
     private fun refreshEvidencePhotosUi() {
         val count = evidenceDisplayUrls.size
         if (count > 0) {
-            tvAfterPhotoCountBadge.text = "$count Foto Terpilih"
-            tvAfterPhotoOverlayHint.text = "$count Foto Bukti Siap Diunggah - Ketuk untuk melihat & menggeser foto"
+            tvAfterPhotoCountBadge.text = if (isReportCompleted) "$count Foto Bukti" else "$count Foto Terpilih"
+            tvAfterPhotoOverlayHint.text = if (isReportCompleted) {
+                "Ketuk untuk melihat & menggeser foto bukti perbaikan"
+            } else {
+                "$count Foto Bukti Siap Diunggah - Ketuk untuk melihat & menggeser foto"
+            }
             btnPreviewEvidencePhotos.text = "Lihat & Geser Foto ($count)"
             Glide.with(this)
                 .load(evidenceDisplayUrls.last())

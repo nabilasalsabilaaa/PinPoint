@@ -3,6 +3,7 @@ package com.kelompok8.service;
 import com.kelompok8.model.User;
 import com.kelompok8.repository.LaporanRepository;
 import com.kelompok8.repository.UserRepository;
+import com.kelompok8.util.PhoneNumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -67,12 +68,17 @@ public class AdminUserService {
         if (userRequest.getPassword() == null || userRequest.getPassword().isBlank()) {
             throw new RuntimeException("Kata sandi sementara wajib diisi!");
         }
-        if (userRepository.existsByEmail(userRequest.getEmail().trim())) {
+        if (userRepository.existsByEmailIgnoreCase(userRequest.getEmail().trim())) {
             throw new RuntimeException("Email sudah terdaftar!");
         }
-        if (userRequest.getNoTelepon() != null && !userRequest.getNoTelepon().isBlank()
-                && userRepository.existsByNoTelepon(userRequest.getNoTelepon().trim())) {
-            throw new RuntimeException("Nomor telepon sudah terdaftar!");
+        String normalizedPhone = PhoneNumberUtils.normalizeToLocalZero(userRequest.getNoTelepon());
+        if (!normalizedPhone.isEmpty()) {
+            if (!PhoneNumberUtils.isValidNormalizedPhone(normalizedPhone)) {
+                throw new RuntimeException("Format nomor telepon tidak valid! Gunakan awalan 0 atau 62.");
+            }
+            if (userRepository.existsByNoTeleponIn(PhoneNumberUtils.buildEquivalentVariants(normalizedPhone))) {
+                throw new RuntimeException("Nomor telepon sudah terdaftar!");
+            }
         }
 
         try {
@@ -80,9 +86,9 @@ public class AdminUserService {
         } catch (Exception ignored) {}
         userRequest.setId(null);
         userRequest.setNama(userRequest.getNama().trim());
-        userRequest.setEmail(userRequest.getEmail().trim());
-        if (userRequest.getNoTelepon() != null) {
-            userRequest.setNoTelepon(userRequest.getNoTelepon().trim());
+        userRequest.setEmail(userRequest.getEmail().trim().toLowerCase());
+        if (!normalizedPhone.isEmpty()) {
+            userRequest.setNoTelepon(normalizedPhone);
         }
         if (userRequest.getIdRole() == null) {
             userRequest.setIdRole(3L); // Default Dinas/Pemerintah jika dibuat dari Admin
@@ -127,7 +133,19 @@ public class AdminUserService {
             user.setNama(profileData.getNama().trim());
         }
         if (profileData.getNoTelepon() != null && !profileData.getNoTelepon().isBlank()) {
-            user.setNoTelepon(profileData.getNoTelepon().trim());
+            String normalizedPhone = PhoneNumberUtils.normalizeToLocalZero(profileData.getNoTelepon());
+            if (!PhoneNumberUtils.isValidNormalizedPhone(normalizedPhone)) {
+                throw new RuntimeException("Format nomor telepon tidak valid! Gunakan awalan 0 atau 62.");
+            }
+            List<User> existingWithPhone = userRepository.findAllByNoTeleponIn(
+                    PhoneNumberUtils.buildEquivalentVariants(normalizedPhone)
+            );
+            boolean ownedByOther = existingWithPhone.stream()
+                    .anyMatch(other -> other.getId() != null && !other.getId().equals(user.getId()));
+            if (ownedByOther) {
+                throw new RuntimeException("Nomor telepon sudah digunakan oleh akun lain!");
+            }
+            user.setNoTelepon(normalizedPhone);
         }
         if (profileData.getFotoProfil() != null && !profileData.getFotoProfil().isBlank()) {
             userPhotosByEmail.put(user.getEmail().trim().toLowerCase(), profileData.getFotoProfil());

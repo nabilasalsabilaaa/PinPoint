@@ -38,22 +38,27 @@
 
         <activity
             android:name=".Login"
+            android:windowSoftInputMode="adjustResize|stateHidden"
             android:exported="false" />
 
         <activity
             android:name=".Register"
+            android:windowSoftInputMode="adjustResize|stateHidden"
             android:exported="false" />
 
         <activity
             android:name=".ForgotPasswordActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden"
             android:exported="false" />
 
         <activity
             android:name=".OtpVerificationActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden"
             android:exported="false" />
 
         <activity
             android:name=".ResetPasswordNewActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden"
             android:exported="false" />
 
         <!-- Halaman Modul Warga / User -->

@@ -3,6 +3,7 @@ package com.kelompok8.service;
 import com.kelompok8.dto.ForgotPasswordRequest;
 import com.kelompok8.model.User;
 import com.kelompok8.repository.UserRepository;
+import com.kelompok8.util.PhoneNumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -75,17 +77,25 @@ public class AuthService {
         }
 
         String cleanEmail = userRequest.getEmail().trim().toLowerCase();
-        String cleanPhone = userRequest.getNoTelepon() != null ? userRequest.getNoTelepon().trim() : "";
+        String cleanPhone = PhoneNumberUtils.normalizeToLocalZero(userRequest.getNoTelepon());
+
+        if (cleanPhone.isEmpty()) {
+            return "Error: Nomor telepon wajib diisi!";
+        }
+        if (!PhoneNumberUtils.isValidNormalizedPhone(cleanPhone)) {
+            return "Error: Format nomor telepon tidak valid! Gunakan awalan 0 atau 62.";
+        }
 
         if (!emailService.isEmailActiveAndValid(cleanEmail)) {
             return "Error: Alamat email tidak valid atau domain email tidak aktif!";
         }
 
-        if (userRepository.existsByEmail(cleanEmail) || userRepository.findByEmailOrNoTelepon(cleanEmail, cleanEmail).isPresent()) {
+        if (userRepository.existsByEmailIgnoreCase(cleanEmail) || userRepository.findByEmailOrNoTelepon(cleanEmail, cleanEmail).isPresent()) {
             return "Error: Email sudah terdaftar!";
         }
-        if (!cleanPhone.isEmpty() && userRepository.existsByNoTelepon(cleanPhone)) {
-            return "Error: Nomor telepon sudah terdaftar!";
+        Set<String> phoneVariants = PhoneNumberUtils.buildEquivalentVariants(cleanPhone);
+        if (userRepository.existsByNoTeleponIn(phoneVariants)) {
+            return "Error: Nomor telepon sudah terdaftar! Gunakan nomor lain.";
         }
 
         userRequest.setNama(userRequest.getNama().trim());
@@ -128,10 +138,16 @@ public class AuthService {
         }
 
         User userToSave = pending.userRequest;
-        if (userRepository.existsByEmail(cleanEmail)) {
+        if (userRepository.existsByEmailIgnoreCase(cleanEmail)) {
             pendingRegistrationsByEmail.remove(cleanEmail);
             return "Error: Email sudah terdaftar!";
         }
+        String normalizedPhone = PhoneNumberUtils.normalizeToLocalZero(userToSave.getNoTelepon());
+        if (!normalizedPhone.isEmpty() && userRepository.existsByNoTeleponIn(PhoneNumberUtils.buildEquivalentVariants(normalizedPhone))) {
+            pendingRegistrationsByEmail.remove(cleanEmail);
+            return "Error: Nomor telepon sudah terdaftar! Gunakan nomor lain.";
+        }
+        userToSave.setNoTelepon(normalizedPhone);
 
         try {
             userRepository.syncSequence();
@@ -161,15 +177,20 @@ public class AuthService {
             return "Error: Kata sandi wajib diisi!";
         }
         String cleanEmail = userRequest.getEmail().trim().toLowerCase();
+        String cleanPhone = PhoneNumberUtils.normalizeToLocalZero(userRequest.getNoTelepon());
         if (!emailService.isEmailActiveAndValid(cleanEmail)) {
             return "Error: Alamat email tidak valid atau tidak aktif!";
         }
-        if (userRepository.existsByEmail(cleanEmail)) {
+        if (userRepository.existsByEmailIgnoreCase(cleanEmail)) {
             return "Error: Email sudah terdaftar!";
         }
-        if (userRequest.getNoTelepon() != null && !userRequest.getNoTelepon().isBlank()
-                && userRepository.existsByNoTelepon(userRequest.getNoTelepon().trim())) {
-            return "Error: Nomor telepon sudah terdaftar!";
+        if (!cleanPhone.isEmpty()) {
+            if (!PhoneNumberUtils.isValidNormalizedPhone(cleanPhone)) {
+                return "Error: Format nomor telepon tidak valid! Gunakan awalan 0 atau 62.";
+            }
+            if (userRepository.existsByNoTeleponIn(PhoneNumberUtils.buildEquivalentVariants(cleanPhone))) {
+                return "Error: Nomor telepon sudah terdaftar! Gunakan nomor lain.";
+            }
         }
 
         try {
@@ -177,6 +198,7 @@ public class AuthService {
         } catch (Exception ignored) {}
         userRequest.setId(null);
         userRequest.setEmail(cleanEmail);
+        userRequest.setNoTelepon(cleanPhone);
         if (userRequest.getIdRole() == null) {
             userRequest.setIdRole(2L);
         }
@@ -192,7 +214,18 @@ public class AuthService {
         if (identifier == null || rawPassword == null) return null;
         String cleanIdentifier = identifier.trim();
         String cleanPassword = rawPassword.trim();
-        Optional<User> optionalUser = userRepository.findByEmailOrNoTelepon(cleanIdentifier, cleanIdentifier);
+        Optional<User> optionalUser;
+        if (cleanIdentifier.contains("@")) {
+            optionalUser = userRepository.findByEmailIgnoreCase(cleanIdentifier);
+        } else {
+            Set<String> phoneVariants = PhoneNumberUtils.buildEquivalentVariants(cleanIdentifier);
+            optionalUser = phoneVariants.isEmpty()
+                    ? Optional.empty()
+                    : userRepository.findFirstByNoTeleponIn(phoneVariants);
+            if (optionalUser.isEmpty()) {
+                optionalUser = userRepository.findByEmailOrNoTelepon(cleanIdentifier, cleanIdentifier);
+            }
+        }
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
@@ -212,6 +245,15 @@ public class AuthService {
                 if (user.getIdRole() == null) {
                     user.setIdRole(2L);
                 }
+                // Selaraskan format nomor telepon lama (misal 62... / +62...) menjadi awalan 0 secara otomatis jika aman
+                if (user.getNoTelepon() != null && !user.getNoTelepon().isBlank()) {
+                    String normalizedPhone = PhoneNumberUtils.normalizeToLocalZero(user.getNoTelepon());
+                    if (!normalizedPhone.equals(user.getNoTelepon())
+                            && PhoneNumberUtils.isValidNormalizedPhone(normalizedPhone)
+                            && !userRepository.existsByNoTelepon(normalizedPhone)) {
+                        user.setNoTelepon(normalizedPhone);
+                    }
+                }
                 user.setTerakhirLogin(LocalDateTime.now());
                 userRepository.save(user);
                 return user;
@@ -229,7 +271,15 @@ public class AuthService {
             return "Error: Harap masukkan email atau nomor telepon Anda!";
         }
         String cleanId = identifier.trim();
-        Optional<User> userOpt = userRepository.findByEmailOrNoTelepon(cleanId, cleanId);
+        Optional<User> userOpt;
+        if ("PHONE".equalsIgnoreCase(type) || !cleanId.contains("@")) {
+            Set<String> phoneVariants = PhoneNumberUtils.buildEquivalentVariants(cleanId);
+            userOpt = phoneVariants.isEmpty()
+                    ? Optional.empty()
+                    : userRepository.findFirstByNoTeleponIn(phoneVariants);
+        } else {
+            userOpt = userRepository.findByEmailIgnoreCase(cleanId);
+        }
 
         if (userOpt.isEmpty()) {
             return "Error: Akun dengan " + ("PHONE".equalsIgnoreCase(type) ? "nomor telepon" : "email")

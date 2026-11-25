@@ -38,13 +38,10 @@
 
         <ImageView
             android:id="@+id/ivNavUserHome"
-            android:layout_width="44dp"
-            android:layout_height="30dp"
-            android:paddingHorizontal="11dp"
-            android:paddingVertical="4dp"
-            android:background="@drawable/bg_nav_icon_active_blue"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
             android:src="@drawable/home"
-            app:tint="#FFFFFF" />
+            app:tint="#0B58CA" />
 
         <TextView
             android:id="@+id/tvNavUserHome"
@@ -76,10 +73,8 @@
 
         <ImageView
             android:id="@+id/ivNavUserHistory"
-            android:layout_width="44dp"
-            android:layout_height="30dp"
-            android:paddingHorizontal="11dp"
-            android:paddingVertical="4dp"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
             android:src="@drawable/ic_history"
             app:tint="#94A3B8" />
 
@@ -119,15 +114,13 @@
         android:layout_marginStart="28dp">
 
         <FrameLayout
-            android:layout_width="46dp"
-            android:layout_height="30dp">
+            android:layout_width="32dp"
+            android:layout_height="24dp">
 
             <ImageView
                 android:id="@+id/ivNavUserNotification"
-                android:layout_width="44dp"
-                android:layout_height="30dp"
-                android:paddingHorizontal="11dp"
-                android:paddingVertical="4dp"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_bell"
                 app:tint="#94A3B8" />
@@ -175,10 +168,8 @@
 
         <ImageView
             android:id="@+id/ivNavUserProfile"
-            android:layout_width="44dp"
-            android:layout_height="30dp"
-            android:paddingHorizontal="11dp"
-            android:paddingVertical="4dp"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
             android:src="@drawable/user"
             app:tint="#94A3B8" />
 

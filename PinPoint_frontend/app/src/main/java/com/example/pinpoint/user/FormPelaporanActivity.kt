@@ -191,6 +191,12 @@ class FormPelaporanActivity : AppCompatActivity() {
             }
         }
 
+    private var isReportSubmitted = false
+
+    private val draftPrefs by lazy {
+        getSharedPreferences("FormPelaporanDraft", MODE_PRIVATE)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -312,10 +318,80 @@ class FormPelaporanActivity : AppCompatActivity() {
         })
 
         setupSubmitButton()
+        restoreLocalDraft()
 
         if (!hasLocationPermission()) {
             requestLocationPermission()
         }
+    }
+
+    private fun saveLocalDraft() {
+        val title = if (::etReportTitle.isInitialized) etReportTitle.text.toString().trim() else ""
+        val desc = if (::etDescription.isInitialized) etDescription.text.toString().trim() else ""
+        if (title.isEmpty() && desc.isEmpty() && selectedPhotoPreviewUris.isEmpty()) {
+            return
+        }
+        draftPrefs.edit()
+            .putString("DRAFT_TITLE", title)
+            .putString("DRAFT_DESC", desc)
+            .putLong("DRAFT_CAT_ID", selectedCategoryId)
+            .putString("DRAFT_CAT_NAME", selectedCategoryName)
+            .putString("DRAFT_URGENCY", selectedUrgency)
+            .putString("DRAFT_ADDRESS", reportAddress)
+            .putString("DRAFT_LAT", reportLatitude.toString())
+            .putString("DRAFT_LNG", reportLongitude.toString())
+            .putString("DRAFT_PHOTO_URIS", selectedPhotoPreviewUris.joinToString("\n"))
+            .apply()
+    }
+
+    private fun restoreLocalDraft() {
+        val savedTitle = draftPrefs.getString("DRAFT_TITLE", "") ?: ""
+        val savedDesc = draftPrefs.getString("DRAFT_DESC", "") ?: ""
+        val savedUrisRaw = draftPrefs.getString("DRAFT_PHOTO_URIS", "") ?: ""
+        if (savedTitle.isBlank() && savedDesc.isBlank() && savedUrisRaw.isBlank()) {
+            return
+        }
+        if (savedTitle.isNotBlank()) etReportTitle.setText(savedTitle)
+        if (savedDesc.isNotBlank()) etDescription.setText(savedDesc)
+
+        selectedCategoryId = draftPrefs.getLong("DRAFT_CAT_ID", selectedCategoryId)
+        selectedCategoryName = draftPrefs.getString("DRAFT_CAT_NAME", selectedCategoryName) ?: selectedCategoryName
+        selectedUrgency = draftPrefs.getString("DRAFT_URGENCY", selectedUrgency) ?: selectedUrgency
+
+        val savedAddr = draftPrefs.getString("DRAFT_ADDRESS", null)
+        val savedLat = draftPrefs.getString("DRAFT_LAT", null)?.toDoubleOrNull()
+        val savedLng = draftPrefs.getString("DRAFT_LNG", null)?.toDoubleOrNull()
+        if (!savedAddr.isNullOrBlank() && savedLat != null && savedLng != null) {
+            isAutoTrackingUser = false
+            reportAddress = savedAddr
+            reportLatitude = savedLat
+            reportLongitude = savedLng
+            tvPinAddress.text = reportAddress
+            tvCoordinates.text = String.format(Locale.US, "Lat: %.5f, Lng: %.5f", reportLatitude, reportLongitude)
+        }
+
+        if (savedUrisRaw.isNotBlank()) {
+            savedUrisRaw.split("\n").filter { it.isNotBlank() }.forEach { uriStr ->
+                try {
+                    val uri = Uri.parse(uriStr)
+                    val bmp = decodeUprightBitmapFromUri(uri)
+                    val b64 = if (bmp != null) encodeBitmapToBase64(bmp) else null
+                    if (b64 != null) {
+                        selectedPhotoPreviewUris.add(uriStr)
+                        selectedPhotoBase64List.add(b64)
+                    }
+                } catch (_: Exception) {}
+            }
+            if (selectedPhotoPreviewUris.isNotEmpty()) {
+                updateSelectedPhotosUI()
+            }
+        }
+
+        Toast.makeText(this, "Draf laporan lokal sebelumnya dipulihkan", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun clearLocalDraft() {
+        draftPrefs.edit().clear().apply()
     }
 
     // =========================================================
@@ -823,6 +899,8 @@ class FormPelaporanActivity : AppCompatActivity() {
                     btnSubmit.text = "Kirim Laporan Fasilitas"
 
                     if (response.isSuccessful) {
+                        isReportSubmitted = true
+                        clearLocalDraft()
                         val result = response.body()
                         Toast.makeText(
                             this@FormPelaporanActivity,
@@ -838,9 +916,10 @@ class FormPelaporanActivity : AppCompatActivity() {
                 onFailure = { _, t ->
                     btnSubmit.isEnabled = true
                     btnSubmit.text = "Kirim Laporan Fasilitas"
+                    saveLocalDraft()
                     Toast.makeText(
                         this@FormPelaporanActivity,
-                        "Gagal terhubung ke server: ${t.message}",
+                        "Koneksi terputus (${t.message}). Draf laporan disimpan secara lokal dan dapat dikirim ulang nanti.",
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -905,6 +984,9 @@ class FormPelaporanActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
+        if (!isReportSubmitted) {
+            saveLocalDraft()
+        }
         googleFormMapView.onPause()
         locationCallback?.let { fusedLocationClient.removeLocationUpdates(it) }
         super.onPause()
