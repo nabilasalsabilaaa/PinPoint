@@ -1,0 +1,899 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainDetail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F9FF">
+
+    <!-- Header Fixed (Selaras dengan Admin Detail Verifikasi) -->
+    <LinearLayout
+        android:id="@+id/toolbarDetail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:background="#FFFFFF"
+        android:elevation="2dp">
+
+        <ImageView
+            android:id="@+id/btnBackDetail"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_white_rounded_btn"
+            android:padding="8dp"
+            android:src="@drawable/back"
+            app:tint="#0B1C30"
+            android:elevation="1dp"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="Kembali" />
+
+        <TextView
+            android:id="@+id/tvDetailToolbarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Detail Laporan"
+            android:textColor="#0B1C30"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Scrollable Body Content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbarDetail"
+        android:clipToPadding="false"
+        android:paddingBottom="28dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Card 1: Utama Laporan (Selaras dengan Admin) -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="#FFFFFF"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <ImageView
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:src="@drawable/verif"
+                                app:tint="#0B3C8C"
+                                android:layout_marginEnd="6dp" />
+
+                            <TextView
+                                android:id="@+id/tvTicketNumber"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="ID #LP-0001"
+                                android:textColor="#434653"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvDetailStatusBadge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:background="@drawable/bg_badge_green_light"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"
+                            android:text="Menunggu Verifikasi"
+                            android:textColor="#00897B"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+
+                    <!-- Kategori & Urgensi -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="6dp">
+
+                        <TextView
+                            android:id="@+id/tvDetailCategory"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_chip_blue_light"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"
+                            android:text="KATEGORI FASILITAS"
+                            android:textColor="#0B3C8C"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
+                            android:layout_marginEnd="8dp" />
+
+                        <TextView
+                            android:id="@+id/tvDetailSeverityBadge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_badge_kritis"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"
+                            android:text="Kritis / Darurat"
+                            android:textColor="#B91C1C"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvDetailTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Judul Laporan"
+                        android:textColor="#0B1C30"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Foto Bukti Laporan dengan Popup Slider -->
+                    <RelativeLayout
+                        android:id="@+id/btnFullscreenPhoto"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:layout_marginBottom="16dp">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp">
+
+                            <ImageView
+                                android:id="@+id/ivDetailPhoto"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/sampul"
+                                android:background="#E2E8F0" />
+                        </androidx.cardview.widget.CardView>
+
+                        <!-- Photo Count Badge -->
+                        <TextView
+                            android:id="@+id/tvDetailPhotoCountBadge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_margin="10dp"
+                            android:background="#B3000000"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"
+                            android:text="1 Foto • Ketuk untuk lihat"
+                            android:textColor="#FFFFFF"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+
+                        <!-- Photo Metadata Overlay -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:background="#80000000"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="8dp"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <ImageView
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:src="@drawable/ic_camera"
+                                app:tint="#FFFFFF"
+                                android:layout_marginEnd="6dp" />
+
+                            <TextView
+                                android:id="@+id/tvDetailDateMeta"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:text="Foto Bukti Laporan"
+                                android:textColor="#FFFFFF"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Perbesar"
+                                android:textColor="#FFFFFF"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <!-- Section Deskripsi Warga -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@android:drawable/ic_menu_sort_by_size"
+                            app:tint="#0B3C8C"
+                            android:layout_marginEnd="8dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Deskripsi dari Warga:"
+                            android:textColor="#434653"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvReportDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_badge_blue_light"
+                        android:padding="12dp"
+                        android:text="-"
+                        android:textColor="#0B1C30"
+                        android:textSize="13sp"
+                        android:lineSpacingExtra="4dp"
+                        android:layout_marginBottom="14dp" />
+
+                    <!-- Dukungan Warga & Tombol Dukung (Tanpa Emoji) -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:src="@drawable/ic_thumb_up"
+                                app:tint="#0B58CA"
+                                android:layout_marginEnd="6dp" />
+
+                            <TextView
+                                android:id="@+id/tvDetailSupportCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0 Dukungan Warga"
+                                android:textColor="#0B1C30"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/btnDetailSupport"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_alignParentEnd="true"
+                            android:background="@drawable/bg_btn_rounded_blue_soft"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="14dp"
+                            android:clickable="true"
+                            android:focusable="true">
+
+                            <ImageView
+                                android:id="@+id/ivDetailSupportIcon"
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:src="@drawable/ic_thumb_up"
+                                app:tint="#0B58CA"
+                                android:layout_marginEnd="6dp" />
+
+                            <TextView
+                                android:id="@+id/tvDetailSupportBtnText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Dukung"
+                                android:textColor="#0B58CA"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card 2: Lokasi Kejadian Laporan (Tanpa Peta Validasi Titik GPS) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardDetailMap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="#FFFFFF"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <ImageView
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:src="@drawable/location"
+                                app:tint="#0B3C8C"
+                                android:layout_marginEnd="8dp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Lokasi Kejadian Laporan"
+                                android:textColor="#0B1C30"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvGeotagCoordinates"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/bg_chip_blue_light"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="4dp"
+                            android:text="Koordinat GPS"
+                            android:textColor="#0B3C8C"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_badge_blue_light"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:id="@+id/tvDetailLocationAddress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Lokasi Laporan"
+                            android:textColor="#0B1C30"
+                            android:textStyle="bold"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card 3: Identitas Pelapor (Selaras dengan Admin) -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="#FFFFFF"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/user"
+                            app:tint="#0B3C8C"
+                            android:layout_marginEnd="8dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Identitas Pelapor"
+                            android:textColor="#0B1C30"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_badge_blue_light"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nama Warga"
+                            android:textColor="#64748B"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tvReporterName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Warga Pelapor"
+                            android:textColor="#0B1C30"
+                            android:textStyle="bold"
+                            android:textSize="15sp"
+                            android:layout_marginBottom="8dp" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#D1D5DB"
+                            android:layout_marginBottom="8dp" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <ImageView
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:src="@drawable/call"
+                                app:tint="#434653"
+                                android:layout_marginEnd="8dp" />
+
+                            <TextView
+                                android:id="@+id/tvReporterPhone"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="-"
+                                android:textColor="#0B1C30"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card 4: Bukti Perbaikan Pemerintah (Tampil saat laporan selesai / ada bukti pemerintah) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardGovEvidenceDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="#FFFFFF"
+                android:visibility="gone"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <ImageView
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:src="@drawable/ic_check_circle"
+                                app:tint="#059669"
+                                android:layout_marginEnd="8dp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Bukti Perbaikan Pemerintah"
+                                android:textColor="#0B1C30"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvGovCompletedByBadge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/bg_badge_diproses_mint"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="3dp"
+                            android:text="Tuntas Diperbaiki"
+                            android:textColor="#0F766E"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+
+                    <FrameLayout
+                        android:id="@+id/layoutGovEvidencePhoto"
+                        android:layout_width="match_parent"
+                        android:layout_height="190dp"
+                        android:background="#E2E8F0"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:layout_marginBottom="10dp">
+
+                        <ImageView
+                            android:id="@+id/ivGovEvidencePhoto"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/sampul" />
+
+                        <TextView
+                            android:id="@+id/tvGovEvidencePhotoCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom|end"
+                            android:layout_margin="10dp"
+                            android:background="#B3000000"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"
+                            android:text="Ketuk untuk lihat foto bukti"
+                            android:textColor="#FFFFFF"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Keterangan Hasil Perbaikan:"
+                        android:textColor="#475569"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="6dp" />
+
+                    <TextView
+                        android:id="@+id/tvGovEvidenceNotes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_badge_blue_light"
+                        android:padding="12dp"
+                        android:text="-"
+                        android:textColor="#0B1C30"
+                        android:textSize="13sp"
+                        android:lineSpacingExtra="3dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card 5: Timeline Tindak Lanjut (HANYA 3 TAHAP: Laporan Masuk, Verifikasi Admin, Diproses Pemerintah) -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="#FFFFFF"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Header Timeline -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="18dp">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:background="@drawable/bg_chip_blue_light"
+                                android:gravity="center"
+                                android:layout_marginEnd="10dp">
+
+                                <ImageView
+                                    android:layout_width="16dp"
+                                    android:layout_height="16dp"
+                                    android:src="@drawable/category"
+                                    app:tint="@color/primary_blue" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Timeline Status Laporan"
+                                    android:textColor="#0B1C30"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Pantau perkembangan penanganan laporan"
+                                    android:textColor="#64748B"
+                                    android:textSize="11sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvTimelineStageBadge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/bg_badge_terverifikasi"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="5dp"
+                            android:text="Tahap 1 dari 3"
+                            android:textColor="#1D4ED8"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+
+                    <!-- TAHAP 1: Laporan Masuk -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="28dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/ivStep1Icon"
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:src="@drawable/ic_check_circle"
+                                app:tint="#059669" />
+
+                            <View
+                                android:id="@+id/lineStep1"
+                                android:layout_width="2dp"
+                                android:layout_height="match_parent"
+                                android:minHeight="44dp"
+                                android:background="#A7F3D0" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingStart="10dp"
+                            android:paddingBottom="16dp">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="2dp">
+
+                                <TextView
+                                    android:id="@+id/tvStep1Title"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Laporan Masuk"
+                                    android:textColor="#0B1C30"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tvStep1State"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:text="Tercatat"
+                                    android:textColor="#059669"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+                            </RelativeLayout>
+
+                            <TextView
+                                android:id="@+id/tvStep1Desc"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Laporan pengaduan warga telah masuk ke dalam sistem PinPoint dan menunggu verifikasi."
+                                android:textColor="#64748B"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- TAHAP 2: Verifikasi Admin -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="28dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/ivStep2Icon"
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:src="@drawable/ic_time"
+                                app:tint="#94A3B8" />
+
+                            <View
+                                android:id="@+id/lineStep2"
+                                android:layout_width="2dp"
+                                android:layout_height="match_parent"
+                                android:minHeight="44dp"
+                                android:background="#CBD5E1" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingStart="10dp"
+                            android:paddingBottom="16dp">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="2dp">
+
+                                <TextView
+                                    android:id="@+id/tvStep2Title"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Verifikasi Admin"
+                                    android:textColor="#64748B"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tvStep2State"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:text="Menunggu"
+                                    android:textColor="#94A3B8"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+                            </RelativeLayout>
+
+                            <TextView
+                                android:id="@+id/tvStep2Desc"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Menunggu pemeriksaan kelengkapan bukti foto dan titik lokasi oleh administrator."
+                                android:textColor="#64748B"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- TAHAP 3: Diproses Pemerintah -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="28dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/ivStep3Icon"
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:src="@drawable/ic_time"
+                                app:tint="#94A3B8" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingStart="10dp">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="2dp">
+
+                                <TextView
+                                    android:id="@+id/tvStep3Title"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Diproses Pemerintah"
+                                    android:textColor="#64748B"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tvStep3State"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:text="Menunggu"
+                                    android:textColor="#94A3B8"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+                            </RelativeLayout>
+
+                            <TextView
+                                android:id="@+id/tvStep3Desc"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Menunggu penanganan dan penyelesaian perbaikan oleh pihak pemerintah."
+                                android:textColor="#64748B"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

@@ -1,4 +1,4 @@
-package com.example.pinpoint
+package com.example.pinpoint.user
 
 import android.app.Activity
 import android.app.Dialog
@@ -6,10 +6,12 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Button
@@ -25,11 +27,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.example.pinpoint.Login
+import com.example.pinpoint.R
 import com.example.pinpoint.admin.BantuanActivity
 import com.example.pinpoint.admin.BiodataActivity
 import com.example.pinpoint.admin.CropRotateImageView
 import com.example.pinpoint.admin.KeamananAkunActivity
-import com.example.pinpoint.admin.NavbarUtils
 import com.example.pinpoint.admin.TentangActivity
 import com.example.pinpoint.network.ApiClient
 import com.example.pinpoint.network.UserAccountDto
@@ -37,17 +40,17 @@ import java.io.File
 import java.io.FileOutputStream
 import kotlin.math.roundToInt
 
-class PemerintahProfileActivity : AppCompatActivity() {
+class ProfilActivity : AppCompatActivity() {
 
     private lateinit var tvProfileName: TextView
     private lateinit var tvProfileEmail: TextView
     private lateinit var ivProfileAvatar: ImageView
     private lateinit var btnEditPhoto: ImageView
     private lateinit var menuBiodata: RelativeLayout
-    private lateinit var menuSecurity: RelativeLayout
-    private lateinit var menuHelp: RelativeLayout
-    private lateinit var menuAbout: RelativeLayout
-    private lateinit var btnLogout: Button
+    private lateinit var menuKeamanan: RelativeLayout
+    private lateinit var menuBantuan: RelativeLayout
+    private lateinit var menuTentang: RelativeLayout
+    private lateinit var btnLogoutUser: Button
 
     private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -61,18 +64,18 @@ class PemerintahProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_pemerintah_profile)
+        setContentView(R.layout.activity_user_profil)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.mainProfil)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
             insets
         }
 
         initViews()
         setupMenuClickListeners()
-        NavbarUtils.setupPemerintahNavbar(this)
-        btnLogout.setOnClickListener { performLogout() }
+        setupBottomNavigation()
+        btnLogoutUser.setOnClickListener { performLogout() }
     }
 
     override fun onResume() {
@@ -86,10 +89,10 @@ class PemerintahProfileActivity : AppCompatActivity() {
         ivProfileAvatar = findViewById(R.id.ivProfileAvatar)
         btnEditPhoto = findViewById(R.id.btnEditPhoto)
         menuBiodata = findViewById(R.id.menuBiodata)
-        menuSecurity = findViewById(R.id.menuSecurity)
-        menuHelp = findViewById(R.id.menuHelp)
-        menuAbout = findViewById(R.id.menuAbout)
-        btnLogout = findViewById(R.id.btnLogout)
+        menuKeamanan = findViewById(R.id.menuKeamanan)
+        menuBantuan = findViewById(R.id.menuBantuan)
+        menuTentang = findViewById(R.id.menuTentang)
+        btnLogoutUser = findViewById(R.id.btnLogoutUser)
     }
 
     private fun showCropRotateDialog(imageUri: Uri) {
@@ -235,6 +238,7 @@ class PemerintahProfileActivity : AppCompatActivity() {
         val permanentPrefs = getSharedPreferences("PermanentUserPrefs", MODE_PRIVATE)
         permanentPrefs.edit()
             .putString("PROFILE_IMAGE_$email", localUri.toString())
+            .putString("PROFILE_IMAGE_LAST", localUri.toString())
             .apply()
 
         updateProfilePictureOnServer(photoUriWithTimestamp)
@@ -244,14 +248,17 @@ class PemerintahProfileActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("UserSession", MODE_PRIVATE)
         val permanentPrefs = getSharedPreferences("PermanentUserPrefs", MODE_PRIVATE)
 
-        val name = sharedPreferences.getString("KEY_NAME", "Petugas Pemerintah") ?: "Petugas Pemerintah"
-        val email = sharedPreferences.getString("KEY_EMAIL", "pemerintah@pinpoint.id") ?: "pemerintah@pinpoint.id"
+        val name = sharedPreferences.getString("KEY_NAME", "Warga Pelapor") ?: "Warga Pelapor"
+        val email = sharedPreferences.getString("KEY_EMAIL", null)
+            ?: sharedPreferences.getString("KEY_SAVED_IDENTIFIER", "warga@pinpoint.id")
+            ?: "warga@pinpoint.id"
         val emailKey = email.trim().lowercase()
 
         tvProfileName.text = name
         tvProfileEmail.text = email
 
         val permanentPhoto = permanentPrefs.getString("PROFILE_IMAGE_$emailKey", null)
+            ?: permanentPrefs.getString("PROFILE_IMAGE_LAST", null)
         val sessionPhoto = sharedPreferences.getString("KEY_PROFILE_IMAGE", null)
 
         val localFile = getProfileImageFile(emailKey)
@@ -289,6 +296,13 @@ class PemerintahProfileActivity : AppCompatActivity() {
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 92, out)
                 out.flush()
             }
+
+            val fallbackFile = File(filesDir, "profile_picture_user.jpg")
+            FileOutputStream(fallbackFile).use { out ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 92, out)
+                out.flush()
+            }
+
             Uri.fromFile(file)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -313,11 +327,11 @@ class PemerintahProfileActivity : AppCompatActivity() {
             callFactory = { api -> api.updateProfile(token, updateReq) },
             onResponse = { _, response ->
                 if (response.isSuccessful) {
-                    Toast.makeText(this@PemerintahProfileActivity, "Foto profil berhasil dipotong & disimpan!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ProfilActivity, "Foto profil berhasil dipotong & disimpan!", Toast.LENGTH_SHORT).show()
                 }
             },
             onFailure = { _, _ ->
-                Toast.makeText(this@PemerintahProfileActivity, "Foto profil berhasil disimpan di perangkat!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@ProfilActivity, "Foto profil berhasil disimpan di perangkat!", Toast.LENGTH_SHORT).show()
             }
         )
     }
@@ -333,13 +347,13 @@ class PemerintahProfileActivity : AppCompatActivity() {
         menuBiodata.setOnClickListener {
             startActivity(Intent(this, BiodataActivity::class.java))
         }
-        menuSecurity.setOnClickListener {
+        menuKeamanan.setOnClickListener {
             startActivity(Intent(this, KeamananAkunActivity::class.java))
         }
-        menuHelp.setOnClickListener {
+        menuBantuan.setOnClickListener {
             startActivity(Intent(this, BantuanActivity::class.java))
         }
-        menuAbout.setOnClickListener {
+        menuTentang.setOnClickListener {
             startActivity(Intent(this, TentangActivity::class.java))
         }
     }
@@ -355,5 +369,9 @@ class PemerintahProfileActivity : AppCompatActivity() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()
+    }
+
+    private fun setupBottomNavigation() {
+        com.example.pinpoint.admin.NavbarUtils.setupUserNavbar(this)
     }
 }

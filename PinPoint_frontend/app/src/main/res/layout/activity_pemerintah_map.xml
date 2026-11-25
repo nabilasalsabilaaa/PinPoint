@@ -14,15 +14,15 @@
         android:layout_height="match_parent"
         android:layout_above="@id/bottomNavContainer" />
 
-    <!-- Top Overlay: Search Bar & Action Buttons -->
+    <!-- Top Overlay: Search Bar & Action Buttons (Tetap pada tempatnya) -->
     <LinearLayout
+        android:id="@+id/topMapOverlay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingHorizontal="16dp"
         android:paddingTop="16dp">
 
-        <!-- Search & Control Buttons Row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -30,7 +30,6 @@
             android:gravity="center_vertical"
             android:layout_marginBottom="12dp">
 
-            <!-- Search Bar -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="48dp"
@@ -43,10 +42,10 @@
                 android:layout_marginEnd="8dp">
 
                 <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:src="@android:drawable/ic_menu_search"
-                    app:tint="#737784"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_search"
+                    app:tint="#64748B"
                     android:layout_marginEnd="10dp" />
 
                 <EditText
@@ -61,7 +60,7 @@
                     android:singleLine="true" />
             </LinearLayout>
 
-            <!-- GPS Button (Biarkan dulu) -->
+            <!-- GPS Button (Tetap pada tempatnya) -->
             <FrameLayout
                 android:id="@+id/btnGps"
                 android:layout_width="48dp"
@@ -80,7 +79,7 @@
                     app:tint="#0B3C8C" />
             </FrameLayout>
 
-            <!-- Layer/Satelit Button (Biarkan dulu) -->
+            <!-- Layer/Satelit Button (Tetap pada tempatnya) -->
             <FrameLayout
                 android:id="@+id/btnLayer"
                 android:layout_width="48dp"
@@ -129,295 +128,163 @@
         </HorizontalScrollView>
     </LinearLayout>
 
-    <!-- Bottom Selected Report Card Overlay (Floating Laporan Masuk) -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardReportDetail"
-        android:layout_width="match_parent"
+    <!-- Floating Quick Access Zoom Controls (Atas ke Bawah: Zoom Out, Zoom In) -->
+    <LinearLayout
+        android:id="@+id/layoutMapZoomControls"
+        android:layout_width="38dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/topMapOverlay"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_white_rounded_btn"
+        android:elevation="6dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/btnMapZoomOut"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:gravity="center"
+            android:text="-"
+            android:textColor="#0B1C30"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E2E8F0" />
+
+        <TextView
+            android:id="@+id/btnMapZoomIn"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:gravity="center"
+            android:text="+"
+            android:textColor="#0B1C30"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:clickable="true"
+            android:focusable="true" />
+    </LinearLayout>
+
+    <!-- ================= TAMPILAN 1: LIST VERTIKAL LAPORAN (DEFAULT - SEPERTI REFERENSI GAMBAR 3) ================= -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardMapListContainer"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
         android:layout_above="@id/bottomNavContainer"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="12dp"
-        app:cardCornerRadius="20dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="22dp"
         app:cardElevation="8dp"
         app:cardBackgroundColor="#FFFFFF">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingTop="10dp">
+
+            <View
+                android:layout_width="40dp"
+                android:layout_height="4dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/bg_drag_handle"
+                android:layout_marginBottom="8dp" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp">
-
-                <View
-                    android:layout_width="40dp"
-                    android:layout_height="4dp"
-                    android:background="@drawable/bg_drag_handle"
-                    android:layout_centerInParent="true" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/btnPrevMapReport"
-                        android:layout_width="26dp"
-                        android:layout_height="26dp"
-                        android:background="@drawable/bg_location_box"
-                        android:gravity="center"
-                        android:text="&lt;"
-                        android:textColor="#0B3C8C"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:clickable="true"
-                        android:focusable="true" />
-
-                    <TextView
-                        android:id="@+id/tvMapReportCounter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="8dp"
-                        android:text="1 / 1"
-                        android:textColor="#475569"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/btnNextMapReport"
-                        android:layout_width="26dp"
-                        android:layout_height="26dp"
-                        android:background="@drawable/bg_location_box"
-                        android:gravity="center"
-                        android:text="&gt;"
-                        android:textColor="#0B3C8C"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:clickable="true"
-                        android:focusable="true" />
-                </LinearLayout>
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tvMapReportId"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="#LP-MKS-0000"
-                        android:textColor="#0B3C8C"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="  |  "
-                        android:textColor="#94A3B8"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:id="@+id/tvMapReportPriority"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_red_light"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="2dp"
-                        android:text="PRIORITAS"
-                        android:textColor="#D32F2F"
-                        android:textSize="10sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
+                android:paddingHorizontal="16dp"
+                android:layout_marginBottom="4dp">
 
                 <TextView
-                    android:id="@+id/tvMapReportStatusBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Daftar Titik Laporan"
+                    android:textColor="#0B1C30"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvMapListTotalCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:background="@drawable/bg_badge_blue_light"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="4dp"
-                    android:text="Terverifikasi"
-                    android:textColor="#0B3C8C"
-                    android:textSize="10sp"
-                    android:textStyle="bold" />
+                    android:text="Ketuk laporan untuk lihat titik"
+                    android:textColor="#64748B"
+                    android:textSize="11sp" />
             </RelativeLayout>
 
             <TextView
-                android:id="@+id/tvMapReportTitle"
+                android:id="@+id/tvEmptyMapReportList"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Memuat data laporan masuk..."
-                android:textColor="#0B1C30"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="10dp" />
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Belum ada laporan yang sesuai pencarian."
+                android:textColor="#64748B"
+                android:textSize="12sp"
+                android:visibility="gone" />
 
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvMapReportList"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_callout_blue"
-                android:orientation="horizontal"
-                android:padding="12dp"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="14dp">
-
-                <FrameLayout
-                    android:layout_width="58dp"
-                    android:layout_height="58dp"
-                    android:background="#E2E8F0"
-                    android:layout_marginEnd="12dp">
-
-                    <ImageView
-                        android:id="@+id/ivMapReportThumb"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/sampul" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom|end"
-                        android:background="#99000000"
-                        android:paddingHorizontal="4dp"
-                        android:text="Foto"
-                        android:textColor="#FFFFFF"
-                        android:textSize="8sp"
-                        android:textStyle="bold" />
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tvMapReportLocation"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Lokasi Laporan"
-                        android:textColor="#0B1C30"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:singleLine="true"
-                        android:ellipsize="end"
-                        android:layout_marginBottom="2dp" />
-
-                    <TextView
-                        android:id="@+id/tvMapReportDesc"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Deskripsi laporan..."
-                        android:textColor="#334155"
-                        android:textSize="11sp"
-                        android:maxLines="2"
-                        android:ellipsize="end"
-                        android:layout_marginBottom="4dp" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/tvMapReportDistance"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Pelapor: Warga"
-                            android:textColor="#0B3C8C"
-                            android:textSize="11sp"
-                            android:textStyle="bold"
-                            android:layout_marginEnd="12dp" />
-
-                        <TextView
-                            android:id="@+id/tvMapReportTime"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="-"
-                            android:textColor="#475569"
-                            android:textSize="11sp" />
-                    </LinearLayout>
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:id="@+id/btnRouteGuidance"
-                    android:layout_width="0dp"
-                    android:layout_height="44dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_btn_secondary"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:layout_marginEnd="8dp"
-                    android:paddingHorizontal="12dp">
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@android:drawable/ic_menu_directions"
-                        app:tint="#0B3C8C"
-                        android:layout_marginEnd="6dp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Pandu Rute"
-                        android:textColor="#0B3C8C"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/btnReportDetail"
-                    android:layout_width="0dp"
-                    android:layout_height="44dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_btn_primary"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:paddingHorizontal="12dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Detail Laporan"
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </LinearLayout>
-
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingBottom="8dp"
+                tools:listitem="@layout/item_pemerintah_map_list_row" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+
+    <!-- ================= TAMPILAN 2: FLOATING CARD CAROUSEL (SWIPE KE SAMPING - SEPERTI REFERENSI GAMBAR 1 & 2) ================= -->
+    <LinearLayout
+        android:id="@+id/layoutFloatingCarouselContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottomNavContainer"
+        android:layout_marginBottom="8dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <!-- ViewPager2 Horizontal dengan Peek Kiri-Kanan -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/vpMapFloatingCards"
+            android:layout_width="match_parent"
+            android:layout_height="236dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:paddingHorizontal="20dp" />
+
+        <!-- Tombol Bulat X untuk Menutup Floating Card & Kembali ke List Vertikal -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/btnCloseFloatingCarousel"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="6dp"
+            app:cardCornerRadius="19dp"
+            app:cardElevation="6dp"
+            app:cardBackgroundColor="#FFFFFF"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="✕"
+                android:textColor="#0B1C30"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
 
     <!-- Floating Bottom Navigation (Selaras dengan Admin) -->
     <include

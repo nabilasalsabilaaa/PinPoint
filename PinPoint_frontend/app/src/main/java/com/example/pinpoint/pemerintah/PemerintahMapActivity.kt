@@ -1,4 +1,4 @@
-package com.example.pinpoint
+package com.example.pinpoint.pemerintah
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -12,7 +12,9 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -21,10 +23,16 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
+import com.example.pinpoint.PhotoSliderDialog
+import com.example.pinpoint.R
 import com.example.pinpoint.admin.NavbarUtils
 import com.example.pinpoint.network.ApiClient
 import com.example.pinpoint.network.CategoryDto
@@ -41,11 +49,11 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
-import com.google.android.gms.maps.model.LatLngBounds
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -58,7 +66,6 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
     private var locationCallback: LocationCallback? = null
     private var activeRoutePoints = mutableListOf<LatLng>()
     private var activeRouteReportId: String? = null
-    // ID laporan yang dikirim dari halaman Detail Laporan untuk langsung dibukakan rutenya.
     private var pendingRouteReportId: String? = null
     private var routePolyline: Polyline? = null
     private val routeExecutor = Executors.newSingleThreadExecutor()
@@ -66,18 +73,20 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var etSearchMap: EditText
     private lateinit var llMapCategoryChips: LinearLayout
 
-    private lateinit var tvMapReportCounter: TextView
-    private lateinit var btnPrevMapReport: TextView
-    private lateinit var btnNextMapReport: TextView
-    private lateinit var tvMapReportId: TextView
-    private lateinit var tvMapReportPriority: TextView
-    private lateinit var tvMapReportStatusBadge: TextView
-    private lateinit var tvMapReportTitle: TextView
-    private lateinit var ivMapReportThumb: ImageView
-    private lateinit var tvMapReportLocation: TextView
-    private lateinit var tvMapReportDesc: TextView
-    private lateinit var tvMapReportDistance: TextView
-    private lateinit var tvMapReportTime: TextView
+    // Tampilan 1: List Vertikal
+    private lateinit var cardMapListContainer: CardView
+    private lateinit var rvMapReportList: RecyclerView
+    private lateinit var tvEmptyMapReportList: TextView
+    private lateinit var tvMapListTotalCount: TextView
+    private lateinit var compactListAdapter: MapCompactListAdapter
+
+    // Tampilan 2: Floating Carousel ViewPager2 + Tombol X
+    private lateinit var layoutFloatingCarouselContainer: LinearLayout
+    private lateinit var vpMapFloatingCards: ViewPager2
+    private lateinit var btnCloseFloatingCarousel: View
+    private lateinit var floatingCarouselAdapter: MapFloatingCarouselAdapter
+    private var isFloatingCarouselVisible = false
+    private var isUpdatingViewPagerProgrammatically = false
 
     private val incomingReports = mutableListOf<ReportDto>()
     private val filteredReports = mutableListOf<ReportDto>()
@@ -91,12 +100,12 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
     private var isSatelliteMode = false
     private var hasCenteredToUserLocation = false
 
-    // Auto-refresh laporan secara berkala agar update real-time
     private val autoRefreshHandler = Handler(Looper.getMainLooper())
+    private var hideInfoWindowRunnable: Runnable? = null
     private val autoRefreshRunnable = object : Runnable {
         override fun run() {
             loadCategoriesAndReports()
-            autoRefreshHandler.postDelayed(this, 15000) // Polling update tiap 15 detik
+            autoRefreshHandler.postDelayed(this, 15000)
         }
     }
 
@@ -111,11 +120,13 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
             detectAndMoveToCurrentLocation(animate = true)
 
             pendingRouteReportId?.let { requestedId ->
-                val targetReport = filteredReports.firstOrNull {
+                val targetIndex = filteredReports.indexOfFirst {
                     it.resolvedId().toString() == requestedId
                 }
-                if (targetReport != null) {
+                if (targetIndex >= 0) {
+                    val targetReport = filteredReports[targetIndex]
                     pendingRouteReportId = null
+                    showFloatingCarouselAt(targetIndex, focusMap = true)
                     startInAppRoute(targetReport)
                 }
             }
@@ -137,6 +148,7 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
         pendingRouteReportId = intent.getStringExtra(EXTRA_OPEN_ROUTE_REPORT_ID)
 
         initViews()
+        setupListAndCarousel()
         setupSearchAndActions()
         NavbarUtils.setupPemerintahNavbar(this)
 
@@ -162,26 +174,104 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
         etSearchMap = findViewById(R.id.etSearchMap)
         llMapCategoryChips = findViewById(R.id.llMapCategoryChips)
 
-        tvMapReportCounter = findViewById(R.id.tvMapReportCounter)
-        btnPrevMapReport = findViewById(R.id.btnPrevMapReport)
-        btnNextMapReport = findViewById(R.id.btnNextMapReport)
-        tvMapReportId = findViewById(R.id.tvMapReportId)
-        tvMapReportPriority = findViewById(R.id.tvMapReportPriority)
-        tvMapReportStatusBadge = findViewById(R.id.tvMapReportStatusBadge)
-        tvMapReportTitle = findViewById(R.id.tvMapReportTitle)
-        ivMapReportThumb = findViewById(R.id.ivMapReportThumb)
-        tvMapReportLocation = findViewById(R.id.tvMapReportLocation)
-        tvMapReportDesc = findViewById(R.id.tvMapReportDesc)
-        tvMapReportDistance = findViewById(R.id.tvMapReportDistance)
-        tvMapReportTime = findViewById(R.id.tvMapReportTime)
+        cardMapListContainer = findViewById(R.id.cardMapListContainer)
+        rvMapReportList = findViewById(R.id.rvMapReportList)
+        tvEmptyMapReportList = findViewById(R.id.tvEmptyMapReportList)
+        tvMapListTotalCount = findViewById(R.id.tvMapListTotalCount)
+
+        layoutFloatingCarouselContainer = findViewById(R.id.layoutFloatingCarouselContainer)
+        vpMapFloatingCards = findViewById(R.id.vpMapFloatingCards)
+        btnCloseFloatingCarousel = findViewById(R.id.btnCloseFloatingCarousel)
+    }
+
+    private fun setupListAndCarousel() {
+        // 1. Setup List Vertikal (Tampilan 1 Default)
+        rvMapReportList.layoutManager = LinearLayoutManager(this)
+        compactListAdapter = MapCompactListAdapter(emptyList()) { index ->
+            showFloatingCarouselAt(index, focusMap = true)
+        }
+        rvMapReportList.adapter = compactListAdapter
+
+        // 2. Setup Floating Carousel ViewPager2 (Tampilan 2 Swipe Horizontal dengan Peek Kiri-Kanan)
+        floatingCarouselAdapter = MapFloatingCarouselAdapter(
+            items = emptyList(),
+            onPhotoClick = { report ->
+                val photos = report.resolvedPhotoUrls()
+                if (photos.isNotEmpty()) {
+                    PhotoSliderDialog.show(this, "Foto Laporan (${photos.size} Foto)", photos, 0)
+                }
+            },
+            onRouteClick = { report ->
+                startInAppRoute(report)
+            },
+            onDetailClick = { report ->
+                val intent = Intent(this, PemerintahDetailTaskActivity::class.java)
+                intent.putExtra("REPORT_ID", report.resolvedId().toString())
+                startActivity(intent)
+            }
+        )
+        vpMapFloatingCards.adapter = floatingCarouselAdapter
+        vpMapFloatingCards.offscreenPageLimit = 1
+        (vpMapFloatingCards.getChildAt(0) as? RecyclerView)?.overScrollMode = View.OVER_SCROLL_NEVER
+
+        // Efek transisi geser horizontal yang halus antar floating card
+        vpMapFloatingCards.setPageTransformer { page, position ->
+            val absPos = kotlin.math.abs(position)
+            page.scaleY = 0.92f + (1f - absPos.coerceAtMost(1f)) * 0.08f
+        }
+
+        // Saat card digeser ke samping (kiri/kanan), pindahkan fokus titik di peta!
+        vpMapFloatingCards.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                if (isUpdatingViewPagerProgrammatically) return
+                if (position in filteredReports.indices && selectedReportIndex != position) {
+                    clearActiveRoute()
+                    selectedReportIndex = position
+                    focusSelectedReportOnMap()
+                }
+            }
+        })
+
+        // Tombol X untuk menutup Floating Card & kembali ke List Vertikal
+        btnCloseFloatingCarousel.setOnClickListener {
+            showVerticalListView()
+        }
+    }
+
+    private fun showFloatingCarouselAt(index: Int, focusMap: Boolean) {
+        if (filteredReports.isEmpty()) return
+        val safeIndex = index.coerceIn(0, filteredReports.lastIndex)
+        if (selectedReportIndex != safeIndex) {
+            clearActiveRoute()
+        }
+        selectedReportIndex = safeIndex
+        isFloatingCarouselVisible = true
+
+        cardMapListContainer.visibility = View.GONE
+        layoutFloatingCarouselContainer.visibility = View.VISIBLE
+
+        isUpdatingViewPagerProgrammatically = true
+        vpMapFloatingCards.setCurrentItem(safeIndex, true)
+        vpMapFloatingCards.post { isUpdatingViewPagerProgrammatically = false }
+
+        if (focusMap) {
+            focusSelectedReportOnMap()
+        }
+    }
+
+    private fun showVerticalListView() {
+        isFloatingCarouselVisible = false
+        layoutFloatingCarouselContainer.visibility = View.GONE
+        cardMapListContainer.visibility = View.VISIBLE
     }
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
 
-        map.uiSettings.isZoomControlsEnabled = true
+        map.uiSettings.isZoomControlsEnabled = false
         map.uiSettings.isCompassEnabled = true
-        map.uiSettings.isMyLocationButtonEnabled = false // Menggunakan btnGps buatan sendiri
+        map.uiSettings.isMyLocationButtonEnabled = false
 
         val defaultPos = LatLng(-5.147665, 119.432731)
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultPos, 14f))
@@ -196,18 +286,56 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
             requestLocationPermission()
         }
 
-        // Listener klik marker laporan
+        // Saat salah satu pin di peta diklik -> tunjukkan titiknya & ubah tampilan ke Floating Carousel Card!
         map.setOnMarkerClickListener { marker ->
             val index = marker.tag as? Int
             if (index != null && index in filteredReports.indices) {
-                if (selectedReportIndex != index) clearActiveRoute()
-                selectedReportIndex = index
-                bindSelectedReportToCard()
-                map.animateCamera(CameraUpdateFactory.newLatLng(marker.position))
-                marker.showInfoWindow()
+                showFloatingCarouselAt(index, focusMap = true)
             }
             true
         }
+
+        map.setOnInfoWindowClickListener { marker ->
+            val index = marker.tag as? Int
+            val report = if (index != null && index in filteredReports.indices) filteredReports[index] else null
+            if (report != null) {
+                val intent = Intent(this, PemerintahDetailTaskActivity::class.java)
+                intent.putExtra("REPORT_ID", report.resolvedId().toString())
+                startActivity(intent)
+            }
+        }
+
+        // Klik area kosong di peta kembali ke Mode List Vertikal
+        map.setOnMapClickListener {
+            if (isFloatingCarouselVisible) {
+                showVerticalListView()
+            }
+        }
+
+        map.setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter {
+            override fun getInfoWindow(marker: Marker): View {
+                val density = resources.displayMetrics.density
+                val index = marker.tag as? Int
+                val report = if (index != null && index in filteredReports.indices) filteredReports[index] else null
+                val locationText = report?.resolvedLocationName() ?: (marker.title ?: "Lokasi Kerusakan")
+
+                return TextView(this@PemerintahMapActivity).apply {
+                    text = locationText
+                    textSize = 11f
+                    setTextColor(Color.parseColor("#0B1C30"))
+                    setTypeface(null, Typeface.BOLD)
+                    setBackgroundResource(R.drawable.bg_white_rounded_btn)
+                    val padH = (12 * density).toInt()
+                    val padV = (7 * density).toInt()
+                    setPadding(padH, padV, padH, padV)
+                    maxWidth = (220 * density).toInt()
+                    maxLines = 2
+                    elevation = 4 * density
+                }
+            }
+
+            override fun getInfoContents(marker: Marker): View? = null
+        })
 
         syncMarkersOnMap()
     }
@@ -215,8 +343,13 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun setupSearchAndActions() {
         val btnGps = findViewById<View>(R.id.btnGps)
         val btnLayer = findViewById<View>(R.id.btnLayer)
-        val btnRouteGuidance = findViewById<View>(R.id.btnRouteGuidance)
-        val btnReportDetail = findViewById<View>(R.id.btnReportDetail)
+
+        findViewById<View>(R.id.btnMapZoomOut)?.setOnClickListener {
+            googleMap?.animateCamera(CameraUpdateFactory.zoomOut())
+        }
+        findViewById<View>(R.id.btnMapZoomIn)?.setOnClickListener {
+            googleMap?.animateCamera(CameraUpdateFactory.zoomIn())
+        }
 
         btnGps.setOnClickListener {
             if (hasLocationPermission()) {
@@ -240,52 +373,6 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
             }
             override fun afterTextChanged(s: Editable?) {}
         })
-
-        btnPrevMapReport.setOnClickListener {
-            if (filteredReports.isNotEmpty() && selectedReportIndex > 0) {
-                clearActiveRoute()
-                selectedReportIndex--
-                bindSelectedReportToCard()
-                focusSelectedReportOnMap()
-            }
-        }
-
-        btnNextMapReport.setOnClickListener {
-            if (filteredReports.isNotEmpty() && selectedReportIndex < filteredReports.size - 1) {
-                clearActiveRoute()
-                selectedReportIndex++
-                bindSelectedReportToCard()
-                focusSelectedReportOnMap()
-            }
-        }
-
-        ivMapReportThumb.setOnClickListener {
-            val current = filteredReports.getOrNull(selectedReportIndex) ?: return@setOnClickListener
-            val photos = current.resolvedPhotoUrls()
-            if (photos.isNotEmpty()) {
-                PhotoSliderDialog.show(this, "Foto Laporan (${photos.size} Foto)", photos, 0)
-            }
-        }
-
-        btnRouteGuidance.setOnClickListener {
-            val current = filteredReports.getOrNull(selectedReportIndex)
-            if (current == null) {
-                Toast.makeText(this, "Pilih laporan terlebih dahulu", Toast.LENGTH_SHORT).show()
-            } else {
-                startInAppRoute(current)
-            }
-        }
-
-        btnReportDetail.setOnClickListener {
-            val current = filteredReports.getOrNull(selectedReportIndex)
-            if (current != null) {
-                val intent = Intent(this, PemerintahDetailTaskActivity::class.java)
-                intent.putExtra("REPORT_ID", current.resolvedId().toString())
-                startActivity(intent)
-            } else {
-                Toast.makeText(this, "Tidak ada laporan yang dipilih", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
     private fun hasLocationPermission(): Boolean {
@@ -319,9 +406,7 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
             .build()
 
         locationCallback = object : LocationCallback() {
-            override fun onLocationResult(result: LocationResult) {
-                // Google Maps menampilkan lokasi terbaru petugas melalui layer My Location.
-            }
+            override fun onLocationResult(result: LocationResult) {}
         }
 
         fusedLocationClient.requestLocationUpdates(
@@ -355,15 +440,28 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
             }
     }
 
+    private fun showInfoWindowTemporarily(marker: Marker?) {
+        if (marker == null) return
+        hideInfoWindowRunnable?.let { autoRefreshHandler.removeCallbacks(it) }
+        marker.showInfoWindow()
+        val runnable = Runnable {
+            try {
+                marker.hideInfoWindow()
+            } catch (_: Exception) {}
+        }
+        hideInfoWindowRunnable = runnable
+        autoRefreshHandler.postDelayed(runnable, 5000)
+    }
+
     private fun focusSelectedReportOnMap() {
         val report = filteredReports.getOrNull(selectedReportIndex) ?: return
         val lat = report.latitude ?: return
         val lng = report.longitude ?: return
         val pos = LatLng(lat, lng)
-        googleMap?.animateCamera(CameraUpdateFactory.newLatLng(pos))
+        googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 16.5f))
 
         val marker = mapMarkers.getOrNull(selectedReportIndex)
-        marker?.showInfoWindow()
+        showInfoWindowTemporarily(marker)
     }
 
     private fun loadCategoriesAndReports() {
@@ -388,16 +486,14 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
                 if (response.isSuccessful && response.body() != null) {
                     val all = response.body()!!
                     incomingReports.clear()
-                    // Sinkronkan laporan untuk pemerintah (TERVERIFIKASI & DIPROSES)
                     incomingReports.addAll(
                         all.filter {
                             val st = it.resolvedStatusKey()
-                            st == "TERVERIFIKASI" || st == "DIPROSES"
+                            st == "TERVERIFIKASI" || st == "DIPROSES" || st == "SELESAI"
                         }
                     )
                     renderCategoryChips()
                     applyMapFilters()
-                    syncMarkersOnMap()
                 }
             },
             onFailure = { _, _ -> }
@@ -436,7 +532,7 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
         categoriesList.forEach { cat ->
             val count = incomingReports.count { r ->
                 (cat.resolvedId() != null && r.idKategori == cat.resolvedId()) ||
-                        r.resolvedCategoryName().equals(cat.resolvedName(), ignoreCase = true)
+                    r.resolvedCategoryName().equals(cat.resolvedName(), ignoreCase = true)
             }
             val chip = createChip("${cat.resolvedName()} ($count)", cat)
             llMapCategoryChips.addView(chip)
@@ -445,7 +541,7 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
         fun updateChipStyles() {
             chipViews.forEach { (tv, cat) ->
                 val isSelected = (selectedCategoryId == null && cat == null) ||
-                        (cat != null && cat.resolvedId() == selectedCategoryId)
+                    (cat != null && cat.resolvedId() == selectedCategoryId)
                 if (isSelected) {
                     tv.setBackgroundResource(R.drawable.bg_chip_selected)
                     tv.setTextColor(Color.WHITE)
@@ -478,15 +574,15 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
         filteredReports.addAll(
             incomingReports.filter { r ->
                 val matchesCat = selectedCategoryId == null && selectedCategoryName.isNullOrBlank() ||
-                        (selectedCategoryId != null && r.idKategori == selectedCategoryId) ||
-                        (!selectedCategoryName.isNullOrBlank() && r.resolvedCategoryName().equals(selectedCategoryName, ignoreCase = true))
+                    (selectedCategoryId != null && r.idKategori == selectedCategoryId) ||
+                    (!selectedCategoryName.isNullOrBlank() && r.resolvedCategoryName().equals(selectedCategoryName, ignoreCase = true))
 
                 val matchesQuery = query.isEmpty() ||
-                        r.resolvedTitle().lowercase().contains(query) ||
-                        r.resolvedLocationName().lowercase().contains(query) ||
-                        r.resolvedCode().lowercase().contains(query) ||
-                        r.resolvedCategoryName().lowercase().contains(query) ||
-                        r.resolvedDescription().lowercase().contains(query)
+                    r.resolvedTitle().lowercase().contains(query) ||
+                    r.resolvedLocationName().lowercase().contains(query) ||
+                    r.resolvedCode().lowercase().contains(query) ||
+                    r.resolvedCategoryName().lowercase().contains(query) ||
+                    r.resolvedDescription().lowercase().contains(query)
 
                 matchesCat && matchesQuery
             }
@@ -497,18 +593,37 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
         } ?: -1
         selectedReportIndex = if (previousIndex >= 0) previousIndex else 0
 
-        // Jika halaman dibuka dari Detail Laporan, pilih laporan tersebut dan mulai panduan rute.
+        // Perbarui kedua adapter (List Vertikal & Floating Carousel)
+        compactListAdapter.updateList(filteredReports)
+        floatingCarouselAdapter.updateList(filteredReports)
+        tvMapListTotalCount.text = "${filteredReports.size} Titik Laporan"
+
+        if (filteredReports.isEmpty()) {
+            tvEmptyMapReportList.visibility = View.VISIBLE
+            rvMapReportList.visibility = View.GONE
+            if (isFloatingCarouselVisible) {
+                showVerticalListView()
+            }
+        } else {
+            tvEmptyMapReportList.visibility = View.GONE
+            rvMapReportList.visibility = View.VISIBLE
+            if (isFloatingCarouselVisible) {
+                isUpdatingViewPagerProgrammatically = true
+                vpMapFloatingCards.setCurrentItem(selectedReportIndex, false)
+                vpMapFloatingCards.post { isUpdatingViewPagerProgrammatically = false }
+            }
+        }
+
+        // Jika halaman dibuka dari Detail Laporan, pilih laporan tersebut dan tampilkan floating card + rute
         pendingRouteReportId?.let { requestedId ->
             val requestedIndex = filteredReports.indexOfFirst {
                 it.resolvedId().toString() == requestedId
             }
             if (requestedIndex >= 0) {
-                selectedReportIndex = requestedIndex
                 val requestedReport = filteredReports[requestedIndex]
                 pendingRouteReportId = null
-                bindSelectedReportToCard()
                 syncMarkersOnMap()
-                focusSelectedReportOnMap()
+                showFloatingCarouselAt(requestedIndex, focusMap = true)
                 startInAppRoute(requestedReport)
                 return
             }
@@ -519,8 +634,19 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
         ) {
             clearActiveRoute()
         }
-        bindSelectedReportToCard()
         syncMarkersOnMap()
+    }
+
+    private fun resolvePinHueBySeverity(severityRaw: String?): Float {
+        val sev = (severityRaw ?: "").lowercase()
+        return when {
+            sev.contains("kritis") || sev.contains("darurat") || sev.contains("tinggi") || sev.contains("berat") ->
+                BitmapDescriptorFactory.HUE_RED
+            sev.contains("rendah") || sev.contains("ringan") ->
+                BitmapDescriptorFactory.HUE_GREEN
+            else ->
+                BitmapDescriptorFactory.HUE_ORANGE
+        }
     }
 
     private fun syncMarkersOnMap() {
@@ -533,15 +659,12 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
             val lng = report.longitude ?: return@forEachIndexed
             val pos = LatLng(lat, lng)
 
-            val markerColor = when (report.resolvedStatusKey()) {
-                "DIPROSES" -> BitmapDescriptorFactory.HUE_VIOLET
-                else -> BitmapDescriptorFactory.HUE_AZURE
-            }
+            val markerColor = resolvePinHueBySeverity(report.tingkatKeparahan)
 
             val markerOptions = MarkerOptions()
                 .position(pos)
-                .title("${report.resolvedCode()}: ${report.resolvedTitle()}")
-                .snippet(report.resolvedLocationName())
+                .title(report.resolvedLocationName())
+                .snippet("${report.resolvedCode()}: ${report.resolvedTitle()}")
                 .icon(BitmapDescriptorFactory.defaultMarker(markerColor))
 
             val marker = map.addMarker(markerOptions)
@@ -551,11 +674,10 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
-        if (mapMarkers.isNotEmpty() && selectedReportIndex in mapMarkers.indices) {
-            mapMarkers[selectedReportIndex].showInfoWindow()
+        if (isFloatingCarouselVisible && mapMarkers.isNotEmpty() && selectedReportIndex in mapMarkers.indices) {
+            showInfoWindowTemporarily(mapMarkers[selectedReportIndex])
         }
 
-        // map.clear() juga menghapus polyline, jadi gambar ulang rute aktif jika ada.
         routePolyline = null
         drawActiveRoute(moveCamera = false)
     }
@@ -582,36 +704,28 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         Toast.makeText(this, "Mengambil lokasi petugas...", Toast.LENGTH_SHORT).show()
-        fun requestLocation() {
-            fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-                .addOnSuccessListener { location ->
-                    if (location != null) {
-                        requestOsrmRoute(
-                            LatLng(location.latitude, location.longitude),
-                            LatLng(destinationLat, destinationLng),
-                            report.id
-                        )
-                    } else {
-                        fusedLocationClient.lastLocation.addOnSuccessListener { lastLocation ->
-                            if (lastLocation != null) {
-                                requestOsrmRoute(
-                                    LatLng(lastLocation.latitude, lastLocation.longitude),
-                                    LatLng(destinationLat, destinationLng),
-                                    report.id
-                                )
-                            } else {
-                                Toast.makeText(this, "Lokasi GPS belum tersedia. Aktifkan GPS dan coba lagi.", Toast.LENGTH_LONG).show()
-                            }
-                        }.addOnFailureListener {
-                            Toast.makeText(this, "Gagal mendapatkan lokasi GPS", Toast.LENGTH_LONG).show()
+        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    requestOsrmRoute(
+                        LatLng(location.latitude, location.longitude),
+                        LatLng(destinationLat, destinationLng),
+                        report.id
+                    )
+                } else {
+                    fusedLocationClient.lastLocation.addOnSuccessListener { lastLocation ->
+                        if (lastLocation != null) {
+                            requestOsrmRoute(
+                                LatLng(lastLocation.latitude, lastLocation.longitude),
+                                LatLng(destinationLat, destinationLng),
+                                report.id
+                            )
+                        } else {
+                            Toast.makeText(this, "Lokasi GPS belum tersedia. Aktifkan GPS dan coba lagi.", Toast.LENGTH_LONG).show()
                         }
                     }
                 }
-                .addOnFailureListener {
-                    Toast.makeText(this, "Gagal mendapatkan lokasi GPS", Toast.LENGTH_LONG).show()
-                }
-        }
-        requestLocation()
+            }
     }
 
     private fun requestOsrmRoute(origin: LatLng, destination: LatLng, reportId: String?) {
@@ -620,12 +734,11 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
         routeExecutor.execute {
             var connection: HttpURLConnection? = null
             try {
-                // OSRM menggunakan urutan koordinat longitude,latitude. Server FOSSGIS routed-car.
                 val routeUrl = URL(
                     "https://routing.openstreetmap.de/routed-car/route/v1/driving/" +
-                            "${origin.longitude},${origin.latitude};" +
-                            "${destination.longitude},${destination.latitude}" +
-                            "?overview=full&geometries=geojson"
+                        "${origin.longitude},${origin.latitude};" +
+                        "${destination.longitude},${destination.latitude}" +
+                        "?overview=full&geometries=geojson"
                 )
                 connection = (routeUrl.openConnection() as HttpURLConnection).apply {
                     requestMethod = "GET"
@@ -637,12 +750,7 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 val responseCode = connection.responseCode
                 if (responseCode !in 200..299) {
-                    val errorBody = connection.errorStream?.bufferedReader()?.use { it.readText() }
-                    val detail = errorBody?.take(180)?.takeIf { it.isNotBlank() }
-                    throw IllegalStateException(
-                        if (detail != null) "Layanan rute menolak permintaan ($responseCode): $detail"
-                        else "Layanan rute menolak permintaan ($responseCode)"
-                    )
+                    throw IllegalStateException("Layanan rute menolak permintaan ($responseCode)")
                 }
 
                 val responseText = connection.inputStream.bufferedReader().use { it.readText() }
@@ -722,66 +830,146 @@ class PemerintahMapActivity : AppCompatActivity(), OnMapReadyCallback {
         routeExecutor.shutdownNow()
     }
 
-    private fun bindSelectedReportToCard() {
-        if (filteredReports.isEmpty()) {
-            tvMapReportCounter.text = "0 / 0"
-            btnPrevMapReport.alpha = 0.4f
-            btnNextMapReport.alpha = 0.4f
-            tvMapReportId.text = "-"
-            tvMapReportPriority.text = "TIDAK ADA DATA"
-            tvMapReportStatusBadge.text = "-"
-            tvMapReportTitle.text = "Tidak ada laporan yang cocok"
-            tvMapReportLocation.text = "Coba kata kunci atau kategori lain"
-            tvMapReportDesc.text = "Belum ada laporan masuk yang sesuai dengan pencarian Anda."
-            tvMapReportDistance.text = "-"
-            tvMapReportTime.text = ""
-            ivMapReportThumb.setImageResource(R.drawable.sampul)
-            return
+    // =========================================================================
+    // ADAPTER 1: TAMPILAN LIST VERTIKAL RINGKAS (Nomor Laporan + Kategori + Judul)
+    // =========================================================================
+    private class MapCompactListAdapter(
+        private var items: List<ReportDto>,
+        private val onItemClick: (Int) -> Unit
+    ) : RecyclerView.Adapter<MapCompactListAdapter.ViewHolder>() {
+
+        class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+            val tvCode: TextView = view.findViewById(R.id.tvRowReportCode)
+            val tvCategory: TextView = view.findViewById(R.id.tvRowReportCategory)
+            val tvStatus: TextView = view.findViewById(R.id.tvRowReportStatus)
+            val tvTitle: TextView = view.findViewById(R.id.tvRowReportTitle)
         }
 
-        val safeIndex = selectedReportIndex.coerceIn(0, filteredReports.size - 1)
-        selectedReportIndex = safeIndex
-        val report = filteredReports[safeIndex]
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_pemerintah_map_list_row, parent, false)
+            return ViewHolder(view)
+        }
 
-        tvMapReportCounter.text = "${safeIndex + 1} / ${filteredReports.size}"
-        btnPrevMapReport.alpha = if (safeIndex > 0) 1.0f else 0.4f
-        btnNextMapReport.alpha = if (safeIndex < filteredReports.size - 1) 1.0f else 0.4f
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            val report = items[position]
+            holder.tvCode.text = report.resolvedCode()
+            holder.tvCategory.text = report.resolvedCategoryName().uppercase()
+            holder.tvTitle.text = report.resolvedTitle()
 
-        tvMapReportId.text = report.resolvedCode()
-        tvMapReportPriority.text = report.resolvedCategoryName().uppercase()
-        tvMapReportTitle.text = report.resolvedTitle()
-        tvMapReportLocation.text = report.resolvedLocationName()
-        tvMapReportDesc.text = report.resolvedDescription()
-        tvMapReportDistance.text = "Pelapor: ${report.resolvedReporterName()}"
-        tvMapReportTime.text = report.resolvedCreatedAt()
-
-        when (report.resolvedStatusKey()) {
-            "DIPROSES" -> {
-                tvMapReportStatusBadge.text = "Sedang Diproses"
-                tvMapReportStatusBadge.background = ContextCompat.getDrawable(this, R.drawable.bg_badge_purple_light)
-                tvMapReportStatusBadge.setTextColor(Color.parseColor("#613EEA"))
+            when (report.resolvedStatusKey()) {
+                "SELESAI" -> {
+                    holder.tvStatus.text = "Sudah Diperbaiki"
+                    holder.tvStatus.setTextColor(Color.parseColor("#059669"))
+                }
+                "DIPROSES" -> {
+                    holder.tvStatus.text = "Sedang Diproses"
+                    holder.tvStatus.setTextColor(Color.parseColor("#613EEA"))
+                }
+                else -> {
+                    holder.tvStatus.text = "Belum Diperbaiki"
+                    holder.tvStatus.setTextColor(Color.parseColor("#D97706"))
+                }
             }
-            else -> {
-                tvMapReportStatusBadge.text = "Terverifikasi"
-                tvMapReportStatusBadge.background = ContextCompat.getDrawable(this, R.drawable.bg_badge_blue_light)
-                tvMapReportStatusBadge.setTextColor(Color.parseColor("#0B3C8C"))
+
+            holder.itemView.setOnClickListener {
+                onItemClick(holder.bindingAdapterPosition.coerceAtLeast(0))
             }
         }
 
-        val photoUrl = report.resolvedPhotoUrl()
-        if (!photoUrl.isNullOrEmpty()) {
-            Glide.with(this)
-                .load(photoUrl)
-                .placeholder(R.drawable.sampul)
-                .error(R.drawable.sampul)
-                .into(ivMapReportThumb)
-        } else {
-            ivMapReportThumb.setImageResource(R.drawable.sampul)
+        override fun getItemCount(): Int = items.size
+
+        fun updateList(newItems: List<ReportDto>) {
+            items = newItems.toList()
+            notifyDataSetChanged()
+        }
+    }
+
+    // =========================================================================
+    // ADAPTER 2: TAMPILAN FLOATING CAROUSEL CARD (Bisa Digeser ke Samping)
+    // =========================================================================
+    private class MapFloatingCarouselAdapter(
+        private var items: List<ReportDto>,
+        private val onPhotoClick: (ReportDto) -> Unit,
+        private val onRouteClick: (ReportDto) -> Unit,
+        private val onDetailClick: (ReportDto) -> Unit
+    ) : RecyclerView.Adapter<MapFloatingCarouselAdapter.ViewHolder>() {
+
+        class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+            val tvId: TextView = view.findViewById(R.id.tvCardReportId)
+            val tvCategory: TextView = view.findViewById(R.id.tvCardReportCategory)
+            val tvStatusBadge: TextView = view.findViewById(R.id.tvCardReportStatusBadge)
+            val tvTitle: TextView = view.findViewById(R.id.tvCardReportTitle)
+            val ivThumb: ImageView = view.findViewById(R.id.ivCardReportThumb)
+            val tvLocation: TextView = view.findViewById(R.id.tvCardReportLocation)
+            val tvDesc: TextView = view.findViewById(R.id.tvCardReportDesc)
+            val tvReporter: TextView = view.findViewById(R.id.tvCardReportReporter)
+            val tvTime: TextView = view.findViewById(R.id.tvCardReportTime)
+            val btnRoute: View = view.findViewById(R.id.btnCardRouteGuidance)
+            val btnDetail: View = view.findViewById(R.id.btnCardReportDetail)
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_pemerintah_map_floating_card, parent, false)
+            return ViewHolder(view)
+        }
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            val report = items[position]
+            val context = holder.itemView.context
+
+            holder.tvId.text = report.resolvedCode()
+            holder.tvCategory.text = report.resolvedCategoryName().uppercase()
+            holder.tvTitle.text = report.resolvedTitle()
+            holder.tvLocation.text = report.resolvedLocationName()
+            holder.tvDesc.text = report.resolvedDescription()
+            holder.tvReporter.text = "Pelapor: ${report.resolvedReporterName()}"
+            holder.tvTime.text = report.resolvedCreatedAt()
+
+            when (report.resolvedStatusKey()) {
+                "SELESAI" -> {
+                    holder.tvStatusBadge.text = "Sudah Diperbaiki"
+                    holder.tvStatusBadge.background = ContextCompat.getDrawable(context, R.drawable.bg_badge_green_light)
+                    holder.tvStatusBadge.setTextColor(Color.parseColor("#00A389"))
+                }
+                "DIPROSES" -> {
+                    holder.tvStatusBadge.text = "Sedang Diproses"
+                    holder.tvStatusBadge.background = ContextCompat.getDrawable(context, R.drawable.bg_badge_purple_light)
+                    holder.tvStatusBadge.setTextColor(Color.parseColor("#613EEA"))
+                }
+                else -> {
+                    holder.tvStatusBadge.text = "Terverifikasi"
+                    holder.tvStatusBadge.background = ContextCompat.getDrawable(context, R.drawable.bg_badge_blue_light)
+                    holder.tvStatusBadge.setTextColor(Color.parseColor("#0B3C8C"))
+                }
+            }
+
+            val photoUrl = report.resolvedPhotoUrl()
+            if (!photoUrl.isNullOrEmpty()) {
+                Glide.with(context)
+                    .load(photoUrl)
+                    .placeholder(R.drawable.sampul)
+                    .error(R.drawable.sampul)
+                    .into(holder.ivThumb)
+            } else {
+                holder.ivThumb.setImageResource(R.drawable.sampul)
+            }
+
+            holder.ivThumb.setOnClickListener { onPhotoClick(report) }
+            holder.btnRoute.setOnClickListener { onRouteClick(report) }
+            holder.btnDetail.setOnClickListener { onDetailClick(report) }
+        }
+
+        override fun getItemCount(): Int = items.size
+
+        fun updateList(newItems: List<ReportDto>) {
+            items = newItems.toList()
+            notifyDataSetChanged()
         }
     }
 
     companion object {
         const val EXTRA_OPEN_ROUTE_REPORT_ID = "OPEN_ROUTE_REPORT_ID"
     }
-
 }

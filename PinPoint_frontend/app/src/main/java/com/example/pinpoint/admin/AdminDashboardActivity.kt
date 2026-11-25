@@ -15,10 +15,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.pinpoint.PilihLokasiActivity
 import com.example.pinpoint.R
 import com.example.pinpoint.adapter.ReportAdapter
 import com.example.pinpoint.network.ApiClient
@@ -33,7 +33,9 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import java.util.Locale
 
 class AdminDashboardActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -49,10 +51,21 @@ class AdminDashboardActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var rvRecentReports: RecyclerView
     private lateinit var reportAdapter: ReportAdapter
+    private lateinit var cardAdminMap: CardView
+    private lateinit var cardAdminSelectedPinPopup: CardView
+    private lateinit var tvAdminPinPopupLocation: TextView
+    private lateinit var tvAdminPinPopupTitle: TextView
+    private lateinit var btnAdminPinPopupDetail: TextView
+    private lateinit var tvToggleExpandAdminMap: TextView
 
     private var allReports = listOf<ReportDto>()
+    private var displayedReports = listOf<ReportDto>()
     private var selectedCategoryId: Long? = null
     private var selectedCategoryName: String? = null
+    private var isAdminMapExpanded = false
+    private var selectedAdminPinReport: ReportDto? = null
+    private var adminMapRepairFilterMode: String = "ALL"
+    private var hideAdminInfoWindowRunnable: Runnable? = null
 
     // Google Maps SDK & Lokasi Admin
     private var googleMap: GoogleMap? = null
@@ -90,9 +103,9 @@ class AdminDashboardActivity : AppCompatActivity(), OnMapReadyCallback {
         if (!isAdmin) {
             val isPemerintah = idRole == 3L || roleStr.contains("PEMERINTAH") || roleStr.contains("DINAS")
             val redirectIntent = if (isPemerintah) {
-                Intent(this, com.example.pinpoint.PemerintahDashboardActivity::class.java)
+                Intent(this, com.example.pinpoint.pemerintah.PemerintahDashboardActivity::class.java)
             } else {
-                Intent(this, com.example.pinpoint.DashboardActivity::class.java)
+                Intent(this, com.example.pinpoint.user.DashboardActivity::class.java)
             }
             startActivity(redirectIntent)
             finish()
@@ -117,13 +130,84 @@ class AdminDashboardActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager.findFragmentById(R.id.adminMapFragment) as? SupportMapFragment
         mapFragment?.getMapAsync(this)
 
-        findViewById<View>(R.id.btnAdminOpenFullMap).setOnClickListener {
-            val intent = Intent(this, PilihLokasiActivity::class.java)
-            startActivity(intent)
+        findViewById<View>(R.id.btnAdminCenterLocation)?.setOnClickListener {
+            if (hasLocationPermission()) {
+                enableMyLocationOnAdminMap()
+                detectAndCenterAdminLocation()
+            } else {
+                locationPermissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                )
+            }
+        }
+        findViewById<View>(R.id.btnAdminZoomIn).setOnClickListener {
+            googleMap?.animateCamera(CameraUpdateFactory.zoomIn())
+        }
+        findViewById<View>(R.id.btnAdminZoomOut).setOnClickListener {
+            googleMap?.animateCamera(CameraUpdateFactory.zoomOut())
+        }
+        findViewById<View>(R.id.btnExpandAdminMap).setOnClickListener {
+            toggleExpandAdminMap()
+        }
+        findViewById<View>(R.id.barExpandAdminMap).setOnClickListener {
+            toggleExpandAdminMap()
+        }
+
+        val chipAll = findViewById<TextView?>(R.id.chipAdminMapFilterAll)
+        val chipUnresolved = findViewById<TextView?>(R.id.chipAdminMapFilterUnresolved)
+        val chipResolved = findViewById<TextView?>(R.id.chipAdminMapFilterResolved)
+        val repairChips = listOfNotNull(chipAll, chipUnresolved, chipResolved)
+
+        fun updateRepairChipStyles(active: TextView?) {
+            repairChips.forEach { chip ->
+                if (chip == active) {
+                    chip.setBackgroundResource(R.drawable.bg_btn_rounded_blue)
+                    chip.setTextColor(Color.WHITE)
+                } else {
+                    chip.setBackgroundResource(0)
+                    chip.setTextColor(Color.parseColor("#475569"))
+                }
+            }
+        }
+
+        chipAll?.setOnClickListener {
+            adminMapRepairFilterMode = "ALL"
+            updateRepairChipStyles(chipAll)
+            syncMapMarkers(displayedReports)
+        }
+        chipUnresolved?.setOnClickListener {
+            adminMapRepairFilterMode = "UNRESOLVED"
+            updateRepairChipStyles(chipUnresolved)
+            syncMapMarkers(displayedReports)
+        }
+        chipResolved?.setOnClickListener {
+            adminMapRepairFilterMode = "RESOLVED"
+            updateRepairChipStyles(chipResolved)
+            syncMapMarkers(displayedReports)
         }
 
         loadRegisteredCategories()
         loadDashboardData()
+    }
+
+    private fun toggleExpandAdminMap() {
+        isAdminMapExpanded = !isAdminMapExpanded
+        val density = resources.displayMetrics.density
+        val targetHeightDp = if (isAdminMapExpanded) 480 else 260
+        val params = cardAdminMap.layoutParams
+        params.height = (targetHeightDp * density).toInt()
+        cardAdminMap.layoutParams = params
+        tvToggleExpandAdminMap.text = if (isAdminMapExpanded) "Kecilkan Peta" else "Perluas Peta"
+    }
+
+    private fun openAdminReportDetail(report: ReportDto) {
+        val intent = Intent(this, DetailVerifikasiActivity::class.java).apply {
+            putExtra("REPORT_ID", report.resolvedId().toString())
+        }
+        startActivity(intent)
     }
 
     override fun onResume() {
@@ -149,17 +233,32 @@ class AdminDashboardActivity : AppCompatActivity(), OnMapReadyCallback {
         tvSeeAllReports = findViewById(R.id.tvSeeAllReports)
         llDashboardCategoryChips = findViewById(R.id.llDashboardCategoryChips)
         rvRecentReports = findViewById(R.id.rvRecentReports)
+        cardAdminMap = findViewById(R.id.cardAdminMap)
+        cardAdminSelectedPinPopup = findViewById(R.id.cardAdminSelectedPinPopup)
+        tvAdminPinPopupLocation = findViewById(R.id.tvAdminPinPopupLocation)
+        tvAdminPinPopupTitle = findViewById(R.id.tvAdminPinPopupTitle)
+        btnAdminPinPopupDetail = findViewById(R.id.btnAdminPinPopupDetail)
+        tvToggleExpandAdminMap = findViewById(R.id.tvToggleExpandAdminMap)
+
+        btnAdminPinPopupDetail.setOnClickListener {
+            selectedAdminPinReport?.let { openAdminReportDetail(it) }
+        }
+        cardAdminSelectedPinPopup.setOnClickListener {
+            selectedAdminPinReport?.let { openAdminReportDetail(it) }
+        }
         updateGreeting()
     }
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
 
-        map.uiSettings.isZoomControlsEnabled = true
+        map.uiSettings.isZoomControlsEnabled = false
+        map.uiSettings.isMapToolbarEnabled = false
         map.uiSettings.isCompassEnabled = true
+        map.uiSettings.isMyLocationButtonEnabled = false
 
         val defaultPos = LatLng(-5.147665, 119.432731)
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultPos, 13f))
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultPos, 14f))
 
         if (hasLocationPermission()) {
             enableMyLocationOnAdminMap()
@@ -175,18 +274,7 @@ class AdminDashboardActivity : AppCompatActivity(), OnMapReadyCallback {
             )
         }
 
-        // Klik InfoWindow pada marker langsung membuka detail verifikasi laporan
-        map.setOnInfoWindowClickListener { marker ->
-            val reportId = marker.snippet?.substringAfter("ID: ")?.substringBefore("\n")?.trim()
-            if (!reportId.isNullOrBlank()) {
-                val intent = Intent(this, DetailVerifikasiActivity::class.java).apply {
-                    putExtra("REPORT_ID", reportId)
-                }
-                startActivity(intent)
-            }
-        }
-
-        syncMapMarkers(allReports)
+        syncMapMarkers(displayedReports.ifEmpty { allReports })
     }
 
     private fun hasLocationPermission(): Boolean {
@@ -224,31 +312,115 @@ class AdminDashboardActivity : AppCompatActivity(), OnMapReadyCallback {
             }
     }
 
+    private fun resolvePinHueBySeverity(severityRaw: String?): Float {
+        val sev = (severityRaw ?: "").lowercase(Locale.getDefault())
+        return when {
+            sev.contains("kritis") || sev.contains("darurat") || sev.contains("tinggi") || sev.contains("berat") ->
+                BitmapDescriptorFactory.HUE_RED
+            sev.contains("rendah") || sev.contains("ringan") ->
+                BitmapDescriptorFactory.HUE_GREEN
+            else ->
+                BitmapDescriptorFactory.HUE_ORANGE
+        }
+    }
+
+    private fun resolveSeverityLabel(severityRaw: String?): String {
+        val sev = (severityRaw ?: "").lowercase(Locale.getDefault())
+        return when {
+            sev.contains("kritis") || sev.contains("darurat") || sev.contains("tinggi") || sev.contains("berat") ->
+                "Kritis / Darurat"
+            sev.contains("rendah") || sev.contains("ringan") ->
+                "Rendah"
+            else ->
+                "Sedang"
+        }
+    }
+
+    private fun showAdminInfoWindowTemporarily(marker: Marker) {
+        hideAdminInfoWindowRunnable?.let { autoRefreshHandler.removeCallbacks(it) }
+        marker.showInfoWindow()
+        val runnable = Runnable {
+            try {
+                marker.hideInfoWindow()
+            } catch (_: Exception) {}
+        }
+        hideAdminInfoWindowRunnable = runnable
+        autoRefreshHandler.postDelayed(runnable, 5000)
+    }
+
     private fun syncMapMarkers(reports: List<ReportDto>) {
+        displayedReports = reports
         val map = googleMap ?: return
         map.clear()
 
-        reports.forEach { report ->
-            val lat = report.latitude ?: return@forEach
-            val lng = report.longitude ?: return@forEach
-            val pos = LatLng(lat, lng)
+        val mapReports = when (adminMapRepairFilterMode) {
+            "UNRESOLVED" -> reports.filter { it.resolvedStatusKey() != "SELESAI" }
+            "RESOLVED" -> reports.filter { it.resolvedStatusKey() == "SELESAI" }
+            else -> reports
+        }
 
-            val markerColor = when (report.resolvedStatusKey()) {
-                "MENUNGGU_VERIFIKASI" -> BitmapDescriptorFactory.HUE_ORANGE
-                "TERVERIFIKASI" -> BitmapDescriptorFactory.HUE_AZURE
-                "DIPROSES" -> BitmapDescriptorFactory.HUE_VIOLET
-                "SELESAI" -> BitmapDescriptorFactory.HUE_GREEN
-                "DITOLAK" -> BitmapDescriptorFactory.HUE_RED
-                else -> BitmapDescriptorFactory.HUE_RED
+        map.setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter {
+            override fun getInfoWindow(marker: Marker): View {
+                val density = resources.displayMetrics.density
+                val report = mapReports.find { it.resolvedId() == (marker.tag as? Long) }
+                val locationText = report?.resolvedLocationName() ?: (marker.title ?: "Lokasi Kerusakan")
+
+                return TextView(this@AdminDashboardActivity).apply {
+                    text = locationText
+                    textSize = 11f
+                    setTextColor(Color.parseColor("#0B1C30"))
+                    setTypeface(null, Typeface.BOLD)
+                    setBackgroundResource(R.drawable.bg_white_rounded_btn)
+                    val padH = (12 * density).toInt()
+                    val padV = (7 * density).toInt()
+                    setPadding(padH, padV, padH, padV)
+                    maxWidth = (220 * density).toInt()
+                    maxLines = 2
+                    elevation = 4 * density
+                }
             }
 
-            map.addMarker(
+            override fun getInfoContents(marker: Marker): View? = null
+        })
+
+        mapReports.forEach { report ->
+            val lat = report.latitude ?: return@forEach
+            val lng = report.longitude ?: return@forEach
+            if (lat == 0.0 && lng == 0.0) return@forEach
+            val pos = LatLng(lat, lng)
+            val markerColor = resolvePinHueBySeverity(report.tingkatKeparahan)
+
+            val marker = map.addMarker(
                 MarkerOptions()
                     .position(pos)
-                    .title("${report.resolvedCode()}: ${report.resolvedTitle()}")
-                    .snippet("ID: ${report.resolvedId()}\n${report.resolvedLocationName()}")
+                    .title(report.resolvedLocationName())
+                    .snippet(report.resolvedTitle())
                     .icon(BitmapDescriptorFactory.defaultMarker(markerColor))
             )
+            marker?.tag = report.resolvedId()
+        }
+
+        map.setOnMarkerClickListener { marker ->
+            val report = mapReports.find { it.resolvedId() == (marker.tag as? Long) }
+            showAdminInfoWindowTemporarily(marker)
+            if (report != null) {
+                selectedAdminPinReport = report
+                val severityLabel = resolveSeverityLabel(report.tingkatKeparahan)
+                val repairState = if (report.resolvedStatusKey() == "SELESAI") "Sudah Diperbaiki" else "Belum Diperbaiki"
+                tvAdminPinPopupLocation.text = report.resolvedLocationName()
+                tvAdminPinPopupTitle.text = "${report.resolvedTitle()} • $severityLabel ($repairState)"
+                cardAdminSelectedPinPopup.visibility = View.VISIBLE
+            }
+            false
+        }
+
+        map.setOnInfoWindowClickListener { marker ->
+            marker.hideInfoWindow()
+        }
+
+        map.setOnMapClickListener {
+            cardAdminSelectedPinPopup.visibility = View.GONE
+            selectedAdminPinReport = null
         }
     }
 

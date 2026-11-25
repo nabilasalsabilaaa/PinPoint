@@ -14,6 +14,8 @@ import com.example.pinpoint.admin.AdminDashboardActivity
 import com.example.pinpoint.network.ApiClient
 import com.example.pinpoint.network.LoginRequest
 import com.example.pinpoint.network.LoginResponse
+import com.example.pinpoint.pemerintah.PemerintahDashboardActivity
+import com.example.pinpoint.user.DashboardActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

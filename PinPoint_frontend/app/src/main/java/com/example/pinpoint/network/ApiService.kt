@@ -274,15 +274,102 @@ data class LaporanResponse(
     val idUser: Long? = null,
     val idKategori: Long? = null,
     val idStatus: Long? = null,
+    val reportCode: String? = null,
     val judul: String? = null,
+    val title: String? = null,
     val deskripsi: String? = null,
+    val description: String? = null,
     val alamat: String? = null,
+    val locationName: String? = null,
+    val categoryName: String? = null,
+    val reporterName: String? = null,
+    val noTelepon: String? = null,
+    val reporterPhone: String? = null,
     val latitude: Double? = null,
     val longitude: Double? = null,
     val tingkatKeparahan: String? = null,
+    val photoUrl: String? = null,
+    val photoUrls: List<String>? = null,
+    val evidencePhotoUrls: List<String>? = null,
+    val evidenceNotes: String? = null,
+    val completedBy: String? = null,
+    val supportCount: Int? = 0,
+    val createdAt: String? = null,
+    val updatedAt: String? = null,
     val tanggalLaporan: String? = null,
     val tanggalUpdate: String? = null
-)
+) {
+    fun resolvedCode(): String {
+        if (!reportCode.isNullOrBlank()) return reportCode
+        val rid = id ?: 0L
+        return String.format("#LP-MKS-2026-%04d", rid)
+    }
+
+    fun resolvedTitle(): String = (judul ?: title)?.takeIf { it.isNotBlank() } ?: "Laporan Fasilitas Umum"
+
+    fun resolvedDescription(): String = (deskripsi ?: description)?.takeIf { it.isNotBlank() } ?: "-"
+
+    fun resolvedLocation(): String = (alamat ?: locationName)?.takeIf { it.isNotBlank() } ?: "Kota Makassar"
+
+    fun resolvedCategoryName(): String = categoryName?.takeIf { it.isNotBlank() } ?: when (idKategori) {
+        1L -> "Infrastruktur Jalan"
+        2L -> "Kebersihan Lingkungan"
+        3L, 4L -> "Fasilitas Umum"
+        else -> "Fasilitas Umum"
+    }
+
+    fun resolvedReporterName(): String = reporterName?.takeIf { it.isNotBlank() } ?: "Warga Pelapor"
+
+    fun resolvedReporterPhone(): String = (noTelepon ?: reporterPhone)?.takeIf { it.isNotBlank() } ?: "-"
+
+    fun resolvedCreatedAt(): String = (createdAt ?: tanggalLaporan)?.takeIf { it.isNotBlank() } ?: "Baru saja"
+
+    fun resolvedUpdatedAt(): String = (updatedAt ?: tanggalUpdate)?.takeIf { it.isNotBlank() } ?: resolvedCreatedAt()
+
+    fun resolvedPhotoUrl(): String? {
+        val raw = photoUrl?.takeIf { it.isNotBlank() } ?: photoUrls?.firstOrNull { it.isNotBlank() }
+        return ApiClient.resolveImageUrl(raw)
+    }
+
+    fun resolvedPhotoUrls(): List<String> {
+        val list = mutableListOf<String>()
+        photoUrls?.forEach { p ->
+            val resolved = ApiClient.resolveImageUrl(p)
+            if (!resolved.isNullOrBlank() && !list.contains(resolved)) {
+                list.add(resolved)
+            }
+        }
+        val main = resolvedPhotoUrl()
+        if (!main.isNullOrBlank() && !list.contains(main)) {
+            list.add(0, main)
+        }
+        return list
+    }
+
+    fun resolvedEvidencePhotoUrls(): List<String> {
+        val list = mutableListOf<String>()
+        evidencePhotoUrls?.forEach { p ->
+            val resolved = ApiClient.resolveImageUrl(p)
+            if (!resolved.isNullOrBlank() && !list.contains(resolved)) {
+                list.add(resolved)
+            }
+        }
+        return list
+    }
+
+    fun resolvedEvidenceNotes(): String = evidenceNotes?.takeIf { it.isNotBlank() } ?: ""
+
+    fun resolvedCompletedBy(): String = completedBy?.takeIf { it.isNotBlank() } ?: "Tim Dinas Pemerintah"
+
+    fun resolvedStatusDisplay(): String = when (idStatus) {
+        1L -> "Menunggu Verifikasi"
+        2L -> "Terverifikasi"
+        3L -> "Ditolak"
+        4L -> "Sedang Diproses"
+        5L -> "Selesai"
+        else -> "Menunggu Verifikasi"
+    }
+}
 
 data class CreateLaporanRequest(
     val idKategori: Long,
@@ -291,7 +378,8 @@ data class CreateLaporanRequest(
     val alamat: String,
     val latitude: Double,
     val longitude: Double,
-    val tingkatKeparahan: String
+    val tingkatKeparahan: String,
+    val photoUrls: List<String> = emptyList()
 )
 
 data class KategoriResponse(
@@ -311,6 +399,16 @@ data class NotifikasiResponse(
     val tipe: String? = null,
     val sudahDibaca: Boolean? = null,
     val tanggalDibuat: String? = null
+)
+
+data class BuktiPerbaikanResponse(
+    val id: Long? = null,
+    val idLaporan: Long? = null,
+    val idPemerintah: Long? = null,
+    val namaFile: String? = null,
+    val pathFile: String? = null,
+    val keterangan: String? = null,
+    val tanggalUpload: String? = null
 )
 
 interface ApiService {
@@ -440,13 +538,34 @@ interface ApiService {
     @GET("api/user/reports/{id}")
     fun getReportDetail(@Path("id") id: Long): Call<LaporanResponse>
 
+    @GET("api/user/reports/{id}/evidence")
+    fun getReportEvidence(@Path("id") id: Long): Call<BuktiPerbaikanResponse>
+
+    @GET("api/admin/reports/{id}")
+    fun getEnrichedReportById(@Path("id") id: Long): Call<LaporanResponse>
+
+    @GET("api/admin/reports")
+    fun getAllEnrichedReports(): Call<List<LaporanResponse>>
+
+    @POST("api/user/reports/{id}/support")
+    fun supportReport(
+        @Header("Authorization") token: String,
+        @Path("id") id: Long
+    ): Call<Map<String, @JvmSuppressWildcards Any>>
+
     @GET("api/user/notifications")
     fun getNotifications(@Header("Authorization") token: String): Call<List<NotifikasiResponse>>
+
+    @PUT("api/user/notifications/{id}/read")
+    fun markNotificationRead(
+        @Header("Authorization") token: String,
+        @Path("id") id: Long
+    ): Call<ResponseBody>
 }
 
 object ApiClient {
     // Ganti IP di bawah ini jika IP laptop berubah
-    const val BASE_URL = "http://10.5.70.43:8081/"
+    const val BASE_URL = "http://172.29.173.86:8081/"
 
     fun resolveImageUrl(raw: String?): String? {
         if (raw.isNullOrBlank()) return null

@@ -72,6 +72,9 @@ public class Laporan {
     @Transient
     private String completedBy;
 
+    @Transient
+    private Integer supportCount = 0;
+
     @JsonProperty("reportCode")
     public String getReportCode() {
         int year = tanggalLaporan != null ? tanggalLaporan.getYear() : 2026;
@@ -156,6 +159,10 @@ public class Laporan {
     @JsonProperty("completedBy")
     public String getCompletedBy() { return completedBy; }
     public void setCompletedBy(String completedBy) { this.completedBy = completedBy; }
+
+    @JsonProperty("supportCount")
+    public Integer getSupportCount() { return supportCount != null ? supportCount : 0; }
+    public void setSupportCount(Integer supportCount) { this.supportCount = supportCount; }
 
     @JsonProperty("updatedAt")
     public String getUpdatedAt() {

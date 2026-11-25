@@ -22,7 +22,7 @@ class BantuanActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_bantuan)
+        setContentView(R.layout.activity_admin_bantuan)
 
         val btnBack = findViewById<ImageView>(R.id.btnBackBantuan)
         val tvEmail = findViewById<TextView>(R.id.tvSupportEmail)

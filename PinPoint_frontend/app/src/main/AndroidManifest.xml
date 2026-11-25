@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -57,57 +58,62 @@
 
         <!-- Halaman Modul Warga / User -->
         <activity
-            android:name=".DashboardActivity"
+            android:name=".user.DashboardActivity"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false" />
 
         <activity
-            android:name=".FormPelaporanActivity"
+            android:name=".user.FormPelaporanActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
 
         <!-- Halaman Interaktif Pemilihan Titik Lokasi Peta (Maps Picker) -->
         <activity
-            android:name=".PilihLokasiActivity"
+            android:name=".user.PilihLokasiActivity"
             android:exported="false" />
 
         <activity
-            android:name=".DetailLaporanActivity"
+            android:name=".user.DetailLaporanActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
 
         <activity
-            android:name=".RiwayatActivity"
+            android:name=".user.RiwayatActivity"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false" />
 
         <activity
-            android:name=".NotifikasiActivity"
+            android:name=".user.NotifikasiActivity"
             android:exported="false" />
 
         <activity
-            android:name=".ProfilActivity"
+            android:name=".user.ProfilActivity"
             android:exported="false" />
 
         <!-- Halaman Dashboard Pemerintah / Petugas -->
         <activity
-            android:name=".PemerintahDashboardActivity"
+            android:name=".pemerintah.PemerintahDashboardActivity"
             android:exported="false" />
 
         <!-- Halaman Riwayat Pemerintah / Petugas -->
         <activity
-            android:name=".PemerintahHistoryActivity"
+            android:name=".pemerintah.PemerintahHistoryActivity"
             android:exported="false" />
 
         <!-- Halaman Peta Pemerintah / Petugas -->
         <activity
-            android:name=".PemerintahMapActivity"
+            android:name=".pemerintah.PemerintahMapActivity"
             android:exported="false" />
 
         <!-- Halaman Profil Pemerintah / Petugas -->
         <activity
-            android:name=".PemerintahProfileActivity"
+            android:name=".pemerintah.PemerintahProfileActivity"
             android:exported="false" />
 
         <!-- Halaman Detail Tugas / Laporan Pemerintah -->
         <activity
-            android:name=".PemerintahDetailTaskActivity"
+            android:name=".pemerintah.PemerintahDetailTaskActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
 
         <!-- Halaman Admin -->

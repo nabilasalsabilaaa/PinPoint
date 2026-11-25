@@ -1,4 +1,4 @@
-package com.example.pinpoint
+package com.example.pinpoint.pemerintah
 
 import android.content.Intent
 import android.graphics.Color
@@ -17,8 +17,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.pinpoint.R
+import com.example.pinpoint.adapter.PemerintahHistoryAdapter
 import com.example.pinpoint.admin.DetailVerifikasiActivity
 import com.example.pinpoint.admin.NavbarUtils
+import com.example.pinpoint.model.PemerintahHistoryItem
 import com.example.pinpoint.network.ApiClient
 import com.example.pinpoint.network.CategoryDto
 import com.example.pinpoint.network.ReportDto

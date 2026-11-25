@@ -16,12 +16,6 @@ import com.example.pinpoint.PhotoSliderDialog
 import com.example.pinpoint.R
 import com.example.pinpoint.network.ApiClient
 import com.example.pinpoint.network.ReportDto
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 
 class DetailVerifikasiActivity : AppCompatActivity() {
 
@@ -42,9 +36,6 @@ class DetailVerifikasiActivity : AppCompatActivity() {
     private lateinit var btnApproveReport: Button
     private lateinit var btnRejectReport: Button
     private lateinit var layoutActionButtons: LinearLayout
-    private lateinit var googleAdminVerifyMapView: MapView
-    private var googleMap: GoogleMap? = null
-    private var reportMarker: Marker? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,8 +43,6 @@ class DetailVerifikasiActivity : AppCompatActivity() {
 
         reportId = intent.getStringExtra("REPORT_ID")
         initViews()
-
-        setupGoogleMap(savedInstanceState)
 
         btnBackDetailVerify.setOnClickListener { finish() }
 
@@ -81,28 +70,7 @@ class DetailVerifikasiActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        googleAdminVerifyMapView.onResume()
         reportId?.let { loadReportDetail(it) }
-    }
-
-    override fun onPause() {
-        googleAdminVerifyMapView.onPause()
-        super.onPause()
-    }
-
-    override fun onDestroy() {
-        googleAdminVerifyMapView.onDestroy()
-        super.onDestroy()
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        googleAdminVerifyMapView.onLowMemory()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        googleAdminVerifyMapView.onSaveInstanceState(outState)
     }
     private fun initViews() {
         btnBackDetailVerify = findViewById(R.id.btnBackDetailVerify)
@@ -162,14 +130,16 @@ class DetailVerifikasiActivity : AppCompatActivity() {
 
                     val evPhotos = report.resolvedEvidencePhotoUrls()
                     val evNotes = report.resolvedEvidenceNotes()
-                    if (evPhotos.isNotEmpty() || evNotes.isNotBlank()) {
+                    val isCompleted = report.resolvedStatusKey() == "SELESAI"
+                    if (isCompleted || evPhotos.isNotEmpty() || evNotes.isNotBlank()) {
                         cardGovEvidence?.visibility = View.VISIBLE
                         tvGovEvidenceNotes?.text = if (evNotes.isNotBlank()) {
                             "Catatan Pengerjaan (${report.resolvedCompletedBy()}): $evNotes"
                         } else {
-                            "Diselesaikan oleh ${report.resolvedCompletedBy()}"
+                            "Perbaikan telah diselesaikan secara resmi oleh ${report.resolvedCompletedBy()}"
                         }
                         if (evPhotos.isNotEmpty() && ivGovEvidence != null) {
+                            layoutGovEvidencePhoto?.visibility = View.VISIBLE
                             tvGovEvidenceCount?.text = "${evPhotos.size} Foto Bukti - Ketuk untuk geser"
                             Glide.with(this@DetailVerifikasiActivity)
                                 .load(evPhotos[0])
@@ -185,7 +155,9 @@ class DetailVerifikasiActivity : AppCompatActivity() {
                                 )
                             }
                         } else {
-                            layoutGovEvidencePhoto?.visibility = View.GONE
+                            layoutGovEvidencePhoto?.visibility = View.VISIBLE
+                            ivGovEvidence?.setImageResource(R.drawable.sampul)
+                            tvGovEvidenceCount?.text = "Bukti Penyelesaian Lapangan"
                         }
                     } else {
                         cardGovEvidence?.visibility = View.GONE
@@ -253,27 +225,8 @@ class DetailVerifikasiActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupGoogleMap(savedInstanceState: Bundle?) {
-        googleAdminVerifyMapView =
-            findViewById(R.id.googleAdminVerifyMapView)
-
-        googleAdminVerifyMapView.onCreate(savedInstanceState)
-
-        googleAdminVerifyMapView.getMapAsync { map ->
-            googleMap = map
-
-            map.uiSettings.isZoomControlsEnabled = true
-            map.uiSettings.isMapToolbarEnabled = false
-            map.uiSettings.isCompassEnabled = true
-
-            updateReportMarker()
-        }
-    }
-
     private fun updateReportMarker() {
         val report = currentReport ?: return
-        val map = googleMap ?: return
-
         val lat = report.latitude
         val lng = report.longitude
 
@@ -284,27 +237,9 @@ class DetailVerifikasiActivity : AppCompatActivity() {
             (lat == 0.0 && lng == 0.0)
         ) {
             tvGpsCoordinatesBadge.text = "Koordinat tidak tersedia"
-            reportMarker?.remove()
-            reportMarker = null
             return
         }
 
-        val location = LatLng(lat, lng)
-
-        tvGpsCoordinatesBadge.text =
-            String.format("%.6f, %.6f", lat, lng)
-
-        reportMarker?.remove()
-
-        reportMarker = map.addMarker(
-            MarkerOptions()
-                .position(location)
-                .title(report.resolvedTitle())
-                .snippet(report.resolvedLocationName())
-        )
-
-        map.animateCamera(
-            CameraUpdateFactory.newLatLngZoom(location, 17f)
-        )
+        tvGpsCoordinatesBadge.text = String.format("GPS: %.5f, %.5f", lat, lng)
     }
 }

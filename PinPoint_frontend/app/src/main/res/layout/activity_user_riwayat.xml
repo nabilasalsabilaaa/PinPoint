@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainRiwayat"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8FAFC">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomNavContainer"
+        android:clipToPadding="false"
+        android:paddingBottom="24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="20dp">
+
+            <!-- 1. Header Judul & Subtitle -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Riwayat Laporan Saya"
+                android:textColor="#0B1C30"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pantau status dan transparansi tindak lanjut laporan fasilitas yang telah Anda buat sendiri."
+                android:textColor="#64748B"
+                android:textSize="12sp"
+                android:lineSpacingExtra="2dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- 2. Search Input Tiket (Icon Search Selaras & Tanpa Filter Icon) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_search_bar"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="14dp"
+                android:layout_marginBottom="12dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_search"
+                    app:tint="#64748B" />
+
+                <EditText
+                    android:id="@+id/etSearchTicket"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:hint="Cari no. tiket, judul, lokasi, atau kategori..."
+                    android:textColor="#0B1C30"
+                    android:textColorHint="#94A3B8"
+                    android:textSize="12sp"
+                    android:paddingHorizontal="10dp"
+                    android:imeOptions="actionSearch"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <!-- 3. Filter Status Dropdown -->
+            <LinearLayout
+                android:id="@+id/btnFilterStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_filter_dropdown"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="10dp"
+                android:layout_marginBottom="18dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="FILTER STATUS LAPORAN"
+                        android:textColor="#64748B"
+                        android:textSize="9sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvCurrentFilterStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Semua Status (0)"
+                        android:textColor="#0B1C30"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_expand_more"
+                    app:tint="#64748B" />
+            </LinearLayout>
+
+            <!-- View jika riwayat kosong -->
+            <TextView
+                android:id="@+id/tvEmptyRiwayat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_white_card"
+                android:text="Belum ada laporan yang Anda buat pada status ini."
+                android:textColor="#64748B"
+                android:textSize="13sp"
+                android:gravity="center"
+                android:padding="24dp"
+                android:visibility="gone"
+                android:layout_marginBottom="16dp" />
+
+            <!-- RecyclerView Semua Laporan Buatan User Sendiri -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvUserHistory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/item_user_report_card" />
+
+            <!-- Footer Trust Shield -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingHorizontal="24dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="32dp">
+
+                <LinearLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_chip_blue_light"
+                    android:gravity="center"
+                    android:layout_marginBottom="8dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/verif"
+                        app:tint="@color/primary_blue" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Data Transparan &amp; Terlindungi"
+                    android:textColor="#0B1C30"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Laporan disimpan otomatis oleh Sistem Pelaporan Infrastruktur Daerah Kota Makassar."
+                    android:textColor="#64748B"
+                    android:textSize="10sp"
+                    android:lineSpacingExtra="2dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Navigation Bar User -->
+    <include
+        android:id="@+id/bottomNavContainer"
+        layout="@layout/layout_user_bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="96dp"
+        android:layout_alignParentBottom="true" />
+
+</RelativeLayout>

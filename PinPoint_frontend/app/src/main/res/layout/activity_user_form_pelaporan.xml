@@ -8,37 +8,41 @@
     android:background="#FFFFFF">
 
     <!-- 1. Header Toolbar Atas -->
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/toolbarForm"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:paddingHorizontal="16dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp"
         android:background="#FFFFFF"
         android:elevation="2dp">
 
         <ImageView
             android:id="@+id/btnBackForm"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_centerVertical="true"
-            android:src="@drawable/ic_arrow_back"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_white_rounded_btn"
+            android:padding="8dp"
+            android:src="@drawable/back"
+            app:tint="#0B1C30"
+            android:elevation="1dp"
+            android:layout_marginEnd="16dp"
             android:contentDescription="Kembali" />
 
         <TextView
             android:id="@+id/tvFormTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="16dp"
-            android:layout_toEndOf="@id/btnBackForm"
             android:text="Buat Laporan"
             android:textColor="#0B1C30"
             android:textSize="18sp"
             android:textStyle="bold" />
-    </RelativeLayout>
+    </LinearLayout>
 
     <!-- 2. Scrollable Body Form -->
     <ScrollView
+        android:id="@+id/scrollViewForm"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbarForm"
@@ -53,7 +57,7 @@
             android:paddingHorizontal="16dp"
             android:paddingTop="16dp">
 
-            <!-- ================= SECTION 1: UPLOAD FOTO ================= -->
+            <!-- ================= SECTION 1: UPLOAD FOTO (MULTI-PHOTO) ================= -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -86,7 +90,6 @@
                 android:padding="20dp"
                 android:layout_marginBottom="24dp">
 
-                <!-- Lingkaran Icon Kamera -->
                 <LinearLayout
                     android:layout_width="56dp"
                     android:layout_height="56dp"
@@ -104,7 +107,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Ambil Foto atau Pilih dari Galeri"
+                    android:text="Ambil Foto atau Pilih Beberapa dari Galeri"
                     android:textColor="#0B1C30"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -113,7 +116,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Format JPG, PNG (Maksimal 5MB)"
+                    android:text="Bisa memilih lebih dari 1 foto bukti kerusakan"
                     android:textColor="#64748B"
                     android:textSize="11sp"
                     android:layout_marginBottom="16dp" />
@@ -123,7 +126,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <!-- Tombol Buka Kamera -->
                     <LinearLayout
                         android:id="@+id/btnTakePhoto"
                         android:layout_width="wrap_content"
@@ -145,13 +147,12 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Buka Kamera"
+                            android:text="Tambah Kamera"
                             android:textColor="#FFFFFF"
                             android:textSize="12sp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
-                    <!-- Tombol Pilih File / Galeri -->
                     <LinearLayout
                         android:id="@+id/btnPickGallery"
                         android:layout_width="wrap_content"
@@ -172,21 +173,64 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Pilih File"
+                            android:text="Pilih Galeri"
                             android:textColor="#0B1C30"
                             android:textSize="12sp"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Preview Foto Setelah Dipilih -->
-                <ImageView
-                    android:id="@+id/ivSelectedPhotoPreview"
+                <!-- Preview Multi-Foto Setelah Dipilih -->
+                <RelativeLayout
+                    android:id="@+id/layoutSelectedPhotosContainer"
                     android:layout_width="match_parent"
-                    android:layout_height="160dp"
-                    android:scaleType="centerCrop"
-                    android:layout_marginTop="12dp"
-                    android:visibility="gone" />
+                    android:layout_height="180dp"
+                    android:layout_marginTop="14dp"
+                    android:visibility="gone">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp">
+
+                        <ImageView
+                            android:id="@+id/ivSelectedPhotoPreview"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop" />
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:id="@+id/tvSelectedPhotoCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_margin="10dp"
+                        android:background="#CC000000"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="5dp"
+                        android:text="1 Foto Terpilih • Ketuk untuk lihat slide"
+                        android:textColor="#FFFFFF"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/btnClearSelectedPhotos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/bg_badge_ditolak"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="4dp"
+                        android:text="Hapus Foto"
+                        android:textColor="#B91C1C"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
             </LinearLayout>
 
             <!-- ================= SECTION 2: TITIK LOKASI ================= -->
@@ -225,12 +269,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <com.google.android.gms.maps.MapView
-                        android:id="@+id/googleFormMapView"
+                    <com.example.pinpoint.user.MapTouchWrapperLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent">
 
-                    <!-- Floating Target GPS Button (Pojok Kanan Atas) -->
+                        <com.google.android.gms.maps.MapView
+                            android:id="@+id/googleFormMapView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+                    </com.example.pinpoint.user.MapTouchWrapperLayout>
+
                     <LinearLayout
                         android:id="@+id/btnLocateMe"
                         android:layout_width="38dp"
@@ -250,7 +298,6 @@
                             app:tint="#0B3C8C" />
                     </LinearLayout>
 
-                    <!-- Pin Marker & Callout Label di Tengah Peta Live -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -259,7 +306,6 @@
                         android:orientation="vertical"
                         android:elevation="6dp">
 
-                        <!-- Dark Address Callout Label -->
                         <TextView
                             android:id="@+id/tvPinAddress"
                             android:layout_width="wrap_content"
@@ -273,14 +319,12 @@
                             android:textSize="10sp"
                             android:layout_marginBottom="2dp" />
 
-                        <!-- Icon Pin Merah -->
                         <ImageView
                             android:layout_width="34dp"
                             android:layout_height="34dp"
                             android:src="@drawable/location"
                             app:tint="#DC2626" />
 
-                        <!-- Shadow dot -->
                         <View
                             android:layout_width="6dp"
                             android:layout_height="6dp"
@@ -291,7 +335,6 @@
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Card Koordinat Terkunci -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -337,20 +380,20 @@
                     app:tint="@color/primary_blue" />
             </LinearLayout>
 
-            <!-- Tombol Sesuaikan Pin Manual -->
+            <!-- Tombol Sesuaikan Pin Manual (Tanpa Emoji) -->
             <Button
                 android:id="@+id/btnAdjustPinManual"
                 android:layout_width="match_parent"
                 android:layout_height="42dp"
                 android:background="@drawable/bg_btn_manual_pin"
                 app:backgroundTint="@null"
-                android:text="✎  Sesuaikan Pin Lokasi Manual"
+                android:text="Sesuaikan Pin Lokasi Manual"
                 android:textColor="@color/primary_blue"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="24dp" />
 
-            <!-- ================= SECTION 3: PILIH KATEGORI ================= -->
+            <!-- ================= SECTION 3: PILIH KATEGORI DARI DATABASE ================= -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -383,289 +426,18 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:text="Pilih 1"
+                    android:text="Sesuai Database"
                     android:textColor="#94A3B8"
-                    android:textSize="12sp" />
+                    android:textSize="11sp" />
             </RelativeLayout>
 
-            <!-- Grid Kategori 2 Kolom -->
+            <!-- Container Kategori Dinamis dari Database -->
             <LinearLayout
+                android:id="@+id/llDynamicCategoryGrid"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginBottom="24dp">
-
-                <!-- Baris 1: Jalan Rusak & Lampu Jalan -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="10dp">
-
-                    <!-- 1. Jalan Rusak (Default Terpilih) -->
-                    <RelativeLayout
-                        android:id="@+id/catJalanRusak"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_category_item_selected"
-                        android:padding="12dp"
-                        android:layout_marginEnd="8dp"
-                        android:clickable="true"
-                        android:focusable="true">
-
-                        <ImageView
-                            android:id="@+id/ivCat1"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:background="@drawable/bg_chip_blue_light"
-                            android:padding="6dp"
-                            android:src="@drawable/jalan"
-                            app:tint="@color/primary_blue" />
-
-                        <ImageView
-                            android:id="@+id/checkCat1"
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
-                            android:layout_alignParentEnd="true"
-                            android:src="@drawable/ic_check_circle"
-                            app:tint="#FFFFFF" />
-
-                        <TextView
-                            android:id="@+id/tvCatTitle1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/ivCat1"
-                            android:layout_marginTop="8dp"
-                            android:text="Jalan Rusak"
-                            android:textColor="#FFFFFF"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tvCatSub1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/tvCatTitle1"
-                            android:text="Lubang / Amblas"
-                            android:textColor="#BFDBFE"
-                            android:textSize="10sp" />
-                    </RelativeLayout>
-
-                    <!-- 2. Lampu Jalan -->
-                    <RelativeLayout
-                        android:id="@+id/catLampuJalan"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_category_item_unselected"
-                        android:padding="12dp"
-                        android:clickable="true"
-                        android:focusable="true">
-
-                        <ImageView
-                            android:id="@+id/ivCat2"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:background="@drawable/bg_chip_blue_light"
-                            android:padding="6dp"
-                            android:src="@drawable/lamp"
-                            app:tint="@color/primary_blue" />
-
-                        <TextView
-                            android:id="@+id/tvCatTitle2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/ivCat2"
-                            android:layout_marginTop="8dp"
-                            android:text="Lampu Jalan"
-                            android:textColor="#0B1C30"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tvCatSub2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/tvCatTitle2"
-                            android:text="Padam / Rusak"
-                            android:textColor="#64748B"
-                            android:textSize="10sp" />
-                    </RelativeLayout>
-                </LinearLayout>
-
-                <!-- Baris 2: Drainase & Banjir, Taman & Fasum -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="10dp">
-
-                    <!-- 3. Drainase & Banjir -->
-                    <RelativeLayout
-                        android:id="@+id/catDrainase"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_category_item_unselected"
-                        android:padding="12dp"
-                        android:layout_marginEnd="8dp"
-                        android:clickable="true"
-                        android:focusable="true">
-
-                        <ImageView
-                            android:id="@+id/ivCat3"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:background="@drawable/bg_chip_blue_light"
-                            android:padding="6dp"
-                            android:src="@drawable/drainage"
-                            app:tint="@color/primary_blue" />
-
-                        <TextView
-                            android:id="@+id/tvCatTitle3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/ivCat3"
-                            android:layout_marginTop="8dp"
-                            android:text="Drainase &amp; Banjir"
-                            android:textColor="#0B1C30"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tvCatSub3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/tvCatTitle3"
-                            android:text="Tersumbat / Meluap"
-                            android:textColor="#64748B"
-                            android:textSize="10sp" />
-                    </RelativeLayout>
-
-                    <!-- 4. Taman & Fasum -->
-                    <RelativeLayout
-                        android:id="@+id/catTaman"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_category_item_unselected"
-                        android:padding="12dp"
-                        android:clickable="true"
-                        android:focusable="true">
-
-                        <ImageView
-                            android:id="@+id/ivCat4"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:background="@drawable/bg_chip_blue_light"
-                            android:padding="6dp"
-                            android:src="@drawable/park"
-                            app:tint="@color/primary_blue" />
-
-                        <TextView
-                            android:id="@+id/tvCatTitle4"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/ivCat4"
-                            android:layout_marginTop="8dp"
-                            android:text="Taman &amp; Fasum"
-                            android:textColor="#0B1C30"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tvCatSub4"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/tvCatTitle4"
-                            android:text="Fasilitas Bermain"
-                            android:textColor="#64748B"
-                            android:textSize="10sp" />
-                    </RelativeLayout>
-                </LinearLayout>
-
-                <!-- Baris 3: Jembatan Penyebrangan & Lainnya -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <!-- 5. Jembatan Penyebrangan -->
-                    <RelativeLayout
-                        android:id="@+id/catJembatan"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_category_item_unselected"
-                        android:padding="12dp"
-                        android:layout_marginEnd="8dp"
-                        android:clickable="true"
-                        android:focusable="true">
-
-                        <ImageView
-                            android:id="@+id/ivCat5"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:background="@drawable/bg_chip_blue_light"
-                            android:padding="6dp"
-                            android:src="@drawable/walk"
-                            app:tint="@color/primary_blue" />
-
-                        <TextView
-                            android:id="@+id/tvCatTitle5"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/ivCat5"
-                            android:layout_marginTop="8dp"
-                            android:text="Jembatan Penyebrangan"
-                            android:textColor="#0B1C30"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tvCatSub5"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/tvCatTitle5"
-                            android:text="JPO / Trotoar"
-                            android:textColor="#64748B"
-                            android:textSize="10sp" />
-                    </RelativeLayout>
-
-                    <!-- 6. Lainnya -->
-                    <RelativeLayout
-                        android:id="@+id/catLainnya"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_category_item_unselected"
-                        android:padding="12dp"
-                        android:clickable="true"
-                        android:focusable="true">
-
-                        <ImageView
-                            android:id="@+id/ivCat6"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:background="@drawable/bg_chip_blue_light"
-                            android:padding="6dp"
-                            android:src="@drawable/category"
-                            app:tint="@color/primary_blue" />
-
-                        <TextView
-                            android:id="@+id/tvCatTitle6"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/ivCat6"
-                            android:layout_marginTop="8dp"
-                            android:text="Lainnya"
-                            android:textColor="#0B1C30"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-                    </RelativeLayout>
-                </LinearLayout>
-            </LinearLayout>
+                android:layout_marginBottom="24dp" />
 
             <!-- ================= SECTION 4: DETAIL & TINGKAT BAHAYA ================= -->
             <LinearLayout
@@ -691,16 +463,38 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- Tingkat Urgensi Label -->
+            <!-- Judul Laporan -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tingkat Urgensi Kerusakan"
+                android:text="Judul Kerusakan / Laporan"
+                android:textColor="#0B1C30"
+                android:textSize="12sp"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/etReportTitle"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:background="@drawable/bg_text_area"
+                android:hint="Contoh: Jalan Berlubang di Depan Halte"
+                android:textColor="#0B1C30"
+                android:textColorHint="#94A3B8"
+                android:textSize="13sp"
+                android:paddingHorizontal="12dp"
+                android:singleLine="true"
+                android:layout_marginBottom="14dp" />
+
+            <!-- Tingkat Bahaya / Urgensi Label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tingkat Bahaya Kerusakan"
                 android:textColor="#0B1C30"
                 android:textSize="12sp"
                 android:layout_marginBottom="8dp" />
 
-            <!-- Segmented Control Urgensi (Rendah / Sedang / Kritis) -->
+            <!-- Segmented Control Tingkat Bahaya (Rendah / Sedang / Kritis / Darurat) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="44dp"
@@ -717,7 +511,8 @@
                     android:gravity="center"
                     android:text="Rendah"
                     android:textColor="#334155"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/btnUrgencyMedium"
@@ -727,9 +522,9 @@
                     android:gravity="center"
                     android:text="Sedang"
                     android:textColor="#334155"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
 
-                <!-- Kritis / Darurat (Selected) -->
                 <LinearLayout
                     android:id="@+id/btnUrgencyCritical"
                     android:layout_width="0dp"
@@ -740,6 +535,7 @@
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:id="@+id/ivUrgencyCriticalIcon"
                         android:layout_width="12dp"
                         android:layout_height="12dp"
                         android:src="@drawable/ic_alert_triangle"
@@ -780,14 +576,13 @@
                     android:textSize="11sp" />
             </RelativeLayout>
 
-            <!-- Kolom Input Deskripsi -->
             <EditText
                 android:id="@+id/etDescription"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="110dp"
                 android:background="@drawable/bg_text_area"
                 android:gravity="top|start"
-                android:hint="Tuliskan deskripsi..."
+                android:hint="Tuliskan detail kondisi kerusakan, patokan lokasi, dan dampak bahaya..."
                 android:textColor="#0B1C30"
                 android:textColorHint="#94A3B8"
                 android:textSize="12sp"
@@ -798,7 +593,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- 3. Bottom Bar: Kirim Laporan Fasilitas -->
+    <!-- 3. Bottom Bar: Kirim Laporan Fasilitas (Tanpa Emoji) -->
     <LinearLayout
         android:id="@+id/bottomBarSubmit"
         android:layout_width="match_parent"
@@ -814,7 +609,7 @@
             android:layout_height="50dp"
             android:background="@drawable/bg_btn_rounded_blue"
             app:backgroundTint="@null"
-            android:text="➤  Kirim Laporan Fasilitas"
+            android:text="Kirim Laporan Fasilitas"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:textStyle="bold" />

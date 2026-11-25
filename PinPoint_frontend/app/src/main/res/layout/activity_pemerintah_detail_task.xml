@@ -82,6 +82,7 @@
 
     <!-- Scrollable Content -->
     <ScrollView
+        android:id="@+id/scrollViewGovDetail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/topBar"

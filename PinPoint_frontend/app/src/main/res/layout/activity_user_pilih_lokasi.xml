@@ -28,11 +28,12 @@
 
         <ImageView
             android:id="@+id/btnBackPicker"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="4dp"
             android:clickable="true"
             android:focusable="true"
-            android:src="@drawable/ic_arrow_back"
+            android:src="@drawable/back"
             app:tint="#0B1C30" />
 
         <LinearLayout

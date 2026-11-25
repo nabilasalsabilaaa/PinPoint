@@ -38,10 +38,13 @@
 
         <ImageView
             android:id="@+id/ivNavHome"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
+            android:layout_width="44dp"
+            android:layout_height="30dp"
+            android:paddingHorizontal="11dp"
+            android:paddingVertical="4dp"
+            android:background="@drawable/bg_nav_icon_active_blue"
             android:src="@drawable/home"
-            app:tint="#0B3C8C" />
+            app:tint="#FFFFFF" />
 
         <TextView
             android:id="@+id/tvNavHome"
@@ -73,8 +76,10 @@
 
         <ImageView
             android:id="@+id/ivNavCategory"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
+            android:layout_width="44dp"
+            android:layout_height="30dp"
+            android:paddingHorizontal="11dp"
+            android:paddingVertical="4dp"
             android:src="@drawable/category"
             app:tint="#94A3B8" />
 
@@ -115,8 +120,10 @@
 
         <ImageView
             android:id="@+id/ivNavAccount"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="44dp"
+            android:layout_height="30dp"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="3dp"
             android:src="@drawable/user_manage"
             app:tint="#94A3B8" />
 
@@ -148,8 +155,10 @@
 
         <ImageView
             android:id="@+id/ivNavProfile"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
+            android:layout_width="44dp"
+            android:layout_height="30dp"
+            android:paddingHorizontal="11dp"
+            android:paddingVertical="4dp"
             android:src="@drawable/user"
             app:tint="#94A3B8" />
 

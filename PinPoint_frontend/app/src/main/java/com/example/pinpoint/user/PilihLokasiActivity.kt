@@ -1,5 +1,5 @@
 
-package com.example.pinpoint
+package com.example.pinpoint.user
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -18,6 +18,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.example.pinpoint.R
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -84,7 +85,7 @@ class PilihLokasiActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_pilih_lokasi)
+        setContentView(R.layout.activity_user_pilih_lokasi)
 
         fusedLocationClient =
             LocationServices.getFusedLocationProviderClient(this)

@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginHorizontal="6dp"
+    android:layout_marginVertical="4dp"
+    app:cardCornerRadius="22dp"
+    app:cardElevation="6dp"
+    app:cardBackgroundColor="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="15dp">
+
+        <!-- Header Nomor Laporan, Kategori, dan Status Badge -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvCardReportId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="#LP-MKS-0001"
+                    android:textColor="#0B3C8C"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="  |  "
+                    android:textColor="#94A3B8"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/tvCardReportCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_badge_red_light"
+                    android:paddingHorizontal="7dp"
+                    android:paddingVertical="2dp"
+                    android:text="KATEGORI"
+                    android:textColor="#D32F2F"
+                    android:textSize="9sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvCardReportStatusBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/bg_badge_blue_light"
+                android:paddingHorizontal="9dp"
+                android:paddingVertical="3dp"
+                android:text="Terverifikasi"
+                android:textColor="#0B3C8C"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <!-- Judul Laporan -->
+        <TextView
+            android:id="@+id/tvCardReportTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Judul Laporan"
+            android:textColor="#0B1C30"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Box Foto + Lokasi + Deskripsi -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_callout_blue"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="10dp">
+
+            <FrameLayout
+                android:layout_width="54dp"
+                android:layout_height="54dp"
+                android:background="#E2E8F0"
+                android:layout_marginEnd="10dp">
+
+                <ImageView
+                    android:id="@+id/ivCardReportThumb"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/sampul" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:background="#99000000"
+                    android:paddingHorizontal="4dp"
+                    android:text="Foto"
+                    android:textColor="#FFFFFF"
+                    android:textSize="8sp"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvCardReportLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Lokasi Laporan"
+                    android:textColor="#0B1C30"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:layout_marginBottom="2dp" />
+
+                <TextView
+                    android:id="@+id/tvCardReportDesc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Deskripsi laporan..."
+                    android:textColor="#334155"
+                    android:textSize="10sp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:layout_marginBottom="3dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvCardReportReporter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pelapor: Warga"
+                        android:textColor="#0B3C8C"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="10dp" />
+
+                    <TextView
+                        android:id="@+id/tvCardReportTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="-"
+                        android:textColor="#475569"
+                        android:textSize="10sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Tombol Pandu Rute & Detail Laporan -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/btnCardRouteGuidance"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_btn_secondary"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginEnd="8dp"
+                android:paddingHorizontal="10dp">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@android:drawable/ic_menu_directions"
+                    app:tint="#0B3C8C"
+                    android:layout_marginEnd="5dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pandu Rute"
+                    android:textColor="#0B3C8C"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btnCardReportDetail"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_btn_primary"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingHorizontal="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Detail Laporan"
+                    android:textColor="#FFFFFF"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
+

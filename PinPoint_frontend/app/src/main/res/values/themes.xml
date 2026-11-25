@@ -1,11 +1,17 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.PinPoint" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:windowAnimationStyle">@style/SmoothActivityAnimation</item>
     </style>
 
     <style name="Theme.PinPoint" parent="Base.Theme.PinPoint" />
+
+    <style name="SmoothActivityAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/fade_in_smooth</item>
+        <item name="android:activityOpenExitAnimation">@anim/fade_out_smooth</item>
+        <item name="android:activityCloseEnterAnimation">@anim/slide_in_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
+    </style>
 
     <style name="cr12">
         <item name="cornerFamily">rounded</item>

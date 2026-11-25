@@ -14,7 +14,7 @@ class BiodataActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_biodata)
+        setContentView(R.layout.activity_admin_biodata)
 
         val btnBack = findViewById<ImageView>(R.id.btnBackBiodata)
         val etName = findViewById<EditText>(R.id.etProfileName)

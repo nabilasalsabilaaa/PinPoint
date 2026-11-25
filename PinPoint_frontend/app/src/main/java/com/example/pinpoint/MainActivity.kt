@@ -7,6 +7,8 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.pinpoint.admin.AdminDashboardActivity
+import com.example.pinpoint.pemerintah.PemerintahDashboardActivity
+import com.example.pinpoint.user.DashboardActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

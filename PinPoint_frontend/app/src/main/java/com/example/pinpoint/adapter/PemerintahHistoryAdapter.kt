@@ -1,4 +1,4 @@
-package com.example.pinpoint
+package com.example.pinpoint.adapter
 
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -9,6 +9,9 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.pinpoint.PhotoSliderDialog
+import com.example.pinpoint.R
+import com.example.pinpoint.model.PemerintahHistoryItem
 
 class PemerintahHistoryAdapter(
     private var historyList: List<PemerintahHistoryItem>,

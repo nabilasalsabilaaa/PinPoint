@@ -1,4 +1,4 @@
-package com.example.pinpoint
+package com.example.pinpoint.pemerintah
 
 import android.content.Intent
 import android.graphics.Bitmap
@@ -20,6 +20,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
+import com.example.pinpoint.PhotoSliderDialog
+import com.example.pinpoint.R
 import com.example.pinpoint.network.ApiClient
 import com.example.pinpoint.network.GovernmentCompleteRequest
 import com.example.pinpoint.network.ReportDto
@@ -76,8 +78,10 @@ class PemerintahDetailTaskActivity : AppCompatActivity() {
         setContentView(R.layout.activity_pemerintah_detail_task)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.ime()
+            )
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
             insets
         }
 
@@ -201,6 +205,17 @@ class PemerintahDetailTaskActivity : AppCompatActivity() {
             }
         }
 
+        val scrollViewGovDetail = findViewById<android.widget.ScrollView>(R.id.scrollViewGovDetail)
+        val scrollToNotes = {
+            scrollViewGovDetail?.postDelayed({
+                scrollViewGovDetail.smoothScrollTo(0, etWorkNotes.bottom + 240)
+            }, 220)
+        }
+        etWorkNotes.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) scrollToNotes()
+        }
+        etWorkNotes.setOnClickListener { scrollToNotes() }
+
         btnSaveDraft.setOnClickListener {
             submitProcessStatus()
         }
@@ -291,6 +306,8 @@ class PemerintahDetailTaskActivity : AppCompatActivity() {
         val existingNotes = report.resolvedEvidenceNotes()
         if (existingNotes.isNotBlank() && etWorkNotes.text.isNullOrBlank()) {
             etWorkNotes.setText(existingNotes)
+        } else if (report.resolvedStatusKey() == "SELESAI" && etWorkNotes.text.isNullOrBlank()) {
+            etWorkNotes.setText("Perbaikan fasilitas umum telah diselesaikan secara resmi oleh pihak pemerintah.")
         }
 
         val existingEvPhotos = report.resolvedEvidencePhotoUrls()
@@ -298,6 +315,10 @@ class PemerintahDetailTaskActivity : AppCompatActivity() {
             evidenceDisplayUrls.addAll(existingEvPhotos)
             evidenceUploadPayloads.addAll(existingEvPhotos)
             refreshEvidencePhotosUi()
+        } else if (report.resolvedStatusKey() == "SELESAI" && evidenceDisplayUrls.isEmpty()) {
+            tvAfterPhotoCountBadge.text = "Tuntas Diperbaiki"
+            tvAfterPhotoOverlayHint.text = "Bukti perbaikan telah tercatat pada laporan selesai"
+            ivConditionAfter.setImageResource(R.drawable.sampul)
         }
     }
 
@@ -352,16 +373,53 @@ class PemerintahDetailTaskActivity : AppCompatActivity() {
                 sampleSize *= 2
             }
             val decodeOpts = BitmapFactory.Options().apply { inSampleSize = sampleSize }
-            val bitmap = contentResolver.openInputStream(uri)?.use {
+            val rawBitmap = contentResolver.openInputStream(uri)?.use {
                 BitmapFactory.decodeStream(it, null, decodeOpts)
             } ?: return uri.toString()
 
+            val uprightBitmap = applyExifOrientation(uri, rawBitmap)
+
             val baos = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 82, baos)
+            uprightBitmap.compress(Bitmap.CompressFormat.JPEG, 82, baos)
             val base64 = Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP)
             "data:image/jpeg;base64,$base64"
         } catch (e: Exception) {
             uri.toString()
+        }
+    }
+
+    private fun applyExifOrientation(uri: Uri, bitmap: Bitmap): Bitmap {
+        return try {
+            val exif = contentResolver.openInputStream(uri)?.use { input ->
+                android.media.ExifInterface(input)
+            } ?: return bitmap
+
+            val orientation = exif.getAttributeInt(
+                android.media.ExifInterface.TAG_ORIENTATION,
+                android.media.ExifInterface.ORIENTATION_NORMAL
+            )
+
+            val matrix = android.graphics.Matrix()
+            when (orientation) {
+                android.media.ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+                android.media.ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+                android.media.ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+                android.media.ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> matrix.preScale(-1f, 1f)
+                android.media.ExifInterface.ORIENTATION_FLIP_VERTICAL -> matrix.preScale(1f, -1f)
+                android.media.ExifInterface.ORIENTATION_TRANSPOSE -> {
+                    matrix.postRotate(90f)
+                    matrix.preScale(-1f, 1f)
+                }
+                android.media.ExifInterface.ORIENTATION_TRANSVERSE -> {
+                    matrix.postRotate(270f)
+                    matrix.preScale(-1f, 1f)
+                }
+                else -> return bitmap
+            }
+
+            Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+        } catch (e: Exception) {
+            bitmap
         }
     }
 

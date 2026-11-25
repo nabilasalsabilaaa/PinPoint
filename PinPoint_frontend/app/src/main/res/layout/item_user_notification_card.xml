@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="1dp"
+    app:cardBackgroundColor="#FFFFFF"
+    android:layout_marginBottom="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="14dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/tvNotifDate"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layout_marginEnd="8dp">
+
+                <LinearLayout
+                    android:id="@+id/layoutNotifIconBg"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_chip_blue_light"
+                    android:gravity="center"
+                    android:layout_marginEnd="10dp">
+
+                    <ImageView
+                        android:id="@+id/ivNotifIcon"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_bell"
+                        app:tint="@color/primary_blue" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvNotifTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Laporan Masuk"
+                    android:textColor="#0B1C30"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvNotifDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:text="Baru saja"
+                android:textColor="#64748B"
+                android:textSize="10sp" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tvNotifMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pesan notifikasi..."
+            android:textColor="#334155"
+            android:textSize="12sp"
+            android:lineSpacingExtra="2dp"
+            android:layout_marginBottom="10dp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvNotifStageBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/bg_badge_terverifikasi"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:text="Status Laporan"
+                android:textColor="#0B58CA"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/btnNotifOpenDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/bg_btn_rounded_blue"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="7dp"
+                android:text="Lihat Detail Laporan"
+                android:textColor="#FFFFFF"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true" />
+        </RelativeLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
+

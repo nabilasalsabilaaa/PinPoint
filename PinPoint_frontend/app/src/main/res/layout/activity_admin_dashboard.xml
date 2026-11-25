@@ -289,53 +289,397 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardAdminMap"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
+                android:layout_height="260dp"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="0dp"
                 android:layout_marginBottom="20dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:background="#DBEAFE">
 
-                    <androidx.fragment.app.FragmentContainerView
-                        android:id="@+id/adminMapFragment"
-                        android:name="com.google.android.gms.maps.SupportMapFragment"
+                    <com.example.pinpoint.user.MapTouchWrapperLayout
+                        android:id="@+id/mapTouchWrapperAdmin"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent">
 
-                    <!-- Tombol Buka Peta Interaktif / Pilih Lokasi -->
+                        <androidx.fragment.app.FragmentContainerView
+                            android:id="@+id/adminMapFragment"
+                            android:name="com.google.android.gms.maps.SupportMapFragment"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+                    </com.example.pinpoint.user.MapTouchWrapperLayout>
+
+                    <!-- Top Left Row: Lokasi Saat Ini + Filter Belum/Sudah Diperbaiki (Scroll Horizontal, Tidak Menutupi Quick Access) -->
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@id/layoutQuickAccessAdminMap"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="6dp"
+                        android:scrollbars="none"
+                        android:clipToPadding="false">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_white_rounded_btn"
+                                android:elevation="3dp"
+                                android:gravity="center_vertical"
+                                android:paddingHorizontal="9dp"
+                                android:paddingVertical="5dp"
+                                android:layout_marginEnd="6dp">
+
+                                <ImageView
+                                    android:layout_width="12dp"
+                                    android:layout_height="12dp"
+                                    android:src="@drawable/location"
+                                    app:tint="#0B58CA"
+                                    android:layout_marginEnd="4dp" />
+
+                                <TextView
+                                    android:id="@+id/tvAdminMapLocationPill"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Makassar &amp; Sekitarnya"
+                                    android:textColor="#0B1C30"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold"
+                                    android:maxLines="1" />
+                            </LinearLayout>
+
+                            <!-- Filter Status Perbaikan (Di Samping Nama Kota) -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_white_rounded_btn"
+                                android:elevation="3dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:padding="2dp">
+
+                                <TextView
+                                    android:id="@+id/chipAdminMapFilterAll"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/bg_btn_rounded_blue"
+                                    android:paddingHorizontal="7dp"
+                                    android:paddingVertical="3dp"
+                                    android:text="Semua"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="9sp"
+                                    android:textStyle="bold"
+                                    android:clickable="true"
+                                    android:focusable="true" />
+
+                                <TextView
+                                    android:id="@+id/chipAdminMapFilterUnresolved"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingHorizontal="7dp"
+                                    android:paddingVertical="3dp"
+                                    android:text="Belum Diperbaiki"
+                                    android:textColor="#475569"
+                                    android:textSize="9sp"
+                                    android:textStyle="bold"
+                                    android:clickable="true"
+                                    android:focusable="true" />
+
+                                <TextView
+                                    android:id="@+id/chipAdminMapFilterResolved"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingHorizontal="7dp"
+                                    android:paddingVertical="3dp"
+                                    android:text="Sudah Diperbaiki"
+                                    android:textColor="#475569"
+                                    android:textSize="9sp"
+                                    android:textStyle="bold"
+                                    android:clickable="true"
+                                    android:focusable="true" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </HorizontalScrollView>
+
+                    <!-- Floating Quick Access Controls (Atas ke Bawah: Pusatkan Lokasi, Zoom Out, Zoom In, Perluas Peta) -->
                     <LinearLayout
-                        android:id="@+id/btnAdminOpenFullMap"
-                        android:layout_width="wrap_content"
-                        android:layout_height="32dp"
+                        android:id="@+id/layoutQuickAccessAdminMap"
+                        android:layout_width="36dp"
+                        android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:layout_alignParentBottom="true"
                         android:layout_margin="10dp"
-                        android:background="@drawable/bg_btn_rounded_blue"
+                        android:background="@drawable/bg_white_rounded_btn"
+                        android:elevation="3dp"
                         android:gravity="center"
-                        android:paddingHorizontal="12dp"
-                        android:elevation="4dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/btnAdminCenterLocation"
+                            android:layout_width="match_parent"
+                            android:layout_height="34dp"
+                            android:gravity="center"
+                            android:clickable="true"
+                            android:focusable="true">
+
+                            <ImageView
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:src="@drawable/ic_my_location"
+                                app:tint="#0B58CA" />
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E2E8F0" />
+
+                        <TextView
+                            android:id="@+id/btnAdminZoomOut"
+                            android:layout_width="match_parent"
+                            android:layout_height="32dp"
+                            android:gravity="center"
+                            android:text="-"
+                            android:textColor="#0B1C30"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:clickable="true"
+                            android:focusable="true" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E2E8F0" />
+
+                        <TextView
+                            android:id="@+id/btnAdminZoomIn"
+                            android:layout_width="match_parent"
+                            android:layout_height="32dp"
+                            android:gravity="center"
+                            android:text="+"
+                            android:textColor="#0B1C30"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:clickable="true"
+                            android:focusable="true" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E2E8F0" />
+
+                        <LinearLayout
+                            android:id="@+id/btnExpandAdminMap"
+                            android:layout_width="match_parent"
+                            android:layout_height="34dp"
+                            android:gravity="center"
+                            android:clickable="true"
+                            android:focusable="true">
+
+                            <ImageView
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:src="@drawable/ic_fullscreen"
+                                app:tint="#0B58CA" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Floating Info Popup Saat Pin Diklik -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardAdminSelectedPinPopup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_above="@id/barExpandAdminMap"
+                        android:layout_marginHorizontal="12dp"
+                        android:layout_marginBottom="2dp"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="6dp"
+                        app:cardBackgroundColor="#FFFFFF"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="10dp">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:layout_marginEnd="8dp">
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal"
+                                    android:layout_marginBottom="2dp">
+
+                                    <ImageView
+                                        android:layout_width="12dp"
+                                        android:layout_height="12dp"
+                                        android:src="@drawable/location"
+                                        app:tint="#0B58CA"
+                                        android:layout_marginEnd="4dp" />
+
+                                    <TextView
+                                        android:id="@+id/tvAdminPinPopupLocation"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Nama Daerah"
+                                        android:textColor="#0B1C30"
+                                        android:textSize="12sp"
+                                        android:textStyle="bold"
+                                        android:maxLines="1"
+                                        android:ellipsize="end" />
+                                </LinearLayout>
+
+                                <TextView
+                                    android:id="@+id/tvAdminPinPopupTitle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Judul Kerusakan"
+                                    android:textColor="#64748B"
+                                    android:textSize="11sp"
+                                    android:maxLines="1"
+                                    android:ellipsize="end" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/btnAdminPinPopupDetail"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:background="@drawable/bg_btn_rounded_blue"
+                                android:gravity="center"
+                                android:paddingHorizontal="12dp"
+                                android:text="Lihat Detail"
+                                android:textColor="#FFFFFF"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:clickable="true"
+                                android:focusable="true" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- Overlay Info Bar Peta (Bawah) dengan Tombol Perluas Peta -->
+                    <LinearLayout
+                        android:id="@+id/barExpandAdminMap"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_margin="12dp"
+                        android:background="@drawable/bg_map_bottom_overlay"
+                        android:elevation="3dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="14dp"
+                        android:paddingVertical="10dp"
                         android:clickable="true"
                         android:focusable="true">
 
                         <ImageView
-                            android:layout_width="14dp"
-                            android:layout_height="14dp"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
                             android:src="@drawable/location"
                             app:tint="#FFFFFF"
-                            android:layout_marginEnd="4dp" />
+                            android:layout_marginEnd="6dp" />
 
                         <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Ketuk pin pada peta untuk info laporan"
+                            android:textColor="#FFFFFF"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:id="@+id/tvToggleExpandAdminMap"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Peta Interaktif"
-                            android:textColor="#FFFFFF"
+                            android:text="Perluas Peta"
+                            android:textColor="#2DD4BF"
                             android:textSize="11sp"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
+
+            <!-- Legenda Warna Pin (Di Bawah Peta, Kecil & Ringkas) -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-12dp"
+                android:layout_marginBottom="16dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="4dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tingkat Kerusakan: "
+                    android:textColor="#64748B"
+                    android:textSize="10sp"
+                    android:layout_marginEnd="6dp" />
+
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/bg_badge_red_circle"
+                    android:layout_marginEnd="4dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Kritis"
+                    android:textColor="#0B1C30"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="10dp" />
+
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/bg_urgency_critical"
+                    android:backgroundTint="#F59E0B"
+                    android:layout_marginEnd="4dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sedang"
+                    android:textColor="#0B1C30"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="10dp" />
+
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/bg_badge_diproses_mint"
+                    android:backgroundTint="#10B981"
+                    android:layout_marginEnd="4dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rendah"
+                    android:textColor="#0B1C30"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
             <!-- 5. Laporan Masuk Terkini -->
             <RelativeLayout

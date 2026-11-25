@@ -1,4 +1,4 @@
-package com.example.pinpoint
+package com.example.pinpoint.model
 
 data class PemerintahReport(
     val reportId: String,
